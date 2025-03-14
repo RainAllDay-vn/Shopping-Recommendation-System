@@ -4,7 +4,6 @@ import com.opencsv.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -16,7 +15,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class FPTShopCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
@@ -126,9 +124,14 @@ public class FPTShopCrawler extends Crawler {
                 driver.get("https://fptshop.com.vn" + product.getSourceURL());
                 Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
                 Element descriptionContainer = doc.getElementsByClass("description-container").first();
-                assert descriptionContainer != null;
-                String description = descriptionContainer.child(0).text();
-                product.setDescription(description);
+                if (descriptionContainer == null) {
+                    product.setDescription("NONE");
+                    continue;
+                }
+                for (Element description : descriptionContainer.children()) {
+                    if (description.text().isBlank()) continue;
+                    product.setDescription(description.text());
+                }
             } catch (Exception e) {
                 System.out.println("An error has occurred when crawling description.");
                 System.out.println("Skipping item " + product.getSourceURL() + " ...");

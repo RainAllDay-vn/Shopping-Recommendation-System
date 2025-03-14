@@ -19,26 +19,21 @@ import java.util.Objects;
 
 public class FPTShopCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
-    String resourceURL = Objects.requireNonNull(CrawlerTest.class.getResource("")).toString();
+    String resourceURL = Objects.requireNonNull(CrawlerTest.class.getResource("")).getPath().replace("%20", " ") + "data/FPTShop";
     public FPTShopCrawler() {
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver-win64\\chromedriver.exe");
+        try {
+            load();
+        } catch (Exception e) {
+            System.out.println("Cannot load crawled data");
+        }
     }
 
     @Override
     public void crawl() {
-        try {
-            load();
-        } catch (Exception ignored) {
-            System.out.println("Failed to load from file, start crawling again ...");
-            crawlInfoCard();
-        }
-
-        List<Product> productsMissingDescription = results.stream()
-                .filter(product -> product.getDescription().isBlank())
-                .toList();
-        if (!productsMissingDescription.isEmpty()) {
-            crawlDescriptions(productsMissingDescription);
-        }
+        crawlInfoCard();
+        crawlProductsInfo();
+        save();
     }
 
     private void crawlInfoCard() {
@@ -84,8 +79,7 @@ public class FPTShopCrawler extends Crawler {
     }
 
     public void save(){
-        String savePath = resourceURL + "data/FPTShop.csv";
-        try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(savePath))
+        try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(resourceURL + "/FPTShop.csv"))
                 .withEscapeChar('\\')
                 .build()) {
             out.writeNext(new String[]{"id", "name", "description", "price", "sourceURL"});
@@ -102,12 +96,27 @@ public class FPTShopCrawler extends Crawler {
             System.out.println("An error has occurred when saving data:");
             System.out.println(e.getMessage());
         }
+        try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(resourceURL + "/ProductImages.csv"))
+                .withEscapeChar('\\')
+                .build()) {
+            out.writeNext(new String[]{"productId", "imageURL"});
+            for (Product product : results) {
+                for(Image image: product.getImages()){
+                    out.writeNext(new String[]{
+                            Integer.toString(product.getId()),
+                            image.getURL()
+                    });
+                }
+            }
+        } catch (Exception e){
+            System.out.println("An error has occurred when saving images:");
+            System.out.println(e.getMessage());
+        }
     }
 
     private void load() {
         results = new ArrayList<>();
-        String loadPath = resourceURL + "data/FPTShop.csv";
-        try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
+        try (CSVReader in = new CSVReader(new FileReader(resourceURL + "/FPTShop.csv"))) {
             in.skip(1);
             for (String[] row : in) {
                 results.add(new Laptop(
@@ -121,30 +130,66 @@ public class FPTShopCrawler extends Crawler {
         } catch (Exception e){
             throw new RuntimeException("An error has occurred when loading data.");
         }
+        try (CSVReader in = new CSVReader(new FileReader(resourceURL + "/ProductImages.csv.csv"))) {
+            in.skip(1);
+            for (String[] row : in) {
+                results.get(Integer.parseInt(row[0])).addImage(row[1]);
+            }
+        } catch (Exception e){
+            throw new RuntimeException("An error has occurred when loading images.");
+        }
     }
 
-    private void crawlDescriptions(List<Product> products) {
+    private void crawlProductsInfo(){
         WebDriver driver = new ChromeDriver();
-        for (Product product : products) {
-            try {
-                driver.get("https://fptshop.com.vn" + product.getSourceURL());
-                Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
-                Element descriptionContainer = doc.getElementsByClass("description-container").first();
-                if (descriptionContainer == null) {
-                    product.setDescription("NONE");
-                    continue;
-                }
-                for (Element description : descriptionContainer.children()) {
-                    if (description.text().isBlank()) continue;
-                    product.setDescription(description.text());
-                }
-            } catch (Exception e) {
-                System.out.println("An error has occurred when crawling description.");
-                System.out.println("Skipping item " + product.getSourceURL() + " ...");
-            }
+        for (Product product : results) {
+            driver.get("https://fptshop.com.vn" + product.getSourceURL());
+            crawlDescription(product, driver);
+            crawlImage(product, driver);
         }
-        save();
         driver.quit();
+    }
+
+    private void crawlDescription(Product product, WebDriver driver) {
+        try {
+            Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
+            Element descriptionContainer = doc.getElementsByClass("description-container").first();
+            if (descriptionContainer == null) {
+                System.out.println("Description container not found. Set description to NONE.");
+                product.setDescription("NONE");
+                return;
+            }
+            for (Element description : descriptionContainer.children()) {
+                if (description.text().isBlank()) continue;
+                product.setDescription(description.text());
+            }
+        } catch (Exception e) {
+            System.out.println("An error has occurred when crawling description for product ...");
+        }
+    }
+
+    private void crawlImage(Product product, WebDriver driver) {
+        try {
+            Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
+            Element descriptionContainer = doc.getElementsByClass("description-container").first();
+            if (descriptionContainer == null) {
+                System.out.println("Description container not found.");
+                return;
+            }
+            Element imageSlider = descriptionContainer.previousElementSibling();
+            if (imageSlider != null) {
+                for (Element image : imageSlider.select("img")) {
+                    String srcset = image.attr("srcset");
+                    String imageURL = srcset.split(",")[0].split(" ")[0];
+                    product.addImage(imageURL);
+                }
+            }
+            for (Element image : descriptionContainer.select("img")) {
+                product.addImage(image.attr("src"));
+            }
+        } catch (Exception e) {
+            System.out.println("An error has occurred when crawling description for product ...");
+        }
     }
 }
 

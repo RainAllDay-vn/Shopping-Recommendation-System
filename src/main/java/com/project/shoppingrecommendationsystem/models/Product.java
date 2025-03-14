@@ -1,9 +1,13 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Product {
     private int id;
     private String name;
     private String description;
+    private List<Image> images;
     private int price;
     private String sourceURL;
 
@@ -11,6 +15,7 @@ public abstract class Product {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.images = new ArrayList<>();
         this.price = price;
         this.sourceURL = sourceURL;
     }
@@ -27,6 +32,10 @@ public abstract class Product {
         return description;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
+
     public int getPrice() {
         return price;
     }
@@ -37,6 +46,10 @@ public abstract class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void addImage(String imageURL) {
+        this.images.add(new Image(this, imageURL));
     }
 
     @Override

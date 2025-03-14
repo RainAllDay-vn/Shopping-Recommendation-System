@@ -5,16 +5,19 @@ import com.project.shoppingrecommendationsystem.CrawlerTest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.JsonToWebElementConverter;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FPTShopCrawler extends Crawler {
@@ -112,6 +115,23 @@ public class FPTShopCrawler extends Crawler {
             System.out.println("An error has occurred when saving images:");
             System.out.println(e.getMessage());
         }
+        try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(resourceURL + "/Hardware.csv"))
+                .withEscapeChar('\\')
+                .build()) {
+            out.writeNext(new String[]{"productId", "key", "value"});
+            for (Product product : results) {
+                for(Map.Entry<String, String> entry: product.getHardwareMap().entrySet()){
+                    out.writeNext(new String[]{
+                            Integer.toString(product.getId()),
+                            entry.getKey(),
+                            entry.getValue()
+                    });
+                }
+            }
+        } catch (Exception e){
+            System.out.println("An error has occurred when saving hardware:");
+            System.out.println(e.getMessage());
+        }
     }
 
     private void load() {
@@ -130,10 +150,18 @@ public class FPTShopCrawler extends Crawler {
         } catch (Exception e){
             throw new RuntimeException("An error has occurred when loading data.");
         }
-        try (CSVReader in = new CSVReader(new FileReader(resourceURL + "/ProductImages.csv.csv"))) {
+        try (CSVReader in = new CSVReader(new FileReader(resourceURL + "/ProductImages.csv"))) {
             in.skip(1);
             for (String[] row : in) {
                 results.get(Integer.parseInt(row[0])).addImage(row[1]);
+            }
+        } catch (Exception e){
+            throw new RuntimeException("An error has occurred when loading images.");
+        }
+        try (CSVReader in = new CSVReader(new FileReader(resourceURL + "/Hardware.csv"))) {
+            in.skip(1);
+            for (String[] row : in) {
+                results.get(Integer.parseInt(row[0])).addHardware(row[1], row[2]);
             }
         } catch (Exception e){
             throw new RuntimeException("An error has occurred when loading images.");
@@ -143,8 +171,10 @@ public class FPTShopCrawler extends Crawler {
     private void crawlProductsInfo(){
         WebDriver driver = new ChromeDriver();
         for (Product product : results) {
+            System.out.printf("Crawling product: %s (Id: %d)%n", product.getName(), product.getId());
             driver.get("https://fptshop.com.vn" + product.getSourceURL());
             crawlDescription(product, driver);
+            crawlHardware(product, driver);
             crawlImage(product, driver);
         }
         driver.quit();
@@ -168,6 +198,23 @@ public class FPTShopCrawler extends Crawler {
         }
     }
 
+    private void crawlHardware(Product product, WebDriver driver) {
+        try {
+            WebElement expandButton = driver.findElement(By.cssSelector(".flex.items-center.text-blue-blue-7.b2-medium"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", expandButton);
+            Thread.sleep(500);
+            expandButton.click();
+            Thread.sleep(500);
+            Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
+            for (Element element: doc.getElementsByClass("flex gap-2 border-b border-dashed border-b-iconDividerOnWhite py-1.5")) {
+                Elements elements = element.children();
+                product.addHardware(elements.get(0).text(), elements.get(1).text());
+            }
+        } catch (Exception e) {
+            System.out.println("An error has occurred when crawling hardware's' information for product.");
+        }
+    }
+
     private void crawlImage(Product product, WebDriver driver) {
         try {
             Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
@@ -188,7 +235,7 @@ public class FPTShopCrawler extends Crawler {
                 product.addImage(image.attr("src"));
             }
         } catch (Exception e) {
-            System.out.println("An error has occurred when crawling description for product ...");
+            System.out.println("An error has occurred when crawling images for product ...");
         }
     }
 }

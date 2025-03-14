@@ -1,6 +1,7 @@
 package com.project.shoppingrecommendationsystem.models;
 
 import com.opencsv.*;
+import com.project.shoppingrecommendationsystem.CrawlerTest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,14 +19,20 @@ import java.util.Objects;
 
 public class FPTShopCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
+    String resourceURL = Objects.requireNonNull(CrawlerTest.class.getResource("")).toString();
     public FPTShopCrawler() {
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver-win64\\chromedriver.exe");
+    }
+
+    @Override
+    public void crawl() {
         try {
             load();
         } catch (Exception ignored) {
             System.out.println("Failed to load from file, start crawling again ...");
-            crawl();
+            crawlInfoCard();
         }
+
         List<Product> productsMissingDescription = results.stream()
                 .filter(product -> product.getDescription().isBlank())
                 .toList();
@@ -34,8 +41,7 @@ public class FPTShopCrawler extends Crawler {
         }
     }
 
-    @Override
-    public void crawl() {
+    private void crawlInfoCard() {
         WebDriver driver = new ChromeDriver();
         results = new ArrayList<>();
         String url = "https://fptshop.com.vn/may-tinh-xach-tay";
@@ -78,7 +84,7 @@ public class FPTShopCrawler extends Crawler {
     }
 
     public void save(){
-        String savePath = "data/FPTShop.csv";
+        String savePath = resourceURL + "data/FPTShop.csv";
         try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(savePath))
                 .withEscapeChar('\\')
                 .build()) {
@@ -100,7 +106,7 @@ public class FPTShopCrawler extends Crawler {
 
     private void load() {
         results = new ArrayList<>();
-        String loadPath = "data/FPTShop.csv";
+        String loadPath = resourceURL + "data/FPTShop.csv";
         try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
             in.skip(1);
             for (String[] row : in) {

@@ -6,6 +6,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,7 +16,7 @@ import java.util.List;
 public class FPTShopCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
     public FPTShopCrawler() {
-        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver-win64\\chromedriver.exe");
+       // System.setProperty("webdriver.chrome.driver", "C:\\chromedriver-win64\\chromedriver.exe");
         try {
             load();
         } catch (Exception ignored) {
@@ -34,10 +35,11 @@ public class FPTShopCrawler extends Crawler {
             WebElement container = driver.findElement(By.className("grow"));
             WebElement button = container.findElement(By.xpath("./div/button"));
             int time = Integer.parseInt(button.getText().replaceAll("\\D", ""))/16 + 1;
+            Actions clickAction = new Actions(driver);
             for (int i = 1; i <= time; i++) {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", button);
+                //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", button);
                 Thread.sleep(500);
-                button.click();
+                clickAction.moveToElement(button).click().perform();
                 Thread.sleep(500);
             }
             List<WebElement> elements = container.findElements(By.xpath("./*[2]/div"));
@@ -51,11 +53,11 @@ public class FPTShopCrawler extends Crawler {
                             .getText()
                             .replaceAll("\\D", "");
                     int price = Integer.parseInt(priceStr);
-                    String sourceURL = infoCard.findElement(By.xpath("./h3/a")).getDomAttribute("href");
+                    String sourceURL = "https://fptshop.com.vn/" + infoCard.findElement(By.xpath("./h3/a")).getDomAttribute("href");
                     Laptop laptop = new Laptop(id, name, description, price, sourceURL);
                     results.add(laptop);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    System.out.println("error inside crawl funntion " +  e.getMessage());
                 }
             }
             save();

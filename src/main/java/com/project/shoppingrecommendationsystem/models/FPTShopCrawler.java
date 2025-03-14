@@ -3,6 +3,8 @@ package com.project.shoppingrecommendationsystem.models;
 import com.opencsv.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -14,6 +16,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FPTShopCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
@@ -24,6 +27,12 @@ public class FPTShopCrawler extends Crawler {
         } catch (Exception ignored) {
             System.out.println("Failed to load from file, start crawling again ...");
             crawl();
+        }
+        List<Product> productsMissingDescription = results.stream()
+                .filter(product -> product.getDescription().isBlank())
+                .toList();
+        if (!productsMissingDescription.isEmpty()) {
+            crawlDescriptions(productsMissingDescription);
         }
     }
 
@@ -108,6 +117,25 @@ public class FPTShopCrawler extends Crawler {
         } catch (Exception e){
             throw new RuntimeException("An error has occurred when loading data.");
         }
+    }
+
+    private void crawlDescriptions(List<Product> products) {
+        WebDriver driver = new ChromeDriver();
+        for (Product product : products) {
+            try {
+                driver.get("https://fptshop.com.vn" + product.getSourceURL());
+                Document doc = Jsoup.parse(Objects.requireNonNull(driver.getPageSource()));
+                Element descriptionContainer = doc.getElementsByClass("description-container").first();
+                assert descriptionContainer != null;
+                String description = descriptionContainer.child(0).text();
+                product.setDescription(description);
+            } catch (Exception e) {
+                System.out.println("An error has occurred when crawling description.");
+                System.out.println("Skipping item " + product.getSourceURL() + " ...");
+            }
+        }
+        save();
+        driver.quit();
     }
 }
 

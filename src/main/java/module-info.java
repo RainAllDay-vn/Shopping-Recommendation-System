@@ -1,4 +1,5 @@
 module com.project.shoppingrecommendationsystem {
+    exports com.project.shoppingrecommendationsystem.models;
     exports com.project.shoppingrecommendationsystem;
 
     requires com.opencsv;
@@ -6,10 +7,12 @@ module com.project.shoppingrecommendationsystem {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
+    requires org.jsoup;
     requires org.seleniumhq.selenium.api;
     requires org.seleniumhq.selenium.chrome_driver;
     requires org.seleniumhq.selenium.chromium_driver;
     requires org.seleniumhq.selenium.remote_driver;
+    requires org.seleniumhq.selenium.support;
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
 }

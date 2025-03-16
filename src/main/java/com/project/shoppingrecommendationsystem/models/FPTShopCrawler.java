@@ -54,8 +54,8 @@ public class FPTShopCrawler extends Crawler {
                             .replaceAll("\\D", "");
                     int price = Integer.parseInt(priceStr);
                     String sourceURL = "https://fptshop.com.vn/" + infoCard.findElement(By.xpath("./h3/a")).getDomAttribute("href");
-                    Laptop laptop = new Laptop(id, name, description, price, sourceURL);
-                    results.add(laptop);
+                    //Laptop laptop = new Laptop(id, name, description, price, sourceURL);
+                    //results.add(laptop);
                 } catch (Exception e) {
                     System.out.println("error inside crawl funntion " +  e.getMessage());
                 }
@@ -91,6 +91,7 @@ public class FPTShopCrawler extends Crawler {
     }
 
     private void load() {
+        /*
         results = new ArrayList<>();
         String loadPath = "data/FPTShop.csv";
         try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
@@ -108,5 +109,6 @@ public class FPTShopCrawler extends Crawler {
             System.out.println("An error has occurred when loading data:");
             System.out.println(e.getMessage());
         }
+             */
     }
 }

@@ -26,7 +26,7 @@ public class TGDDCrawler extends Crawler {
                 String source = "https://www.thegioididong.com/laptop" + element.getDomAttribute("href");
                 String name = element.getDomAttribute("data-name");
                 int price = (int)Double.parseDouble(element.getDomAttribute("data-price"));
-                results.add(new Laptop(0,name,"", price,source));
+                //results.add(new Laptop(0,name,"", price,source));
             }
             save();
         } catch (Exception e) {
@@ -59,6 +59,7 @@ public class TGDDCrawler extends Crawler {
     }
 
     private void load() {
+        /*
         results = new ArrayList<>();
         String loadPath = "data/FPTShop.csv";
         try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
@@ -76,5 +77,6 @@ public class TGDDCrawler extends Crawler {
             System.out.println("An error has occurred when loading data:");
             System.out.println(e.getMessage());
         }
+             */
     }
 }

@@ -10,23 +10,35 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TGDDCrawler extends Crawler {
     private List<Product> results = new ArrayList<>();
+    WebDriver driver;
     @Override
     public void crawl() {
-        WebDriver driver = new ChromeDriver();
+        driver = new ChromeDriver();
         results = new ArrayList<>();
         String url = "https://www.thegioididong.com/laptop#c=44&o=13&pi=30";
+        List<String> sources= new LinkedList<>();
+        List<String> names = new LinkedList<>();
+        List<Integer> prices = new LinkedList<>();
         try {
             driver.get(url);
             List<WebElement> elements = driver.findElements(By.xpath("/html/body/div[7]/section[5]/div[1]/ul/*/a"));
             for(WebElement element : elements){
-                String source = "https://www.thegioididong.com/laptop" + element.getDomAttribute("href");
+                String source = "https://www.thegioididong.com" + element.getDomAttribute("href");
                 String name = element.getDomAttribute("data-name");
                 int price = (int)Double.parseDouble(element.getDomAttribute("data-price"));
-                results.add(new Laptop(0,name,"", price,source));
+                //results.add(new Laptop(0,name,"", price,source));
+                sources.add(source);
+                names.add(name);
+                prices.add(price);
+            }
+            for(int i = 0 ; i< sources.size(); i++){
+                crawlDetailed(sources.get(i));
+
             }
             save();
         } catch (Exception e) {
@@ -35,6 +47,22 @@ public class TGDDCrawler extends Crawler {
         } finally {
             driver.quit();
         }
+    }
+
+    String crawlDetailed(String source){
+        String data = "";
+        ///html/body/section/div[2]/div[1]/div[6]/div[2]/div[1]/ul/li[1]/aside[2]/span
+        ///html/body/section/div[2]/div[1]/div[6]/div[2]/div[1]/ul/li[2]/aside[2]/span
+        ///html/body/section/div[2]/div[1]/div[6]/div[2]/div[1]/ul/li[3]/aside[2]/span
+        ///html/body/section/div[2]/div[1]/div[6]/div[2]/div[2]/ul/li[1]/aside[2]/a
+        ///html/body/section/div[2]/div[1]/div[6]/div[2]/div[2]/ul/li[3]/aside[2]/span
+        String path=  "/html/body/section/div[2]/div[1]/div[6]/div[2]/*/ul/*/aside[2]/span";
+        driver.get(source);
+        List<WebElement> elements = driver.findElements(By.xpath(path));
+        for(WebElement element : elements){
+            System.out.println(element.getAttribute("textContent"));
+        }
+        return data;
     }
 
     public void save(){
@@ -59,6 +87,7 @@ public class TGDDCrawler extends Crawler {
     }
 
     private void load() {
+        /*
         results = new ArrayList<>();
         String loadPath = "data/FPTShop.csv";
         try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
@@ -76,5 +105,6 @@ public class TGDDCrawler extends Crawler {
             System.out.println("An error has occurred when loading data:");
             System.out.println(e.getMessage());
         }
+             */
     }
 }

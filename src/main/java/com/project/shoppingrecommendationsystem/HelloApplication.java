@@ -7,10 +7,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import com.project.shoppingrecommendationsystem.models.Crawler;
-import com.project.shoppingrecommendationsystem.models.FPTShopCrawler;
-import com.project.shoppingrecommendationsystem.models.TGDDCrawler;
-
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -22,8 +18,5 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
-        Crawler testCrawler = new TGDDCrawler();
-        testCrawler.crawl();
-        launch();
     }
 }

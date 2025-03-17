@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
+import com.project.shoppingrecommendationsystem.HelloApplication;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class FPTShopCrawler {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final String resourceURL = Objects.requireNonNull(FPTShopCrawler.class.getResource(""))
+    private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
             .getPath()
             .replace("%20", " ") + "data/FPTShop";
 

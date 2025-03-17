@@ -13,6 +13,7 @@ module com.project.shoppingrecommendationsystem {
     requires org.seleniumhq.selenium.chromium_driver;
     requires org.seleniumhq.selenium.remote_driver;
     requires org.seleniumhq.selenium.support;
+    requires com.fasterxml.jackson.databind;
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
 }

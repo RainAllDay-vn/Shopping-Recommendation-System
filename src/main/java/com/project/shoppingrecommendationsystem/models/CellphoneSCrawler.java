@@ -1,162 +1,101 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
+import com.project.shoppingrecommendationsystem.HelloApplication;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
-public class CellphoneSCrawler extends Crawler{
-    private List<Product> results = new ArrayList<>();
-    WebDriver driver;
-    @Override
-    public void crawl() {
-        driver =  new ChromeDriver();
-        results = new ArrayList<>();
-        String url = "https://cellphones.com.vn/laptop.html";
-        String buttonXPath = "/html/body/div[1]/div/div/div[3]/div[2]/div/div[8]/div[5]/div/div[2]";
+public class CellphoneSCrawler {
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
+            .getPath()
+            .replace("%20", " ") + "data/CellphoneS/";
+
+    public static void main(String[] args) {
+        CellphoneSCrawler crawler = new CellphoneSCrawler();
         try {
-            driver.get(url);
-
-            
-            /*
-            //Show all product
-            WebElement button = driver.findElement(By.xpath(buttonXPath));
-            Actions clickAction = new Actions(driver);
-            while (button.getText().contains("Xem")) {
-                //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", button);
-                Thread.sleep(500);
-                clickAction.moveToElement(button).click().perform();
-                System.out.println(button.getText());
-                Thread.sleep(500);
-            }
- */
-            List<String> sources = new LinkedList<>();
-            List<String> names = new LinkedList<>();
-            List<String> imagesURL = new LinkedList<>();
-            List<Integer> prices = new LinkedList<>();
-
-            String productCellPath = "html/body/div[1]/div/div/div[3]/div[2]/div/div[8]/div[5]/div/div[1]/*/div[1]/a";
-            List<WebElement> elements = driver.findElements(By.xpath(productCellPath));
-            for(WebElement element : elements){
-                i--;
-                if(i <= 0)break;
-                String source = element.getDomAttribute("href");
-                WebElement image = element.findElement(By.tagName("img"));
-                String imageURL = image.getDomAttribute("src");
-                String name = element.findElement(By.className("product__name")).getText();
-                String price =  element.findElement(By.className("product__price--show")).getText().toString();
-                price = price.substring(0, price.length()-1);
-                price = price.replaceAll("\\.", "");
-                sources.add(source);
-                names.add(name);
-                prices.add((int)Double.parseDouble(price));
-                imagesURL.add(imageURL);
-
-                //results.add(new Laptop(0, name, "",(int)Double.parseDouble(price) , source,imageURL,attributes));
-            }
-            for(int i = 0; i< sources.size(); i++){
-                Map<String,String> attributes = getDetailedProductInfo(sources.get(i));
-                results.add(new Laptop(i,names.get(i), "", prices.get(i), sources.get(i), imagesURL.get(i), attributes));
-            }
-            save();
+            crawler.crawlLaptops();
         } catch (Exception e) {
-            System.out.println("An error has occurred when crawling data:");
+            System.out.println("Crawling did not work");
             System.out.println(e.getMessage());
         }
     }
-    int i = 2;
-    Map<String,String> getDetailedProductInfo(String source){
-        Map<String,String> data = new HashMap<>();
-        boolean done = false;
-        new Actions(driver).scrollByAmount(0, 1650).perform();
-        do{
-            try{
-                driver.get(source);
-                WebElement temp = driver.findElement(By.id("cpsContent"));
-                new Actions(driver).scrollToElement(temp).perform();
-                //WebElement show_technical = driver.findElement(By.className("button button__show-modal-technical"));
-                //new Actions(driver).scrollToElement(show_technical).scrollByAmount(0, 50).perform();
-                Thread.sleep(500);
-                //new Actions(driver).moveToElement(show_technical).click().perform();
-                
 
-                String path = "//*[@id=\"productDetailV2\"]/section/div[4]/div[2]/div/div/div[2]/div[2]/section/div/ul/*/div/*/div";
-                            //*[@id=\"productDetailV2\"]/section/div[4]/div[2]/div/div/div[2]/div[2]/section/div/ul/li[1]/div/div[2]/div
-                            //*[@id=\"productDetailV2\"]/section/div[4]/div[2]/div/div/div[2]/div[2]/section/div/ul/li[2]/div/div[1]/div
-                //html/body/div[1]/div/div/div[3]/div[2]/div[1]/section/div[4]/div[2]/div[1]/div[1]/div[2]/div[2]/section/div/ul/*/div/div[1]/div
-
-                List<WebElement> elements  = driver.findElements(By.xpath(path));
-                if(elements.size() == 0)
-                    continue;
-                for(WebElement element : elements){
-                    String rdata = element.getAttribute("textContent");
-                    System.out.println(rdata);
+    // Crawl Homepage API for the list of Laptops
+    private void crawlLaptops () {
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv"))) {
+            csvWriter.writeNext(new String[]{"product_id", "name", "attributes", "sku", "doc_quyen", "manufacturer",
+                    "url_key", "url_path", "categories", "review", "is_installment", "stock_available_id", "company_stock_id",
+                    "filter", "is_parent", "price", "prices", "special_price", "promotion_information",
+                    "thumbnail", "promotion_pack", "sticker", "flash_sale_types"});
+        } catch (Exception e){
+            System.out.println("There was an error when accessing saving file");
+            System.out.println(e.getMessage());
+            return;
+        }
+        String requestBody = "{" +
+                "  \"query\": \"query " +
+                    "GetProductsByCateId { products( filter: { static: { categories: [\\\"380\\\"], " +
+                        "province_id: 30, stock: { from: 0 }, " +
+                        "stock_available_id: [46, 56, 152, 4920], " +
+                        "filter_price: { from: 0, to: 194990000 } }, " +
+                        "dynamic: {} }, " +
+                    "page: %s, size: 100, sort: [{ view: desc }] ) " +
+                    "{ general { product_id name attributes sku doc_quyen manufacturer url_key url_path categories " +
+                        "{ categoryId name uri } review { total_count average_rating } }, " +
+                    "filterable { is_installment stock_available_id company_stock_id filter { id Label } " +
+                        "is_parent price prices special_price promotion_information thumbnail promotion_pack sticker flash_sale_types } } }\"," +
+                "  \"variables\": {}" +
+                "}";
+        List<String[]> laptopRows = new ArrayList<>();
+        for (int i=1; i<=10; i++) {
+            JsonNode products;
+            try {
+                Document response = Jsoup.connect("https://api.cellphones.com.vn/v2/graphql/query")
+                        .header("Content-Type", "application/json") // Gửi dữ liệu dạng JSON
+                        .requestBody(requestBody.formatted(i))
+                        .ignoreContentType(true)
+                        .post();
+                JsonNode jsonNode = mapper.readTree(response.body().text());
+                products = jsonNode.path("data").path("products");
+                if (products == null) {
+                    return;
                 }
-                done = true;
-
-            } catch(Exception exception){
-                System.out.println("Error,try again");
+            } catch (Exception e) {
+                System.out.println("An error occurred while crawling ...");
+                System.out.println(e.getMessage());
+                break;
             }
-        } while(!done);
-        return data;
-    }
-
-    public void save(){
-        String savePath = "C:\\Users\\minhh\\Downloads\\ProjectStuffs\\Shopping-Recommendation-System\\src\\main\\java\\com\\project\\shoppingrecommendationsystem\\models\\data";
-        try (ICSVWriter out = new CSVWriterBuilder(new FileWriter(savePath + "\\CellphoneS.csv"))
-                .withEscapeChar('\\')
-                .build()) {
-            out.writeNext(new String[]{"id", "name", "description", "price", "sourceURL","attributes"});
-            for (Product product : results) {
-                out.writeNext(new String[]{
-                        Integer.toString(product.getId()),
-                        product.getName(),
-                        product.getDescription(),
-                        Integer.toString(product.getPrice()),
-                        product.getSourceURL(),
-                        product.getAttributeAsJSon()
-                });
+            for (JsonNode product : products) {
+                List<String> laptopRow = new ArrayList<>();
+                for (Iterator<Map.Entry<String, JsonNode>> it = product.path("general").fields(); it.hasNext(); ) {
+                    Map.Entry<String, JsonNode> entry = it.next();
+                    laptopRow.add(entry.getValue().toString());
+                }
+                for (Iterator<Map.Entry<String, JsonNode>> it = product.path("filterable").fields(); it.hasNext(); ) {
+                    Map.Entry<String, JsonNode> entry = it.next();
+                    JsonNode value = entry.getValue();
+                    if (value.isNumber()) {
+                        laptopRow.add(String.valueOf(value.asInt()));
+                    } else {
+                        laptopRow.add(value.toString());
+                    }
+                }
+                laptopRows.add(laptopRow.toArray(new String[0]));
             }
+        }
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv", true))) {
+            csvWriter.writeAll(laptopRows);
         } catch (Exception e){
-            System.out.println("An error has occurred when saving data:");
+            System.out.println("There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
 
-    private void load() {
-        /*
-        results = new ArrayList<>();
-        String loadPath = "data/FPTShop.csv";
-        try (CSVReader in = new CSVReader(new FileReader(loadPath))) {
-            in.skip(1);
-            for (String[] row : in) {
-                results.add(new Laptop(
-                        Integer.parseInt(row[0]),
-                        row[1],
-                        row[2],
-                        Integer.parseInt(row[3]),
-                        row[4]
-                ));
-            }
-        } catch (Exception e){
-            System.out.println("An error has occurred when loading data:");
-            System.out.println(e.getMessage());
-        }
-             */
-    }
 }

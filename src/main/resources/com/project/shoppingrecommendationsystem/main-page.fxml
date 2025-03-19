@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/23.0.1">
    <top>
       <HBox alignment="CENTER" prefHeight="77.0" prefWidth="1536.0" BorderPane.alignment="CENTER">
          <children>
@@ -26,7 +26,7 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <TextField prefHeight="40.0" prefWidth="525.0" promptText="What product you have in mind today" />
+            <TextField fx:id="searchTextField" prefHeight="40.0" prefWidth="525.0" promptText="What product you have in mind today" />
             <Button mnemonicParsing="false" text="Search" />
          </children>
       </HBox>
@@ -64,11 +64,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="1" />
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="2" />
-                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="3" />
+                        <Button fx:id="asusButton" mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Asus" GridPane.rowIndex="1" />
+                        <Button fx:id="appleButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Apple" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="lenovoButton" mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Lenovo" GridPane.rowIndex="2" />
+                        <Button fx:id="msiButton" mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="MSI" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button fx:id="hpButton" mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="HP" GridPane.rowIndex="3" />
                         <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="4" />
                         <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="4" />

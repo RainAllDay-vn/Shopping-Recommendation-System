@@ -3,7 +3,7 @@ package com.project.shoppingrecommendationsystem.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
-import com.project.shoppingrecommendationsystem.HelloApplication;
+import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -13,7 +13,7 @@ import java.util.*;
 
 public class CellphoneSCrawler {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
+    private final String resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
             .getPath()
             .replace("%20", " ") + "data/CellphoneS/";
 

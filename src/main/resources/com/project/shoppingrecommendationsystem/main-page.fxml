@@ -1,16 +1,196 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.project.shoppingrecommendationsystem.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox alignment="CENTER" prefHeight="77.0" prefWidth="1536.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="52.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
+            <Label prefHeight="78.0" prefWidth="365.0" text="Shopping recommended system">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Label>
+            <TextField prefHeight="40.0" prefWidth="525.0" promptText="What product you have in mind today" />
+            <Button mnemonicParsing="false" text="Search" />
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <ScrollPane prefHeight="786.0" prefWidth="344.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox prefHeight="1099.0" prefWidth="331.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <HBox prefHeight="46.0" prefWidth="331.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="70.0" prefWidth="158.0" text="Hãng sản xuất ">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <GridPane alignment="CENTER" prefHeight="193.0" prefWidth="187.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="1" />
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="2" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="3" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="4" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Button mnemonicParsing="false" prefHeight="18.0" prefWidth="119.0" text="Button" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+                  <VBox prefHeight="267.0" prefWidth="331.0">
+                     <children>
+                        <HBox prefHeight="42.0" prefWidth="331.0">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="55.0" prefWidth="155.0" text="Mức giá">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Tất cả" />
+                        <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="326.0" text="Dưới 10 triệu" />
+                        <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 10 - 15 triệu" />
+                        <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 15 - 20 triệu" />
+                        <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 20 - 25 triệu" />
+                        <CheckBox mnemonicParsing="false" prefHeight="29.0" prefWidth="324.0" text="Từ 25 - 30 triệu" />
+                        <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Trên 30 triệu " />
+                     </children>
+                  </VBox>
+                   <VBox prefHeight="267.0" prefWidth="331.0">
+                       <children>
+                           <HBox prefHeight="42.0" prefWidth="331.0">
+                               <children>
+                                   <Label alignment="CENTER" prefHeight="55.0" prefWidth="155.0" text="Nhu cầu">
+                                       <font>
+                                           <Font size="16.0" />
+                                       </font>
+                                   </Label>
+                               </children>
+                           </HBox>
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Tất cả" />
+                           <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="326.0" text="Dưới 10 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 10 - 15 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 15 - 20 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 20 - 25 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="29.0" prefWidth="324.0" text="Từ 25 - 30 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Trên 30 triệu " />
+                       </children>
+                   </VBox>
+                   <VBox prefHeight="267.0" prefWidth="331.0">
+                       <children>
+                           <HBox prefHeight="42.0" prefWidth="331.0">
+                               <children>
+                                   <Label alignment="CENTER" prefHeight="55.0" prefWidth="155.0" text="Kích thước màn hình ">
+                                       <font>
+                                           <Font size="16.0" />
+                                       </font>
+                                   </Label>
+                               </children>
+                           </HBox>
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Tất cả" />
+                           <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="326.0" text="Dưới 10 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 10 - 15 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 15 - 20 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Từ 20 - 25 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="29.0" prefWidth="324.0" text="Từ 25 - 30 triệu" />
+                           <CheckBox mnemonicParsing="false" prefHeight="28.0" prefWidth="324.0" text="Trên 30 triệu " />
+                       </children>
+                   </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox prefHeight="50.0" prefWidth="331.0">
+                           <children>
+                              <Label prefHeight="55.0" prefWidth="128.0" text="Nhu cầu">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </left>
+   <bottom>
+      <Label alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" text="####Footer " BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <ScrollPane prefHeight="720.0" prefWidth="1006.0" BorderPane.alignment="CENTER">
+         <content>
+            <GridPane prefHeight="956.0" prefWidth="850.0">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Circle fill="DODGERBLUE" radius="100.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" />
+                  <Circle fill="DODGERBLUE" radius="100.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+         </content>
+      </ScrollPane>
+   </center>
+   <right>
+      <VBox alignment="TOP_RIGHT" prefHeight="720.0" prefWidth="302.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView prefHeight="555.0" prefWidth="302.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TextField prefHeight="91.0" prefWidth="236.0" />
+                  <Button mnemonicParsing="false" prefHeight="53.0" prefWidth="66.0" text="Button" />
+               </children>
+            </HBox>
+            <Circle fill="DODGERBLUE" radius="31.0" stroke="BLACK" strokeType="INSIDE" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

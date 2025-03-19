@@ -5,6 +5,7 @@ module com.project.shoppingrecommendationsystem {
     requires org.jsoup;
     requires org.seleniumhq.selenium.chrome_driver;
     requires com.fasterxml.jackson.databind;
+    requires org.checkerframework.checker.qual;
 
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;

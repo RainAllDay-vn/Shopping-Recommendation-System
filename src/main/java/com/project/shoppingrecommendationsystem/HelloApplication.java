@@ -21,7 +21,7 @@ public class HelloApplication extends Application {
 
         Scene scene = new Scene(fxmlLoader.load());
 
-        stage.setTitle("what the fuck is happening !");
+        stage.setTitle("what the fuck is happening !");//Bruh
         stage.setScene(scene);
 
         stage.show();

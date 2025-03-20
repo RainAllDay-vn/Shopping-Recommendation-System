@@ -31,4 +31,10 @@ public class ProductDatabase {
         }
         return Optional.empty();
     }
+
+    public List<Laptop> findLaptop (String[][] query) {
+        return laptops.stream()
+                .filter(laptop -> laptop.match(query))
+                .toList();
+    }
 }

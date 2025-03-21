@@ -31,6 +31,13 @@ public class TGDDCrawler {
             "data-brand", "data-cate", "data-box", "data-pos", "data-color", "data-productstatus", "data-premium",
             "data-promotiontype", "imageURL", "percent", "gift", "rating", "unit-sold"};
 
+    /**
+     * Constructs a TGDDCrawler object.
+     * Initializes the resource directory where the scraped data will be saved.
+     * If the directory does not exist, it will be created.
+     *
+     * @throws RuntimeException if the resource directory cannot be created.
+     */
     public TGDDCrawler() {
         File resourceDir = new File(resourceURL);
         if (!resourceDir.exists()) {
@@ -47,11 +54,17 @@ public class TGDDCrawler {
         } catch (Exception e) {
             System.err.println("Crawling did not work");
             System.err.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 
-    // Crawl Homepage API for the list of Laptops
+    /**
+     * Crawls the homepage API for the list of laptop products.
+     * It initializes a headless Chrome driver, navigates to the laptop page, and iterates through
+     * the pages to fetch product data. The data is then extracted and saved to a CSV file.
+     *
+     * @throws JsonProcessingException if there is an error processing JSON data.
+     * @throws RuntimeException if there is an error accessing save files.
+     */
     private void crawlHomepageAPI () throws JsonProcessingException {
         resetSaveFile();
         driver = new ChromeDriver(new ChromeOptions().addArguments("--headless"));
@@ -60,7 +73,7 @@ public class TGDDCrawler {
         int total = 1;
 
         while ((currentPage-1)*20 <= total) {
-            JsonNode jsonNode = fetchHomepage(currentPage);
+            JsonNode jsonNode = fetchHomepageAPI(currentPage);
             currentPage++;
             total = jsonNode.get("total").asInt();
             Element products = Jsoup.parse(jsonNode.path("listproducts").textValue()).body();
@@ -75,6 +88,11 @@ public class TGDDCrawler {
         driver.quit();
     }
 
+    /**
+     * Resets the save file and write the column headers to a new CSV file.
+     *
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
     private void resetSaveFile() {
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"));
              FileWriter ignored1 = new FileWriter(resourceURL + "/raw.txt")) {
@@ -84,6 +102,13 @@ public class TGDDCrawler {
         }
     }
 
+    /**
+     * Saves the extracted product data to CSV and raw HTML files.
+     *
+     * @param rows     List of string arrays representing the rows of data to be saved.
+     * @param products Element containing the raw HTML of the products.
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
     private void save(List<String[]> rows, Element products) {
         try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true));
              FileWriter rawWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
@@ -94,7 +119,14 @@ public class TGDDCrawler {
         }
     }
 
-    private JsonNode fetchHomepage (int pageIndex) throws JsonProcessingException {
+    /**
+     * Fetches the homepage API at a specific page index using JavaScript call.
+     *
+     * @param pageIndex The index of the page to fetch.
+     * @return JsonNode representing the fetched data.
+     * @throws JsonProcessingException if there is an error processing JSON data.
+     */
+    private JsonNode fetchHomepageAPI (int pageIndex) throws JsonProcessingException {
         String script = """
             return (async function() {
                 try {
@@ -117,13 +149,19 @@ public class TGDDCrawler {
         return mapper.readTree(response);
     }
 
+    /**
+     * Extracts product data from a product Element.
+     *
+     * @param product The product element.
+     * @return List of strings representing the extracted data, or null if extraction fails.
+     */
     private List<String> extractData (Element product) {
         List<String> row = new ArrayList<>();
         try {
             extractDataFromAttribute(product, row);
             extractDataFromAnchor(product, row);
             extractImage(product, row);
-            extractDiscountedPercent(product, row);
+            extractDiscountPercent(product, row);
             extractGift(product, row);
             extractRating(product, row);
             extractUnitSold(product, row);
@@ -136,6 +174,26 @@ public class TGDDCrawler {
         }
     }
 
+    /**
+     * Extracts data from the attributes of the list item ({@code <li>}) element.
+     * This method retrieves the following attributes:
+     * <ul>
+     * <li>data-index</li>
+     * <li>data-id</li>
+     * <li>data-issetup</li>
+     * <li>data-maingroup</li>
+     * <li>data-subgroup</li>
+     * <li>data-type</li>
+     * <li>data-vehicle</li>
+     * <li>data-productcode</li>
+     * <li>data-price-root</li>
+     * <li>data-ordertypeid</li>
+     * <li>data-pos</li>
+     * </ul>
+     *
+     * @param product The Element to extract data from.
+     * @param row     The list to store the extracted data.
+     */
     private void extractDataFromAttribute (Element product, List<String> row) {
         for (Attribute attribute : product.attributes()) {
             if (attribute.getKey().equals("class")) {
@@ -145,6 +203,32 @@ public class TGDDCrawler {
         }
     }
 
+    /**
+     * Extracts data from the attributes of the anchor ({@code <a>}) element within a product Element.
+     * This method retrieves the following attributes:
+     * <ul>
+     * <li>sourceURL</li>
+     * <li>data-s</li>
+     * <li>data-site</li>
+     * <li>data-pro</li>
+     * <li>data-cache</li>
+     * <li>data-sv</li>
+     * <li>data-name</li>
+     * <li>data-id</li>
+     * <li>data-price</li>
+     * <li>data-brand</li>
+     * <li>data-cate</li>
+     * <li>data-box</li>
+     * <li>data-pos</li>
+     * <li>data-color</li>
+     * <li>data-productstatus</li>
+     * <li>data-premium</li>
+     * <li>data-promotiontype</li>
+     * </ul>
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     * @throws RuntimeException if the anchor element cannot be located.
+     */
     private void extractDataFromAnchor (Element product, List<String> row) {
         Element a = product.selectFirst("a");
         if (a == null) {
@@ -158,6 +242,12 @@ public class TGDDCrawler {
         }
     }
 
+    /**
+     * Extracts the image URL from a product Element.
+     *
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     */
     private void extractImage(Element product, List<String> row) {
         Element img = product.select("img").first();
         if (img != null) {
@@ -167,7 +257,13 @@ public class TGDDCrawler {
         row.add(null);
     }
 
-    private void extractDiscountedPercent (Element product, List<String> row) {
+    /**
+     * Extracts the discount percentage from a product Element.
+     *
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     */
+    private void extractDiscountPercent (Element product, List<String> row) {
         Element percent = product.selectFirst("span.percent");
         if (percent != null) {
             row.add(percent.text());
@@ -176,6 +272,12 @@ public class TGDDCrawler {
         row.add("0%");
     }
 
+    /**
+     * Extracts the gift information from a product Element.
+     *
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     */
     private void extractGift (Element product, List<String> row) {
         Element gift = product.selectFirst("p.item-gift");
         if (gift != null) {
@@ -185,6 +287,12 @@ public class TGDDCrawler {
         row.add(null);
     }
 
+    /**
+     * Extracts the rating information from a product Element.
+     *
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     */
     private void extractRating (Element product, List<String> row) {
         Element rating = product.selectFirst("div.vote-txt");
         if (rating != null) {
@@ -194,6 +302,12 @@ public class TGDDCrawler {
         row.add(null);
     }
 
+    /**
+     * Extracts the unit sold information from a product Element.
+     *
+     * @param product The Element containing the product data.
+     * @param row     The list to store the extracted data.
+     */
     private void extractUnitSold (Element product, List<String> row) {
         Element unitSold = product.selectFirst("div.rating_Compare span");
         if (unitSold != null) {

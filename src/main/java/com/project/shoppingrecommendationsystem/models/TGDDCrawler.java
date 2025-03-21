@@ -3,38 +3,52 @@ package com.project.shoppingrecommendationsystem.models;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.project.shoppingrecommendationsystem.HelloApplication;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TGDDCrawler {
     private final ObjectMapper mapper = new ObjectMapper();
-    WebDriver driver;
+    private WebDriver driver;
     private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
             .getPath()
             .replace("%20", " ") + "data/TGDD";
-    private final String[] columns = {"data-index", "data-id", "data-issetup", "data-maingroup", "data-subgroup",
+    private final String pageURL = "https://www.thegioididong.com";
+    private final String[] laptopColumns = {"data-index", "data-id", "data-issetup", "data-maingroup", "data-subgroup",
             "data-type", "data-vehicle", "data-productcode", "data-price-root", "data-ordertypeid", "data-pos", "sourceURL",
             "data-s", "data-site", "data-pro", "data-cache", "data-sv", "data-name", "data-id", "data-price",
             "data-brand", "data-cate", "data-box", "data-pos", "data-color", "data-productstatus", "data-premium",
             "data-promotiontype", "imageURL", "percent", "gift", "rating", "unit-sold"};
+    private final String[] descriptionColumns = {"data-id", "description"};
+    private final String[] propertiesColumns = {"data-id", "Công nghệ CPU", "Số nhân", "Số luồng", "Tốc độ CPU",
+            "Tốc độ tối đa", "RAM", "Loại RAM", "Tốc độ Bus RAM", "Hỗ trợ RAM tối đa", "Ổ cứng", "Màn hình",
+            "Độ phân giải", "Tần số quét", "Độ phủ màu", "Công nghệ màn hình", "Card màn hình", "Công nghệ âm thanh",
+            "Cổng giao tiếp", "Kết nối không dây", "Webcam", "Đèn bàn phím", "Kích thước", "Chất liệu", "Thông tin Pin",
+            "Hệ điều hành", "Thời điểm ra mắt", "Khe đọc thẻ nhớ", "Tính năng khác", "Tản nhiệt", "Màn hình cảm ứng",
+            "NPU", "Hiệu năng xử lý AI (TOPS)"};
+    private final HashMap<String, Integer> propertiesMap = new HashMap<>();
 
     /**
      * Constructs a TGDDCrawler object.
-     * Initializes the resource directory where the scraped data will be saved.
-     * If the directory does not exist, it will be created.
+     * <p>
+     * This constructor performs the following actions:
+     * <ul>
+     * <li>Initializes the resource directory where the scraped data will be saved. If the directory does not exist, it creates it.</li>
+     * <li>Populates the {@code propertiesMap} with keys based on the {@code propertiesColumns} array, appending a colon (':') to each key. The values are the corresponding indices from the array.</li>
+     * </ul>
      *
      * @throws RuntimeException if the resource directory cannot be created.
      */
@@ -45,12 +59,17 @@ public class TGDDCrawler {
                 throw new RuntimeException("Unable to create directory " + resourceURL);
             }
         }
+        for (int i = 0; i < propertiesColumns.length; i++) {
+            propertiesMap.put(propertiesColumns[i] + ":", i);
+        }
     }
 
     public static void main(String[] args) {
         TGDDCrawler crawler = new TGDDCrawler();
         try {
+            crawler.resetSaveFile();
             crawler.crawlHomepageAPI();
+            crawler.crawlLaptops();
         } catch (Exception e) {
             System.err.println("Crawling did not work");
             System.err.println(e.getMessage());
@@ -66,9 +85,8 @@ public class TGDDCrawler {
      * @throws RuntimeException if there is an error accessing save files.
      */
     private void crawlHomepageAPI () throws JsonProcessingException {
-        resetSaveFile();
         driver = new ChromeDriver(new ChromeOptions().addArguments("--headless"));
-        driver.get("https://www.thegioididong.com/laptop");
+        driver.get(pageURL + "/laptop");
         int currentPage = 1;
         int total = 1;
 
@@ -83,40 +101,81 @@ public class TGDDCrawler {
                     .filter(Objects::nonNull)
                     .map(row -> row.toArray(new String[0]))
                     .forEach(rows::add);
-            save(rows, products);
+            saveLaptop(rows, products);
         }
         driver.quit();
     }
 
     /**
-     * Resets the save file and write the column headers to a new CSV file.
+     * Crawls laptop product data from a list of URLs, extracting descriptions and properties.
+     * <p>
+     * This method iterates through a list of laptop URLs, fetches the HTML content of each page,
+     * extracts the product description and properties, and then saves the extracted data.
      *
-     * @throws RuntimeException if there is an error accessing the save file.
+     * @see #loadSourceURL()
+     * @see #extractDescription(String, Element)
+     * @see #extractProperties(String, Element)
+     * @see #saveDescription(List)
+     * @see #saveProperties(List)
      */
-    private void resetSaveFile() {
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"));
-             FileWriter ignored1 = new FileWriter(resourceURL + "/raw.txt")) {
-            csvWriter.writeNext(columns);
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error when accessing save file");
+    private void crawlLaptops () {
+        List<String[]> descriptionRows = new LinkedList<>();
+        List<String[]> propertiesRows = new LinkedList<>();
+        for (String[] URL: loadSourceURL()) {
+            try {
+                Element body = Jsoup.connect(pageURL + URL[1]).get().body();
+                descriptionRows.add(extractDescription(URL[0], body));
+                propertiesRows.add(extractProperties(URL[0], body));
+            } catch (Exception e) {
+                System.err.printf("Crawl laptop #%s failed\n", URL[0]);
+            }
         }
+        saveDescription(descriptionRows);
+        saveProperties(propertiesRows);
     }
 
     /**
-     * Saves the extracted product data to CSV and raw HTML files.
+     * Extracts the product description from the HTML body.
+     * <p>
+     * This method selects the description element from the HTML body, extracts its text content,
+     * and returns it as a string array.
      *
-     * @param rows     List of string arrays representing the rows of data to be saved.
-     * @param products Element containing the raw HTML of the products.
-     * @throws RuntimeException if there is an error accessing the save file.
+     * @param id   The product ID.
+     * @param body The HTML body of the product page.
+     * @return A string array containing the product ID and description.
      */
-    private void save(List<String[]> rows, Element products) {
-        try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true));
-             FileWriter rawWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
-            laptopWriter.writeAll(rows);
-            rawWriter.write(products.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error when accessing save file");
+    private String[] extractDescription(String id, Element body) {
+        String[] descriptionRow = new String[descriptionColumns.length];
+        descriptionRow[0] = id;
+        Element description = body.selectFirst("div.description");
+        if (description != null) {
+            descriptionRow[1] = description.text();
         }
+        return descriptionRow;
+    }
+
+    /**
+     * Extracts the product properties from the HTML body.
+     * <p>
+     * This method selects the properties element from the HTML body, extracts the property names and values,
+     * and returns them as a string array. It uses the {@code propertiesMap} to map property
+     * names to indices in the properties array.
+     *
+     * @param id   The product ID.
+     * @param body The HTML body of the product page.
+     * @return A string array containing the product ID and properties.
+     * @see #propertiesMap
+     */
+    private String[] extractProperties(String id, Element body) {
+        String[] propertiesRow = new String[propertiesColumns.length];
+        propertiesRow[0] = id;
+        Element properties = body.selectFirst("div.specification-item");
+        if (properties != null) {
+            Elements propertiesPair = properties.select("li");
+            propertiesPair.forEach(pair ->
+                    propertiesRow[propertiesMap.get(pair.child(0).text())] = pair.child(1).text());
+        }
+        return propertiesRow;
     }
 
     /**
@@ -325,5 +384,99 @@ public class TGDDCrawler {
             return;
         }
         row.add(null);
+    }
+
+    /**
+     * Resets the save file and write the column headers to a new CSV file.
+     *
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
+    private void resetSaveFile () {
+        try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"));
+             FileWriter ignored1 = new FileWriter(resourceURL + "/raw.txt");
+             CSVWriter descriptionWriter = new CSVWriter(new FileWriter(resourceURL + "/description.csv"));
+             CSVWriter propertiesWriter = new CSVWriter(new FileWriter(resourceURL + "/properties.csv"))) {
+            laptopWriter.writeNext(laptopColumns);
+            descriptionWriter.writeNext(descriptionColumns);
+            propertiesWriter.writeNext(propertiesColumns);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    /**
+     * Saves the extracted product data to CSV and raw HTML files.
+     *
+     * @param rows     List of string arrays representing the rows of data to be saved.
+     * @param products Element containing the raw HTML of the products.
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
+    private void saveLaptop (List<String[]> rows, Element products) {
+        try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true));
+             FileWriter rawWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
+            laptopWriter.writeAll(rows);
+            rawWriter.write(products.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    /**
+     * Saves the extracted product descriptions to a CSV file.
+     * <p>
+     * This method writes the provided list of string arrays, representing product descriptions,
+     * to a CSV file.
+     *
+     * @param rows The list of string arrays containing product descriptions.
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
+    private void saveDescription (List<String[]> rows) {
+        try (CSVWriter descriptionWriter = new CSVWriter(new FileWriter(resourceURL + "/description.csv", true))) {
+            descriptionWriter.writeAll(rows);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    /**
+     * Saves the extracted product properties to a CSV file.
+     * <p>
+     * This method writes the provided list of string arrays, representing product properties,
+     * to a CSV file.
+     *
+     * @param rows The list of string arrays containing product properties.
+     * @throws RuntimeException if there is an error accessing the save file.
+     */
+    private void saveProperties (List<String[]> rows) {
+        try (CSVWriter propertiesWriter = new CSVWriter(new FileWriter(resourceURL + "/properties.csv", true))){
+            propertiesWriter.writeAll(rows);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    /**
+     * Loads product IDs and source URLs from the laptop CSV file.
+     * <p>
+     * This method reads the laptop CSV file, extracts the product IDs and source URLs,
+     * and returns them as a list of string arrays.
+     *
+     * @return A list of string arrays, where each array contains a product ID and source URL.
+     * Returns an empty list if there is an error accessing the file.
+     */
+    private List<String[]> loadSourceURL () {
+        try (CSVReader reader = new CSVReader(new FileReader(resourceURL + "/laptop.csv"))) {
+            String[] header = reader.readNext();
+            int IdIndex = Arrays.asList(header).indexOf("data-id");
+            int URLIndex = Arrays.asList(header).indexOf("sourceURL");
+            return reader.readAll()
+                    .stream()
+                    .map(row -> new String[]{row[IdIndex], row[URLIndex]})
+                    .toList();
+        } catch (Exception e) {
+            System.err.println("There was an error when accessing save file");
+            System.err.println(e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }

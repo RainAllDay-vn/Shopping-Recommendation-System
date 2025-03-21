@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,15 @@ public class TGDDCrawler {
             "data-brand", "data-cate", "data-box", "data-pos", "data-color", "data-productstatus", "data-premium",
             "data-promotiontype", "imageURL", "percent", "gift", "rating", "unit-sold"};
 
+    public TGDDCrawler() {
+        File resourceDir = new File(resourceURL);
+        if (!resourceDir.exists()) {
+            if (!resourceDir.mkdirs()) {
+                throw new RuntimeException("Unable to create directory " + resourceURL);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         TGDDCrawler crawler = new TGDDCrawler();
         try {
@@ -37,19 +47,58 @@ public class TGDDCrawler {
         } catch (Exception e) {
             System.err.println("Crawling did not work");
             System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     // Crawl Homepage API for the list of Laptops
     private void crawlHomepageAPI () throws JsonProcessingException {
-        List<String[]> rows = new ArrayList<>();
+        resetSaveFile();
         driver = new ChromeDriver(new ChromeOptions().addArguments("--headless"));
+        driver.get("https://www.thegioididong.com/laptop");
         int currentPage = 1;
         int total = 1;
+
+        while ((currentPage-1)*20 <= total) {
+            JsonNode jsonNode = fetchHomepage(currentPage);
+            currentPage++;
+            total = jsonNode.get("total").asInt();
+            Element products = Jsoup.parse(jsonNode.path("listproducts").textValue()).body();
+            List<String[]> rows = new ArrayList<>();
+            products.children().stream()
+                    .map(this::extractData)
+                    .filter(Objects::nonNull)
+                    .map(row -> row.toArray(new String[0]))
+                    .forEach(rows::add);
+            save(rows, products);
+        }
+        driver.quit();
+    }
+
+    private void resetSaveFile() {
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"));
+             FileWriter ignored1 = new FileWriter(resourceURL + "/raw.txt")) {
+            csvWriter.writeNext(columns);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    private void save(List<String[]> rows, Element products) {
+        try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true));
+             FileWriter rawWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
+            laptopWriter.writeAll(rows);
+            rawWriter.write(products.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error when accessing save file");
+        }
+    }
+
+    private JsonNode fetchHomepage (int pageIndex) throws JsonProcessingException {
         String script = """
             return (async function() {
                 try {
-                    let response = await fetch("https://www.thegioididong.com/Category/FilterProductBox?c=44&o=13&pi=%s", {
+                    let response = await fetch("https://www.thegioididong.com/Category/FilterProductBox?c=44&o=13&pi=%d", {
                         method: "POST",
                         headers: {
                             "Accept": "*/*",
@@ -63,37 +112,9 @@ public class TGDDCrawler {
                     return 'Error: ' + error.toString();
                 }
             })();
-        """;
-
-
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"));
-        FileWriter ignored1 = new FileWriter(resourceURL + "/raw.txt")) {
-            csvWriter.writeNext(columns);
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error when accessing saving file");
-        }
-        driver.get("https://www.thegioididong.com/laptop");
-        while ((currentPage-1)*20 <= total) {
-            String response = (String) ((JavascriptExecutor) driver).executeScript(script.formatted(currentPage));
-            currentPage++;
-            JsonNode jsonNode = mapper.readTree(response);
-            total = jsonNode.get("total").asInt();
-            Element products = Jsoup.parse(jsonNode.path("listproducts").textValue()).body();
-            try (FileWriter fileWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
-                fileWriter.write(products.toString());
-            } catch (Exception ignored) {}
-            products.stream()
-                    .map(this::extractData)
-                    .filter(Objects::nonNull)
-                    .map(row -> row.toArray(new String[0]))
-                    .forEach(rows::add);
-        }
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true))) {
-            csvWriter.writeAll(rows);
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error when accessing saving file");
-        }
-        driver.quit();
+        """.formatted(pageIndex);
+        String response = (String) ((JavascriptExecutor) driver).executeScript(script);
+        return mapper.readTree(response);
     }
 
     private List<String> extractData (Element product) {
@@ -150,6 +171,7 @@ public class TGDDCrawler {
         Element percent = product.selectFirst("span.percent");
         if (percent != null) {
             row.add(percent.text());
+            return;
         }
         row.add("0%");
     }

@@ -82,70 +82,11 @@ public class TGDDCrawler {
             try (FileWriter fileWriter = new FileWriter(resourceURL + "/raw.txt", true)) {
                 fileWriter.write(products.toString());
             } catch (Exception ignored) {}
-            for (Element product: products.children()) {
-
-                List<String> row = new ArrayList<>();
-                try {
-                    for (Attribute attribute : product.attributes()) {
-                        if (attribute.getKey().equals("class")) {
-                            continue;
-                        }
-                        row.add(attribute.getValue());
-                    }
-                    Element a = product.selectFirst("a");
-                    assert a != null;
-                    for (Attribute attribute : a.attributes()) {
-                        if (attribute.getKey().equals("class")) {
-                            continue;
-                        }
-                        row.add(attribute.getValue());
-                    }
-                    Element img = product.select("img").first();
-                    assert img != null;
-                    row.add(img.attr("data-src"));
-                    Element percent = product.select("span.percent").first();
-                    if (percent != null) {
-                        row.add(percent.text());
-                    } else {
-                        row.add("0%");
-                    }
-                    Element gift = product.select("p.item-gift").first();
-                    if (gift != null) {
-                        row.add(gift.text());
-                    } else {
-                        row.add(null);
-                    }
-
-                    Element rating = product.select("div.vote-txt").first();
-                    if (rating != null) {
-                        row.add(rating.text());
-                    } else {
-                        row.add(null);
-                    }
-                    Element unitSold = product.select("div.rating_Compare span").first();
-                    if (unitSold != null) {
-                        row.add(unitSold.text());
-                    } else {
-                        Element comingSoon = product.select("p.item-txt-online").first();
-                        if (comingSoon != null) {
-                            row.add(comingSoon.text());
-                        } else {
-                            Element newModel = product.select("span.ln-new").first();
-                            if (newModel != null) {
-                                row.add(newModel.text());
-                            } else {
-                                row.add(null);
-                            }
-                        }
-                    }
-
-                    rows.add(row.toArray(new String[0]));
-                } catch (Exception e) {
-                    System.err.println("Crawl an item failed");
-                    System.err.println("Printing collected data: ");
-                    System.out.println(row);
-                }
-            }
+            products.stream()
+                    .map(this::extractData)
+                    .filter(Objects::nonNull)
+                    .map(row -> row.toArray(new String[0]))
+                    .forEach(rows::add);
         }
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true))) {
             csvWriter.writeAll(rows);
@@ -153,5 +94,100 @@ public class TGDDCrawler {
             throw new RuntimeException("There was an error when accessing saving file");
         }
         driver.quit();
+    }
+
+    private List<String> extractData (Element product) {
+        List<String> row = new ArrayList<>();
+        try {
+            extractDataFromAttribute(product, row);
+            extractDataFromAnchor(product, row);
+            extractImage(product, row);
+            extractDiscountedPercent(product, row);
+            extractGift(product, row);
+            extractRating(product, row);
+            extractUnitSold(product, row);
+            return row;
+        } catch (Exception e) {
+            System.err.println("Crawl an item failed");
+            System.err.println("Printing collected data: ");
+            System.out.println(row);
+            return null;
+        }
+    }
+
+    private void extractDataFromAttribute (Element product, List<String> row) {
+        for (Attribute attribute : product.attributes()) {
+            if (attribute.getKey().equals("class")) {
+                continue;
+            }
+            row.add(attribute.getValue());
+        }
+    }
+
+    private void extractDataFromAnchor (Element product, List<String> row) {
+        Element a = product.selectFirst("a");
+        if (a == null) {
+            throw new RuntimeException("Cannot locate <a> element from product");
+        }
+        for (Attribute attribute : a.attributes()) {
+            if (attribute.getKey().equals("class")) {
+                continue;
+            }
+            row.add(attribute.getValue());
+        }
+    }
+
+    private void extractImage(Element product, List<String> row) {
+        Element img = product.select("img").first();
+        if (img != null) {
+            row.add(img.attr("data-src"));
+            return;
+        }
+        row.add(null);
+    }
+
+    private void extractDiscountedPercent (Element product, List<String> row) {
+        Element percent = product.selectFirst("span.percent");
+        if (percent != null) {
+            row.add(percent.text());
+        }
+        row.add("0%");
+    }
+
+    private void extractGift (Element product, List<String> row) {
+        Element gift = product.selectFirst("p.item-gift");
+        if (gift != null) {
+            row.add(gift.text());
+            return;
+        }
+        row.add(null);
+    }
+
+    private void extractRating (Element product, List<String> row) {
+        Element rating = product.selectFirst("div.vote-txt");
+        if (rating != null) {
+            row.add(rating.text());
+            return;
+        }
+        row.add(null);
+    }
+
+    private void extractUnitSold (Element product, List<String> row) {
+        Element unitSold = product.selectFirst("div.rating_Compare span");
+        if (unitSold != null) {
+            row.add(unitSold.text());
+            return;
+        }
+        Element comingSoon = product.selectFirst("p.item-txt-online");
+        if (comingSoon != null) {
+            row.add(comingSoon.text());
+            return;
+        }
+        Element newModel = product.selectFirst("span.ln-new");
+        if (newModel != null) {
+            row.add(newModel.text());
+            return;
+        }
+        row.add(null);
     }
 }

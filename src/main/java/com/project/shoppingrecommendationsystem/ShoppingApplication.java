@@ -1,5 +1,6 @@
 package com.project.shoppingrecommendationsystem;
 
+import com.project.shoppingrecommendationsystem.controllers.MainPage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,7 +11,6 @@ import java.io.IOException;
 public class ShoppingApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ShoppingApplication.class.getResource("main-page.fxml"));
 
 
 //        #Check device screen size
@@ -18,7 +18,9 @@ public class ShoppingApplication extends Application {
 //        int height = (int) Screen.getPrimary().getBounds().getHeight();
 //        System.out.print(width + " " + height);
 
-        Scene scene = new Scene(fxmlLoader.load());
+        FXMLLoader fxmlLoader = new FXMLLoader(ShoppingApplication.class.getResource("main-page.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+
 
         stage.setTitle("Latptop Shopping Recommendation System");
         stage.setScene(scene);

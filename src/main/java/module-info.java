@@ -11,6 +11,9 @@ module com.project.shoppingrecommendationsystem {
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
     exports com.project.shoppingrecommendationsystem;
-    exports com.project.shoppingrecommendationsystem.controller;
-    opens com.project.shoppingrecommendationsystem.controller to javafx.fxml;
+    exports com.project.shoppingrecommendationsystem.controllers;
+    exports com.project.shoppingrecommendationsystem.models;
+    exports com.project.shoppingrecommendationsystem.views;
+
+    opens com.project.shoppingrecommendationsystem.controllers to javafx.fxml;
 }

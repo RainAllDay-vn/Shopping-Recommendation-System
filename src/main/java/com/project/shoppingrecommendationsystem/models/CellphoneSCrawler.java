@@ -7,10 +7,16 @@ import com.project.shoppingrecommendationsystem.HelloApplication;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
 
-
+/**
+ * CellphoneSCrawler class is responsible for crawling laptop data from CellphoneS website.
+ * It fetches product information using the website's API and extracts relevant details
+ * such as product ID, name, description, and properties. The extracted data is then
+ * saved into CSV files.
+ */
 public class CellphoneSCrawler {
     private final ObjectMapper mapper = new ObjectMapper();
     private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
@@ -47,7 +53,24 @@ public class CellphoneSCrawler {
             "promotion_actual_price_id", "usb", "related_new_product_id", "tinh_trang_may_cu", "tax_class_id"};
     private final Map<String, Integer> propertiesMap = new HashMap<>();
 
+    /**
+     * Constructs a CellphoneSCrawler object.
+     * <p>
+     * This constructor performs the following actions:
+     * <ul>
+     * <li>Initializes the resource directory where the scraped data will be saved. If the directory does not exist, it creates it.</li>
+     * <li>Populates the {@code propertiesMap} with keys based on the {@code propertiesColumns} array. The values are the corresponding indices from the array.</li>
+     * </ul>
+     *
+     * @throws RuntimeException if the resource directory cannot be created.
+     */
     public CellphoneSCrawler() {
+        File resourceDir = new File(resourceURL);
+        if (!resourceDir.exists()) {
+            if (!resourceDir.mkdirs()) {
+                throw new RuntimeException("Unable to create directory " + resourceURL);
+            }
+        }
         for (int i = 0; i < propertiesColumn.length; i++) {
             propertiesMap.put(propertiesColumn[i], i);
         }
@@ -63,7 +86,11 @@ public class CellphoneSCrawler {
         }
     }
 
-    // Crawl Homepage API for the list of Laptops
+    /**
+     * Crawls the CellphoneS website for laptop data.
+     * Fetches product information from the homepage API and extracts laptop details,
+     * descriptions, and properties. Saves the extracted data to CSV files.
+     */
     private void crawlLaptops () {
         List<String[]> laptopRows = new ArrayList<>(laptopColumn.length);
         List<String[]> descriptionRows = new ArrayList<>(descriptionColumn.length);
@@ -92,6 +119,12 @@ public class CellphoneSCrawler {
         saveProperties(propertiesRows);
     }
 
+    /**
+     * Fetches the homepage API for product data.
+     *
+     * @param pageIndex The page index to fetch.
+     * @return The JSON response from the API as a String.
+     */
     private String fetchHomepageAPI (int pageIndex) {
         resetSave();
         String requestBody = "{" +
@@ -121,6 +154,12 @@ public class CellphoneSCrawler {
         }
     }
 
+    /**
+     * Extracts laptop information from a product JSON node.
+     *
+     * @param product The product JSON node.
+     * @return An array of Strings containing laptop information.
+     */
     private String[] extractLaptop (JsonNode product) {
         List<String> laptopRow = new ArrayList<>();
         for (Iterator<Map.Entry<String, JsonNode>> it = product.path("general").fields(); it.hasNext(); ) {
@@ -142,6 +181,12 @@ public class CellphoneSCrawler {
         return laptopRow.toArray(new String[0]);
     }
 
+    /**
+     * Extracts the description of a product from its product page.
+     *
+     * @param product The product JSON node.
+     * @return An array of Strings containing the product ID and description.
+     */
     private String[] extractDescription (JsonNode product) {
         String productId = product.path("general").get("product_id").asText();
         System.out.println("Extracting description for " + productId);
@@ -165,6 +210,12 @@ public class CellphoneSCrawler {
         return descriptionRow;
     }
 
+    /**
+     * Extracts the properties of a product from its attributes.
+     *
+     * @param product The product JSON node.
+     * @return An array of Strings containing the product properties.
+     */
     private String[] extractProperties (JsonNode product) {
         String[] propertiesRow = new String[propertiesColumn.length];
         for (Iterator<Map.Entry<String, JsonNode>> it = product.path("general").path("attributes").fields(); it.hasNext(); ) {
@@ -174,6 +225,9 @@ public class CellphoneSCrawler {
         return propertiesRow;
     }
 
+    /**
+     * Resets the CSV files and write the column headers.
+     */
     private void resetSave () {
         try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv"));
              CSVWriter descriptionWriter = new CSVWriter(new FileWriter(resourceURL + "description.csv"));
@@ -187,6 +241,11 @@ public class CellphoneSCrawler {
         }
     }
 
+    /**
+     * Saves the extracted laptop rows to the laptop CSV file.
+     *
+     * @param laptopRows A list of String arrays containing laptop information.
+     */
     private void saveLaptop (List<String[]> laptopRows) {
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv", true))) {
             csvWriter.writeAll(laptopRows);
@@ -196,6 +255,11 @@ public class CellphoneSCrawler {
         }
     }
 
+    /**
+     * Saves the extracted description rows to the description CSV file.
+     *
+     * @param descriptionRows A list of String arrays containing product descriptions.
+     */
     private void saveDescriptions (List<String[]> descriptionRows) {
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "description.csv", true))) {
             csvWriter.writeAll(descriptionRows);
@@ -205,6 +269,11 @@ public class CellphoneSCrawler {
         }
     }
 
+    /**
+     * Saves the extracted properties rows to the properties CSV file.
+     *
+     * @param propertiesRows A list of String arrays containing product properties.
+     */
     private void saveProperties (List<String[]> propertiesRows) {
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "properties.csv", true))) {
             csvWriter.writeAll(propertiesRows);

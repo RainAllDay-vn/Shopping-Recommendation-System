@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

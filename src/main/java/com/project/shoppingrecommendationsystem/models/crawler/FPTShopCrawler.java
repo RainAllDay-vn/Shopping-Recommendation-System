@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

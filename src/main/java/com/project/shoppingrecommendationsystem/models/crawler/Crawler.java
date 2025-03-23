@@ -1,4 +1,6 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.crawler;
+
+import com.project.shoppingrecommendationsystem.models.Laptop;
 
 import java.util.List;
 

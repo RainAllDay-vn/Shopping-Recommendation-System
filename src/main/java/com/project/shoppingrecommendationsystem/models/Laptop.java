@@ -2,17 +2,72 @@ package com.project.shoppingrecommendationsystem.models;
 
 public class Laptop extends Product {
 
-    public Laptop(int id, String name, String description, String productImage, int price, String sourceURL) {
-        super(id, name, description, productImage, price, sourceURL);
+    private Laptop(LaptopBuilder builder) {
+        id = getNewId();
+        name = builder.name;
+        productImage = builder.productImage;
+        price = builder.price;
+        discountPrice = builder.discountPrice;
+        sourceURL = builder.sourceURL;
+        brand = builder.brand;
+        color = builder.color;
+        description = builder.description;
     }
 
-    public static Laptop buildTestLaptop() {
-        int id = (int)(Math.random()*100);
-        String name = "laptop #" + id;
-        String description = "laptop #%d's description".formatted(id);
-        String productImage = "laptop #%d.jpg".formatted(id);
-        int price = (int)(Math.random()*100)*100000;
-        String sourceURL = "https://laptop%d".formatted(id);
-        return new Laptop(id, name, description, productImage, price, sourceURL);
+    // Builder: LaptopBuilder
+    public static class LaptopBuilder {
+        private String name;
+        private String productImage;
+        private int price;
+        private int discountPrice;
+        private String sourceURL;
+
+        private String brand;
+        private String color;
+        private String description;
+
+        public LaptopBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public LaptopBuilder setProductImage(String productImage) {
+            this.productImage = productImage;
+            return this;
+        }
+
+        public LaptopBuilder setPrice(int price) {
+            this.price = price;
+            return this;
+        }
+
+        public LaptopBuilder setDiscountPrice(int discountPrice) {
+            this.discountPrice = discountPrice;
+            return this;
+        }
+
+        public LaptopBuilder setSourceURL(String sourceURL) {
+            this.sourceURL = sourceURL;
+            return this;
+        }
+
+        public LaptopBuilder setBrand(String brand) {
+            this.brand = brand;
+            return this;
+        }
+
+        public LaptopBuilder setColor(String color) {
+            this.color = color;
+            return this;
+        }
+
+        public LaptopBuilder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Laptop build() {
+            return new Laptop(this);
+        }
     }
 }

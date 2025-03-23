@@ -6,6 +6,7 @@ public class Laptop extends Product {
     private final Storage storage;
     private final Connectivity connectivity;
     private final Battery battery;
+    private final LaptopCase laptopCase;
 
     private Laptop(LaptopBuilder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
@@ -15,6 +16,7 @@ public class Laptop extends Product {
         this.storage = builder.storage;
         this.connectivity = builder.connectivity;
         this.battery = builder.battery;
+        this.laptopCase = builder.laptopCase;
     }
 
     public CPU getCPU() {
@@ -37,6 +39,10 @@ public class Laptop extends Product {
         return battery;
     }
 
+    public LaptopCase getLaptopCase() {
+        return laptopCase;
+    }
+
     public static class LaptopBuilder {
         private String name;
         private String productImage;
@@ -53,6 +59,7 @@ public class Laptop extends Product {
         private Storage storage;
         private Connectivity connectivity;
         private Battery battery;
+        private LaptopCase laptopCase;
 
         public LaptopBuilder setName(String name) {
             this.name = name;
@@ -116,6 +123,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setBattery(Battery battery) {
             this.battery = battery;
+            return this;
+        }
+
+        public LaptopBuilder setLaptopCase(LaptopCase laptopCase) {
+            this.laptopCase = laptopCase;
             return this;
         }
 

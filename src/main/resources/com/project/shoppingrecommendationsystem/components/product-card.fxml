@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="productCardContainer" spacing="10"
+      style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10;"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductCardController">
+
+    <ImageView fx:id="productImage" fitHeight="120" fitWidth="120" preserveRatio="true"/>
+    <Label fx:id="productName" style="-fx-font-weight: bold;"/>
+    <Label fx:id="productPrice"/>
+    <Label fx:id="productDiscount" style="-fx-text-fill: green;"/>
+    <Button fx:id="viewDetailsButton" text="View Details"/>
+
+</VBox>

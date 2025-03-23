@@ -1,10 +1,16 @@
 package com.project.shoppingrecommendationsystem.models;
 
 public class Laptop extends Product {
+    private final CPU cpu;
 
     private Laptop(LaptopBuilder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
                 builder.color, builder.description);
+        this.cpu = builder.cpu;
+    }
+
+    public CPU getCPU() {
+        return cpu;
     }
 
     // Builder: LaptopBuilder
@@ -18,6 +24,8 @@ public class Laptop extends Product {
         private String brand;
         private String color;
         private String description;
+
+        private CPU cpu;
 
         public LaptopBuilder setName(String name) {
             this.name = name;
@@ -56,6 +64,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setDescription(String description) {
             this.description = description;
+            return this;
+        }
+
+        public LaptopBuilder setCpu(CPU cpu) {
+            this.cpu = cpu;
             return this;
         }
 

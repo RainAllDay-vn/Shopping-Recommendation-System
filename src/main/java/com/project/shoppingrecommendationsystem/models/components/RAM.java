@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.components;
 
 public class RAM {
     private final String size;

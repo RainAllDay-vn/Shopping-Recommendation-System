@@ -1,5 +1,7 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import com.project.shoppingrecommendationsystem.models.components.*;
+
 public class Laptop extends Product {
     private final CPU cpu;
     private final RAM ram;

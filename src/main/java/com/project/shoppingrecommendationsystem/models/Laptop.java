@@ -3,12 +3,14 @@ package com.project.shoppingrecommendationsystem.models;
 public class Laptop extends Product {
     private final CPU cpu;
     private final RAM ram;
+    private final Storage storage;
 
     private Laptop(LaptopBuilder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
                 builder.color, builder.description);
         this.cpu = builder.cpu;
         this.ram = builder.ram;
+        this.storage = builder.storage;
     }
 
     public CPU getCPU() {
@@ -17,6 +19,10 @@ public class Laptop extends Product {
 
     public RAM getRam() {
         return ram;
+    }
+
+    public Storage getStorage() {
+        return storage;
     }
 
     // Builder: LaptopBuilder
@@ -33,6 +39,7 @@ public class Laptop extends Product {
 
         private CPU cpu;
         private RAM ram;
+        private Storage storage;
 
         public LaptopBuilder setName(String name) {
             this.name = name;
@@ -81,6 +88,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setRam(RAM ram) {
             this.ram = ram;
+            return this;
+        }
+
+        public LaptopBuilder setStorage(Storage storage) {
+            this.storage = storage;
             return this;
         }
 

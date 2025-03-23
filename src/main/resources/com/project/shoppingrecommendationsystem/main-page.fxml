@@ -18,7 +18,7 @@
 
 <BorderPane  fx:id="rootPane"    maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0"
              xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/23.0.1"
-             fx:controller="com.project.shoppingrecommendationsystem.controllers.MainPage">
+             fx:controller="com.project.shoppingrecommendationsystem.views.MainPage">
     <center>
 
     </center>
@@ -33,7 +33,7 @@
          <content>
             <VBox prefHeight="1099.0" prefWidth="331.0">
                <children>
-                  <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
+                  <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter " fx:id="greenText">
                      <font>
                         <Font size="22.0" />
                      </font>

@@ -12,6 +12,17 @@ public abstract class Product {
     private final String sourceURL;
     private final LinkedHashMap<String, String> hardware;
 
+    // Default constructor
+    public Product(){
+        this.id = 0;
+        this.name = "Lenovo Laptop";
+        this.description = "THis is a product";
+        this.productImage = "com/project/shoppingrecommendationsystem/app-icon.jpg";
+        this.price = 0;
+        this.sourceURL = "https://open.spotify.com/";
+        this.hardware = new LinkedHashMap<>();
+    }
+
     public Product(int id, String name, String description, String productImage, int price, String sourceURL) {
         this.id = id;
         this.name = name;

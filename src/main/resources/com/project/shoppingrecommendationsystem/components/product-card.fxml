@@ -7,7 +7,7 @@
 
 <VBox fx:id="productCardContainer" spacing="10"
       style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10;"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductCardController">
 
     <ImageView fx:id="productImage" fitHeight="120" fitWidth="120" preserveRatio="true"/>

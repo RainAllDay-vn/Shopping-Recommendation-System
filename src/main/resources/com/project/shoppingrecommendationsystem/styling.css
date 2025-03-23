@@ -1,0 +1,52 @@
+/* Apply to the root BorderPane */
+#rootPane {
+    -fx-background-color: #f4f4f4;
+}
+
+/* Style for Labels */
+Label {
+    -fx-text-fill: #333;
+    -fx-font-size: 14px;
+}
+
+/* Special style for green text */
+#greenText {
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+}
+
+/* Style for Buttons */
+Button {
+    -fx-background-color: #008CBA;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 5px;
+}
+
+Button:hover {
+    -fx-background-color: #005f7a;
+}
+
+/* Style for Checkboxes */
+CheckBox {
+    -fx-font-size: 14px;
+}
+
+/* Style for VBox containers */
+VBox {
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+}
+
+/* Style for HBox containers */
+HBox {
+    -fx-spacing: 5px;
+}
+
+/* Style for ScrollPane */
+ScrollPane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+}

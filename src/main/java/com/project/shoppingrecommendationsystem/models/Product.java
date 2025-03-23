@@ -2,7 +2,7 @@ package com.project.shoppingrecommendationsystem.models;
 
 import java.util.LinkedHashMap;
 
-public abstract class Product {
+public class Product {
 
     private final int id;
     private final String name;
@@ -12,12 +12,12 @@ public abstract class Product {
     private final String sourceURL;
     private final LinkedHashMap<String, String> hardware;
 
-    // Default constructor
+    // Default constructor example
     public Product(){
         this.id = 0;
         this.name = "Lenovo Laptop";
         this.description = "THis is a product";
-        this.productImage = "com/project/shoppingrecommendationsystem/app-icon.jpg";
+        this.productImage = "/com/project/shoppingrecommendationsystem/app-icon.jpg";
         this.price = 0;
         this.sourceURL = "https://open.spotify.com/";
         this.hardware = new LinkedHashMap<>();

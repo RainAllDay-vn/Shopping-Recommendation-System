@@ -61,7 +61,7 @@ public class MainPage {
                     ("/com/project/shoppingrecommendationsystem/components/footer-bar.fxml"))));
 
             // Set the scene and show
-            Scene scene = new Scene(rootPane);
+            Scene scene = new Scene(rootPane, 800, 600);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Shopping Recommendation System");
             primaryStage.show();

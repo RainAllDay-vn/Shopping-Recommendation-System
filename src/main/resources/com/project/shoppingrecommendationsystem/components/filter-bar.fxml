@@ -5,8 +5,9 @@
 <?import javafx.scene.text.*?>
 
 <ScrollPane prefHeight="786.0" prefWidth="344.0" fx:id="filterBar"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml">
-    <VBox spacing="10" prefHeight="1099.0" prefWidth="331.0" padding="10">
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+    <VBox spacing="10" prefHeight="1099.0" prefWidth="331.0" >
 
         <!-- Title -->
         <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter " fx:id="greenText">
@@ -86,6 +87,5 @@
             <CheckBox text="15 - 16 inch"/>
             <CheckBox text="Trên 16 inch"/>
         </VBox>
-
     </VBox>
 </ScrollPane>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.shoppingrecommendationsystem.controllers.FooterBarController"
+      alignment="CENTER"
+      style="-fx-background-color: black;">
+
+    <Label text="About Us"
+           onMouseClicked="#goToRepo"
+           underline="true"
+           textAlignment="CENTER"
+           alignment="CENTER"
+           style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+</HBox>

@@ -8,7 +8,7 @@ public class CPU {
     private final String threads;
     private final String cache;
 
-    public CPU(CPUBuilder builder) {
+    private CPU(CPUBuilder builder) {
         this.name = builder.name;
         this.baseFrequency = builder.baseFrequency;
         this.turboFrequency = builder.turboFrequency;

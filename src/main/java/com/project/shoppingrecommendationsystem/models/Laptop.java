@@ -4,6 +4,7 @@ public class Laptop extends Product {
     private final CPU cpu;
     private final RAM ram;
     private final Storage storage;
+    private final Connectivity connectivity;
 
     private Laptop(LaptopBuilder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
@@ -11,6 +12,7 @@ public class Laptop extends Product {
         this.cpu = builder.cpu;
         this.ram = builder.ram;
         this.storage = builder.storage;
+        this.connectivity = builder.connectivity;
     }
 
     public CPU getCPU() {
@@ -25,7 +27,10 @@ public class Laptop extends Product {
         return storage;
     }
 
-    // Builder: LaptopBuilder
+    public Connectivity getConnectivity() {
+        return connectivity;
+    }
+
     public static class LaptopBuilder {
         private String name;
         private String productImage;
@@ -40,6 +45,7 @@ public class Laptop extends Product {
         private CPU cpu;
         private RAM ram;
         private Storage storage;
+        private Connectivity connectivity;
 
         public LaptopBuilder setName(String name) {
             this.name = name;
@@ -93,6 +99,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setStorage(Storage storage) {
             this.storage = storage;
+            return this;
+        }
+
+        public LaptopBuilder setConnectivity(Connectivity connectivity) {
+            this.connectivity = connectivity;
             return this;
         }
 

@@ -41,6 +41,18 @@ public class CPU {
         return cache;
     }
 
+    @Override
+    public String toString() {
+        return "CPU{" +
+                "name='" + name + '\'' +
+                ", baseFrequency='" + baseFrequency + '\'' +
+                ", turboFrequency='" + turboFrequency + '\'' +
+                ", cores='" + cores + '\'' +
+                ", threads='" + threads + '\'' +
+                ", cache='" + cache + '\'' +
+                '}';
+    }
+
     public static class CPUBuilder {
         private String name;
         private String baseFrequency;

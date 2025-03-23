@@ -45,6 +45,27 @@ public class Laptop extends Product {
         return laptopCase;
     }
 
+    @Override
+    public String toString() {
+        return "Laptop{" +
+                "id=" + id +
+                ", cpu=" + cpu +
+                ", ram=" + ram +
+                ", storage=" + storage +
+                ", connectivity=" + connectivity +
+                ", battery=" + battery +
+                ", laptopCase=" + laptopCase +
+                ", name='" + name + '\'' +
+                ", productImage='" + productImage + '\'' +
+                ", price=" + price +
+                ", discountPrice=" + discountPrice +
+                ", sourceURL='" + sourceURL + '\'' +
+                ", brand='" + brand + '\'' +
+                ", color='" + color + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
     public static class LaptopBuilder {
         private String name;
         private String productImage;

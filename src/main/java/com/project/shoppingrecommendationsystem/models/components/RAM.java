@@ -47,6 +47,19 @@ public class RAM {
         return maxSize;
     }
 
+    @Override
+    public String toString() {
+        return "RAM{" +
+                "size='" + size + '\'' +
+                ", channels='" + channels + '\'' +
+                ", clock='" + clock + '\'' +
+                ", type='" + type + '\'' +
+                ", upgradable='" + upgradable + '\'' +
+                ", slots='" + slots + '\'' +
+                ", maxSize='" + maxSize + '\'' +
+                '}';
+    }
+
     public static class RAMBuilder {
         private String size;
         private String channels;

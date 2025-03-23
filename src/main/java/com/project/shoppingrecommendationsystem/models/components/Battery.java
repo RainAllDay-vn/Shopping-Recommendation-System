@@ -23,6 +23,15 @@ public class Battery {
         return chargePower;
     }
 
+    @Override
+    public String toString() {
+        return "Battery{" +
+                "capacity='" + capacity + '\'' +
+                ", fullyChargingTime='" + fullyChargingTime + '\'' +
+                ", chargePower='" + chargePower + '\'' +
+                '}';
+    }
+
     public static class BatteryBuilder {
         private String capacity;
         private String fullyChargingTime;

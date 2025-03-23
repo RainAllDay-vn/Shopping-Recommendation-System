@@ -23,6 +23,15 @@ public class LaptopCase {
         return material;
     }
 
+    @Override
+    public String toString() {
+        return "LaptopCase{" +
+                "weight='" + weight + '\'' +
+                ", dimensions='" + dimensions + '\'' +
+                ", material='" + material + '\'' +
+                '}';
+    }
+
     public static class CaseBuilder {
         private String weight;
         private String dimensions;

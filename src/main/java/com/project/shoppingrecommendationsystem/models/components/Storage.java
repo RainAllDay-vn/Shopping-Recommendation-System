@@ -41,6 +41,18 @@ public class Storage {
         return slots;
     }
 
+    @Override
+    public String toString() {
+        return "Storage{" +
+                "size='" + size + '\'' +
+                ", bus='" + bus + '\'' +
+                ", storageType='" + storageType + '\'' +
+                ", channels='" + channels + '\'' +
+                ", upgradable='" + upgradable + '\'' +
+                ", slots='" + slots + '\'' +
+                '}';
+    }
+
     public static class StorageBuilder {
         private String size;
         private String bus;

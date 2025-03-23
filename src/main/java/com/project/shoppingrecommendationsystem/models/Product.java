@@ -2,16 +2,16 @@ package com.project.shoppingrecommendationsystem.models;
 
 public abstract class Product {
     private static int counter = 0;
-    private final int id;
-    private final String name;
-    private final String productImage;
-    private final int price;
-    private final int discountPrice;
-    private final String sourceURL;
+    final int id;
+    final String name;
+    final String productImage;
+    final int price;
+    final int discountPrice;
+    final String sourceURL;
 
-    private final String brand;
-    private final String color;
-    private final String description;
+    final String brand;
+    final String color;
+    final String description;
 
     Product(String name, String productImage, int price, int discountPrice, String sourceURL, String brand, String color, String description) {
         this.id = ++counter;

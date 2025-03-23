@@ -35,6 +35,17 @@ public class Connectivity {
         return webCam;
     }
 
+    @Override
+    public String toString() {
+        return "Connectivity{" +
+                "ports='" + ports + '\'' +
+                ", wifi='" + wifi + '\'' +
+                ", bluetooth='" + bluetooth + '\'' +
+                ", fingerprint='" + fingerprint + '\'' +
+                ", webCam='" + webCam + '\'' +
+                '}';
+    }
+
     public static class ConnectivityBuilder {
         private String ports;
         private String wifi;

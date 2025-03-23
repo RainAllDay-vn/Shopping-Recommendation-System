@@ -1,26 +1,39 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
-import com.project.shoppingrecommendationsystem.views.RenderChatBox;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 public class ChatBoxController {
 
-    private RenderChatBox chatBox;
+    @FXML
+    private VBox chatContainer;
 
-    public ChatBoxController(RenderChatBox chatBox) {
-        this.chatBox = chatBox;
-    }
+    @FXML
+    private ListView<String> chatListView;
 
-    // Toggles chat visibility
+    @FXML
+    private TextField chatInput;
+
+    @FXML
+    private Button sendButton;
+
+    @FXML
+    private Button chatToggleButton;
+
+    @FXML
     public void toggleChat() {
-        chatBox.getChatContainer().setVisible(!chatBox.getChatContainer().isVisible());
+        chatContainer.setVisible(!chatContainer.isVisible());
     }
 
-    // Handles sending messages
+    @FXML
     public void sendMessage() {
-        String message = chatBox.getChatInput().getText().trim();
+        String message = chatInput.getText().trim();
         if (!message.isEmpty()) {
-            chatBox.addMessage(message);
-            chatBox.getChatInput().clear();
+            chatListView.getItems().add(message);
+            chatInput.clear();
         }
     }
 }

@@ -3,15 +3,8 @@ package com.project.shoppingrecommendationsystem.models;
 public class Laptop extends Product {
 
     private Laptop(LaptopBuilder builder) {
-        id = getNewId();
-        name = builder.name;
-        productImage = builder.productImage;
-        price = builder.price;
-        discountPrice = builder.discountPrice;
-        sourceURL = builder.sourceURL;
-        brand = builder.brand;
-        color = builder.color;
-        description = builder.description;
+        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
+                builder.color, builder.description);
     }
 
     // Builder: LaptopBuilder

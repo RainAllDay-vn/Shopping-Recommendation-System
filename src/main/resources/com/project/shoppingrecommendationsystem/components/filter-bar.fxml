@@ -1,91 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane prefHeight="786.0" prefWidth="344.0" fx:id="filterBar"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
-    <VBox spacing="10" prefHeight="1099.0" prefWidth="331.0" >
+<ScrollPane fx:id="filterBar" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+    <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
         <!-- Title -->
-        <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter " fx:id="greenText">
+        <Label fx:id="greenText" alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
             <font>
-                <Font size="22.0"/>
+                <Font size="22.0" />
             </font>
         </Label>
 
         <!-- Manufacturer Filter -->
-        <Label text="Hãng sản xuất">
+        <Label styleClass="content_manufacturer" stylesheets="@../styling.css" text="Hãng sản xuất">
             <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
             </font>
         </Label>
         <GridPane alignment="CENTER" prefHeight="193.0" prefWidth="187.0">
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints />
             </rowConstraints>
-            <Button fx:id="asusButton" text="Asus" GridPane.rowIndex="1"/>
-            <Button fx:id="appleButton" text="Apple" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-            <Button fx:id="lenovoButton" text="Lenovo" GridPane.rowIndex="2"/>
-            <Button fx:id="msiButton" text="MSI" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-            <Button fx:id="hpButton" text="HP" GridPane.rowIndex="3"/>
-            <Button text="Acer" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-            <Button text="Dell" GridPane.rowIndex="4"/>
-            <Button text="Samsung" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <Button fx:id="asusButton" styleClass="button_1" stylesheets="@../styling.css" text="Asus" />
+            <Button fx:id="appleButton" styleClass="button_1" stylesheets="@../styling.css" text="Apple" GridPane.columnIndex="1" />
+            <Button fx:id="lenovoButton" styleClass="button_1" stylesheets="@../styling.css" text="Lenovo" GridPane.rowIndex="1" />
+            <Button fx:id="msiButton" styleClass="button_1" stylesheets="@../styling.css" text="MSI" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="hpButton" styleClass="button_1" stylesheets="@../styling.css" text="HP" GridPane.rowIndex="2" />
+            <Button styleClass="button_1" stylesheets="@../styling.css" text="Acer" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button styleClass="button_1" stylesheets="@../styling.css" text="Dell" GridPane.rowIndex="3" />
+            <Button styleClass="button_1" stylesheets="@../styling.css" text="Samsung" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </GridPane>
 
         <!-- Price Filter -->
-        <Label text="Mức giá">
+        <Label styleClass="content_price" stylesheets="@../styling.css" text="Mức giá">
             <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
             </font>
         </Label>
         <VBox spacing="5">
-            <CheckBox text="Tất cả"/>
-            <CheckBox text="Dưới 10 triệu"/>
-            <CheckBox text="Từ 10 - 15 triệu"/>
-            <CheckBox text="Từ 15 - 20 triệu"/>
-            <CheckBox text="Từ 20 - 25 triệu"/>
-            <CheckBox text="Từ 25 - 30 triệu"/>
-            <CheckBox text="Trên 30 triệu"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 10 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 10 - 15 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 15 - 20 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 20 - 25 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 25 - 30 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 30 triệu" />
         </VBox>
 
         <!-- Usage Filter -->
-        <Label text="Nhu cầu">
+        <Label styleClass="content_demand" stylesheets="@../styling.css" text="Nhu cầu">
             <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
             </font>
         </Label>
         <VBox spacing="5">
-            <CheckBox text="Tất cả"/>
-            <CheckBox text="Gaming"/>
-            <CheckBox text="Văn phòng"/>
-            <CheckBox text="Đồ họa"/>
-            <CheckBox text="Lập trình"/>
-            <CheckBox text="Sinh viên"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Gaming" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Văn phòng" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Đồ họa" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lập trình" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Sinh viên" />
         </VBox>
 
         <!-- Screen Size Filter -->
-        <Label text="Kích thước màn hình">
+        <Label styleClass="content_screen" stylesheets="@../styling.css" text="Kích thước màn hình">
             <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
             </font>
         </Label>
         <VBox spacing="5">
-            <CheckBox text="Tất cả"/>
-            <CheckBox text="Dưới 13 inch"/>
-            <CheckBox text="13 - 14 inch"/>
-            <CheckBox text="15 - 16 inch"/>
-            <CheckBox text="Trên 16 inch"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 13 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="13 - 14 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="15 - 16 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 16 inch" />
         </VBox>
     </VBox>
 </ScrollPane>

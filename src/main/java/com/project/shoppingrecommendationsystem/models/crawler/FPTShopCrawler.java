@@ -1,52 +1,87 @@
 package com.project.shoppingrecommendationsystem.models.crawler;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
-import com.project.shoppingrecommendationsystem.HelloApplication;
+import com.project.shoppingrecommendationsystem.models.Laptop;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class FPTShopCrawler {
-    private final ObjectMapper mapper = new ObjectMapper();
-    private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
-            .getPath()
-            .replace("%20", " ") + "data/FPTShop";
+public class FPTShopCrawler extends Crawler{
+    private final Pattern compiledPattern = Pattern.compile("attributeItem");
 
-    public static void main(String[] args) {
-        FPTShopCrawler crawler = new FPTShopCrawler();
-        try {
-            crawler.crawlHomepageAPI();
-            crawler.crawlLaptops();
-        } catch (Exception e) {
-            System.out.println("Crawling did not work");
-            System.out.println(e.getMessage());
+    public FPTShopCrawler() {
+        super("data/FPTShop/");
+        this.laptopColumn = new String[]{"product_id", "score", "name", "displayName", "typePim", "type", "slug", "price", "industry",
+                "brand", "productType", "group", "keySellingPoints", "units", "image", "originalPrice", "currentPrice",
+                "discountPercentage", "endTimeDiscount", "promotions", "totalInventory", "skus"};
+        this.descriptionColumn = new String[]{"product_id", "description"};
+        this.propertiesColumn = new String[]{"product_id", "Bộ xử lý", "Đồ họa", "RAM", "Lưu trữ", "Màn hình", "Giao tiếp và kết nối",
+                "Âm Thanh", "Ổ đĩa quang", "Hệ điều hành", "Bảo mật", "Bàn phím & TouchPad", "Thông tin pin & sạc",
+                "Phụ kiện trong hộp", "Thông số cơ bản", "Thiết kế & Trọng lượng", "Thông tin hàng hóa"};
+    }
+
+    @Override
+    public void crawlLaptops() {
+        crawlLaptops(Integer.MAX_VALUE);
+    }
+
+    /**
+     * @param limit The maximum number of laptops to crawl.
+     */
+    @Override
+    public void crawlLaptops(int limit) {
+        resetSave();
+        crawlAllLaptops(limit);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<Laptop> getLaptops() {
+        return List.of();
+    }
+
+    private void crawlAllLaptops (int limit) {
+        int processed = 0;
+        int count = 0;
+        int max = 1;
+        JsonNode jsonNode;
+        while (count < max) {
+            try {
+                jsonNode = fetchHomepageAPI(count);
+                count+=50;
+                max = jsonNode.get("totalCount").asInt();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                break;
+            }
+            for (JsonNode item : jsonNode.get("items")) {
+                try {
+                    Document productPage = Jsoup.connect("https://fptshop.com.vn/" + item.get("slug").asText()).get();
+                    String code = item.get("code").asText();
+                    saveLaptopRow(extractLaptopRow(item));
+                    saveDescriptionRow(extractDescriptionRow(code, productPage));
+                    savePropertiesRow(extractPropertiesRow(code, productPage));
+                    if (++processed == limit) {
+                        return;
+                    }
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
         }
     }
 
-    // Crawl Homepage API for the list of Laptops
-    private void crawlHomepageAPI () throws IOException {
-        String[] columns = {"index", "score", "code", "name", "displayName", "typePim", "type", "slug", "price", "industry",
-                "brand", "productType", "group", "keySellingPoints", "units", "image", "originalPrice", "currentPrice",
-                "discountPercentage", "endTimeDiscount", "promotions", "totalInventory", "skus"};
-        try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv"))){
-            writer.writeNext(columns);
-        }
-        int currentRow = 0;
-        int count = 0;
-        int max = 1;
-        while (count < max) {
-            String requestBody =  """
+    private JsonNode fetchHomepageAPI(int count) throws IOException {
+        String requestBody =  """
                     {
                         "categoryType": "category",
                         "maxResultCount": 50,
@@ -55,105 +90,73 @@ public class FPTShopCrawler {
                         "sortMethod": "noi-bat"
                     }
                     """.formatted(count);
-            Map<String, Object> jsonMap;
-            try {
-                Document response = Jsoup.connect("https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category")
-                        .header("Content-Type", "application/json") // Gửi dữ liệu dạng JSON
-                        .requestBody(requestBody)
-                        .ignoreContentType(true)
-                        .post();
-                jsonMap = mapper.readValue(response.body().text(), new TypeReference<>() {});
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+        Document response = Jsoup.connect("https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category")
+                .header("Content-Type", "application/json")
+                .requestBody(requestBody)
+                .ignoreContentType(true)
+                .post();
+        return mapper.readTree(response.body().text());
+    }
+
+    private JsonNode extractScript (Document productPage) throws IOException, CsvValidationException {
+        String script = productPage.getElementsByTag("script")
+                .stream()
+                .map(Node::toString)
+                .filter(compiledPattern.asPredicate())
+                .findFirst()
+                .orElse("");
+        int index = script.indexOf("attributeItem");
+        int bracketCount = 0;
+        for(int i = index+16; i < script.length(); i++) {
+            if(script.charAt(i) == '[') {
+                bracketCount++;
+            } else if (script.charAt(i) == ']') {
+                bracketCount--;
+            }
+            if(bracketCount == 0) {
+                script = script.substring(index+16, i+1).replace("\\\"", "\"");
                 break;
             }
-            count+=50;
-            max = (int) jsonMap.get("totalCount");
-            List<Map<String, Object>> items = mapper.convertValue(jsonMap.get("items"), new TypeReference<>() {});
-            try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/laptop.csv", true))) {
-                for (Map<String, Object> item : items) {
-                    String[] row = new String[columns.length];
-                    row[0] = String.valueOf(currentRow++);
-                    for (int i = 1; i < columns.length; i++) {
-                        row[i] = item.get(columns[i]) == null ? "" : item.get(columns[i]).toString();
-                    }
-                    writer.writeNext(row);
-                }
-            } catch (Exception ignored) {}
         }
+        return mapper.readTree(script);
     }
 
-    // Crawl specific details of all laptops
-    private void crawlLaptops () throws IOException, CsvValidationException {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/properties.csv"))) {
-            String[] columns = {"index", "Bộ xử lý", "Đồ họa", "RAM", "Lưu trữ", "Màn hình", "Giao tiếp và kết nối", "Âm Thanh",
-                    "Ổ đĩa quang", "Hệ điều hành", "Bảo mật", "Bàn phím & TouchPad", "Thông tin pin & sạc",
-                    "Phụ kiện trong hộp", "Thông số cơ bản", "Thiết kế & Trọng lượng", "Thông tin hàng hóa"};
-            writer.writeNext(columns);
+    private String[] extractLaptopRow(JsonNode jsonNode) {
+        String[] laptopRow = new String[laptopColumn.length];
+        laptopRow[0] = String.valueOf(jsonNode.get("code").toString());
+        for (int i = 1; i < laptopColumn.length; i++) {
+            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]));
         }
-        try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/description.csv"))) {
-            String[] columns = {"index", "description"};
-            writer.writeNext(columns);
-        }
-
-        try (CSVReader reader = new CSVReader(new FileReader(resourceURL + "/laptop.csv"))) {
-            String[] columns = reader.readNext();
-            int slugIndex = Arrays.asList(columns).indexOf("slug");
-            for (String[] row : reader) {
-                System.out.printf("Processing row #%s\n", row[0]);
-                crawlLaptop(row[0], row[slugIndex]);
-            }
-        }
+        return laptopRow;
     }
 
-    // Crawl specific details of a laptop
-    private void crawlLaptop (String id, String slug) {
+    private String[] extractDescriptionRow (String code, Document productPage) {
+        String[] descriptionRow = new String[descriptionColumn.length];
+        descriptionRow[0] = code;
+        Element descriptionContainer;
         try {
-            Pattern compiledPattern = Pattern.compile("attributeItem");
-            Document response = Jsoup.connect("https://fptshop.com.vn/" + slug).get();
-
-            String script = response.getElementsByTag("script")
-                    .stream()
-                    .map(Node::toString)
-                    .filter(compiledPattern.asPredicate())
-                    .findFirst()
-                    .orElse("");
-            int index = script.indexOf("attributeItem");
-            int bracketCount = 0;
-            for(int i = index+16; i < script.length(); i++) {
-                if(script.charAt(i) == '[') {
-                    bracketCount++;
-                } else if (script.charAt(i) == ']') {
-                    bracketCount--;
-                }
-                if(bracketCount == 0) {
-                    script = script.substring(index+16, i+1).replace("\\\"", "\"");
-                    break;
-                }
-            }
-            List<Map<String, Object>> jsonMap = mapper.readValue(script, new TypeReference<>() {});
-            String[] propertiesRow = new String[jsonMap.size()+1];
-            propertiesRow[0] = id;
-            for (int i = 1; i <= jsonMap.size(); i++) {
-                propertiesRow[i] = String.valueOf(jsonMap.get(i-1).getOrDefault("attributes", ""));
-            }
-            try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/properties.csv", true))) {
-                writer.writeNext(propertiesRow);
-            }
-
-            Element descriptionContainer = response.getElementsByClass("description-container").getFirst();
-            StringBuilder stringBuilder = new StringBuilder();
-            for(Element child : descriptionContainer.children()) {
-                stringBuilder.append(child.text());
-            }
-            String description = stringBuilder.toString();
-            try (CSVWriter writer = new CSVWriter(new FileWriter(resourceURL + "/description.csv", true))) {
-                writer.writeNext(new String[]{id, description});
-            }
-        } catch (Exception e) {
-            System.out.printf("Crawling laptop #%s failed\n", id);
-            System.out.println(e.getMessage());
+            descriptionContainer = productPage.getElementsByClass("description-container").getFirst();
+        } catch (NoSuchElementException e) {
+            descriptionRow[0] = "";
+            return descriptionRow;
         }
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Element child : descriptionContainer.children()) {
+            stringBuilder.append(child.text());
+        }
+        String description = stringBuilder.toString();
+        descriptionRow[1] = description;
+        return descriptionRow;
+    }
+
+    private String[] extractPropertiesRow (String code, Document productPage) throws CsvValidationException, IOException {
+        String[] propertiesRow = new String[propertiesColumn.length];
+        propertiesRow[0] = code;
+        JsonNode properties = extractScript(productPage);
+        for (int i = 1; i < propertiesColumn.length; i++) {
+            propertiesRow[i] = String.valueOf(properties.get(i-1).get("attributes"));
+        }
+        return propertiesRow;
     }
 }
 

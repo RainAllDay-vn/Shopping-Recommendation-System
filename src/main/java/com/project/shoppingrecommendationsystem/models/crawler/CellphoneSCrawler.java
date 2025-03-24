@@ -93,8 +93,16 @@ public class CellphoneSCrawler implements Crawler {
      */
     @Override
     public void crawlLaptops() {
+        crawlLaptops(Integer.MAX_VALUE);
+    }
+
+    /**
+     * @param limit The maximum number of laptops to crawl.
+     */
+    @Override
+    public void crawlLaptops(int limit) {
         resetSave();
-        crawlAllLaptops();
+        crawlAllLaptops(limit);
     }
 
     /**
@@ -102,7 +110,8 @@ public class CellphoneSCrawler implements Crawler {
      * Fetches product information from the homepage API and extracts laptop details,
      * descriptions, and properties. Saves the extracted data to CSV files.
      */
-    private void crawlAllLaptops () {
+    private void crawlAllLaptops (int limit) {
+        int count = 0;
         for (int pageIndex=1; pageIndex<=10; pageIndex++) {
             JsonNode products;
             try {
@@ -131,6 +140,10 @@ public class CellphoneSCrawler implements Crawler {
                 saveLaptopRow(laptopRow);
                 saveDescriptionRow(descriptionRow);
                 savePropertiesRow(propertiesRow);
+                count++;
+                if (count >= limit) {
+                    return;
+                }
             }
         }
     }

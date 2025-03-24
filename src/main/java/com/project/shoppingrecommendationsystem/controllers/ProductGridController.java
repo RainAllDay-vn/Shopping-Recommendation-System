@@ -70,7 +70,7 @@ public class ProductGridController implements Initializable{
         }
 
         // Hide expand button if all products are loaded
-        expandButton.setVisible(currentProductIndex < allProducts.length);
+        //expandButton.setVisible(currentProductIndex < allProducts.length);
     }
 
     private VBox createProductCard(Product product) {
@@ -80,7 +80,6 @@ public class ProductGridController implements Initializable{
             VBox productCard = card.load();
             ProductCardController controller = card.getController();
             controller.setProduct(product);
-            controller.display(); // Populate the card with product data
             return productCard;
         } catch (IOException e) {
             e.printStackTrace();

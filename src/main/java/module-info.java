@@ -7,6 +7,7 @@ module com.project.shoppingrecommendationsystem {
     requires com.fasterxml.jackson.databind;
     requires org.checkerframework.checker.qual;
     requires java.desktop;
+    requires jdk.compiler;
 
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;

@@ -13,9 +13,20 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * FPTShopCrawler class is responsible for crawling laptop data from FPTShop website.
+ * It fetches product information using the website's API and extracts relevant details
+ * such as product ID, name, description, and properties. The extracted data is then
+ * saved into CSV files.
+ */
 public class FPTShopCrawler extends Crawler{
     private final Pattern compiledPattern = Pattern.compile("attributeItem");
 
+    /**
+     * Constructs a FPTShopCrawler object.
+     * <p>
+     * This constructor initializes the resource directory and sets up the column headers for the CSV files.
+     */
     public FPTShopCrawler() {
         super("data/FPTShop/");
         this.laptopColumn = new String[]{"product_id", "score", "name", "displayName", "typePim", "type", "slug", "price", "industry",
@@ -49,6 +60,11 @@ public class FPTShopCrawler extends Crawler{
         return List.of();
     }
 
+    /**
+     * Crawls all laptops from the FPTShop website up to the specified limit.
+     *
+     * @param limit The maximum number of laptops to crawl.
+     */
     private void crawlAllLaptops (int limit) {
         int processed = 0;
         int count = 0;
@@ -80,6 +96,13 @@ public class FPTShopCrawler extends Crawler{
         }
     }
 
+    /**
+     * Fetches the homepage API for product data.
+     *
+     * @param count The skip count for pagination.
+     * @return The JSON response from the API as a JsonNode.
+     * @throws IOException If an I/O error occurs.
+     */
     private JsonNode fetchHomepageAPI(int count) throws IOException {
         String requestBody =  """
                     {
@@ -98,6 +121,14 @@ public class FPTShopCrawler extends Crawler{
         return mapper.readTree(response.body().text());
     }
 
+    /**
+     * Extracts the script containing product properties from the product page.
+     *
+     * @param productPage The product page Document.
+     * @return The JSON representation of the product properties as a JsonNode.
+     * @throws IOException If an I/O error occurs.
+     * @throws CsvValidationException If a CSV validation error occurs.
+     */
     private JsonNode extractScript (Document productPage) throws IOException, CsvValidationException {
         String script = productPage.getElementsByTag("script")
                 .stream()
@@ -121,6 +152,12 @@ public class FPTShopCrawler extends Crawler{
         return mapper.readTree(script);
     }
 
+    /**
+     * Extracts laptop information from a product JSON node.
+     *
+     * @param jsonNode The product JSON node.
+     * @return An array of Strings containing laptop information.
+     */
     private String[] extractLaptopRow(JsonNode jsonNode) {
         String[] laptopRow = new String[laptopColumn.length];
         laptopRow[0] = String.valueOf(jsonNode.get("code").toString());
@@ -130,6 +167,13 @@ public class FPTShopCrawler extends Crawler{
         return laptopRow;
     }
 
+    /**
+     * Extracts the description of a product from its product page.
+     *
+     * @param code The product code.
+     * @param productPage The product page Document.
+     * @return An array of Strings containing the product ID and description.
+     */
     private String[] extractDescriptionRow (String code, Document productPage) {
         String[] descriptionRow = new String[descriptionColumn.length];
         descriptionRow[0] = code;
@@ -149,6 +193,15 @@ public class FPTShopCrawler extends Crawler{
         return descriptionRow;
     }
 
+    /**
+     * Extracts the properties of a product from its product page.
+     *
+     * @param code The product code.
+     * @param productPage The product page Document.
+     * @return An array of Strings containing the product properties.
+     * @throws CsvValidationException If a CSV validation error occurs.
+     * @throws IOException If an I/O error occurs.
+     */
     private String[] extractPropertiesRow (String code, Document productPage) throws CsvValidationException, IOException {
         String[] propertiesRow = new String[propertiesColumn.length];
         propertiesRow[0] = code;

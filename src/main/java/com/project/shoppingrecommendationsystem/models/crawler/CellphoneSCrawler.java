@@ -103,9 +103,6 @@ public class CellphoneSCrawler implements Crawler {
      * descriptions, and properties. Saves the extracted data to CSV files.
      */
     private void crawlAllLaptops () {
-        List<String[]> laptopRows = new ArrayList<>(laptopColumn.length);
-        List<String[]> descriptionRows = new ArrayList<>(descriptionColumn.length);
-        List<String[]> propertiesRows = new ArrayList<>(propertiesColumn.length);
         for (int pageIndex=1; pageIndex<=10; pageIndex++) {
             JsonNode products;
             try {
@@ -120,14 +117,22 @@ public class CellphoneSCrawler implements Crawler {
                 break;
             }
             for (JsonNode product : products) {
-                laptopRows.add(extractLaptop(product));
-                descriptionRows.add(extractDescription(product));
-                propertiesRows.add(extractProperties(product));
+                String[] laptopRow;
+                String[] descriptionRow;
+                String[] propertiesRow;
+                try {
+                    laptopRow = extractLaptop(product);
+                    descriptionRow = extractDescription(product);
+                    propertiesRow = extractProperties(product);
+                } catch (Exception e) {
+                    System.err.println("An error occurred while extracting information");
+                    continue;
+                }
+                saveLaptopRow(laptopRow);
+                saveDescriptionRow(descriptionRow);
+                savePropertiesRow(propertiesRow);
             }
         }
-        saveLaptop(laptopRows);
-        saveDescriptions(descriptionRows);
-        saveProperties(propertiesRows);
     }
 
     /**
@@ -236,16 +241,38 @@ public class CellphoneSCrawler implements Crawler {
         return propertiesRow;
     }
 
+    /**
+     * Creates an ICSVWriter for a given filename with the append option set to false.
+     *
+     * @param filename The name of the CSV file.
+     * @return An ICSVWriter instance.
+     * @throws IOException If an I/O error occurs.
+     */
     private ICSVWriter getCSVWriter (String filename) throws IOException {
         return getCSVWriter(filename, false);
     }
 
+    /**
+     * Creates an ICSVWriter for a given filename with an option to append.
+     *
+     * @param filename The name of the CSV file.
+     * @param append   True to append to the file, false to overwrite.
+     * @return An ICSVWriter instance.
+     * @throws IOException If an I/O error occurs.
+     */
     private ICSVWriter getCSVWriter (String filename, boolean append) throws IOException {
         return new CSVWriterBuilder(new FileWriter(resourceURL + filename, append))
                 .withParser(parser)
                 .build();
     }
 
+    /**
+     * Creates a CSVReader for a given filename.
+     *
+     * @param filename The name of the CSV file to read.
+     * @return A CSVReader instance configured with the predefined CSVParser.
+     * @throws IOException If an I/O error occurs while creating the reader.
+     */
     private CSVReader getCSVReader (String filename) throws IOException {
         return new CSVReaderBuilder(new FileReader(resourceURL + filename))
                 .withCSVParser(parser)
@@ -269,53 +296,65 @@ public class CellphoneSCrawler implements Crawler {
     }
 
     /**
-     * Saves the extracted laptop rows to the laptop CSV file.
+     * Saves a single laptop row to the laptop CSV file.
      *
-     * @param laptopRows A list of String arrays containing laptop information.
+     * @param laptopRow A String array containing laptop information.
      */
-    private void saveLaptop (List<String[]> laptopRows) {
+    private void saveLaptopRow(String[] laptopRow) {
         try (ICSVWriter csvWriter = getCSVWriter("laptop.csv", true)) {
-            csvWriter.writeAll(laptopRows);
-        } catch (Exception e){
+            csvWriter.writeNext(laptopRow);
+        } catch (Exception e) {
             System.out.println("There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Saves the extracted description rows to the description CSV file.
+     * Saves a single description row to the description CSV file.
      *
-     * @param descriptionRows A list of String arrays containing product descriptions.
+     * @param descriptionRow A String array containing product description.
      */
-    private void saveDescriptions (List<String[]> descriptionRows) {
+    private void saveDescriptionRow(String[] descriptionRow) {
         try (ICSVWriter csvWriter = getCSVWriter("description.csv", true)) {
-            csvWriter.writeAll(descriptionRows);
-        } catch (Exception e){
+            csvWriter.writeNext(descriptionRow);
+        } catch (Exception e) {
             System.out.println("There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Saves the extracted properties rows to the properties CSV file.
+     * Saves a single properties row to the properties CSV file.
      *
-     * @param propertiesRows A list of String arrays containing product properties.
+     * @param propertiesRow A String array containing product properties.
      */
-    private void saveProperties (List<String[]> propertiesRows) {
+    private void savePropertiesRow(String[] propertiesRow) {
         try (ICSVWriter csvWriter = getCSVWriter("properties.csv", true)) {
-            csvWriter.writeAll(propertiesRows);
-        } catch (Exception e){
+            csvWriter.writeNext(propertiesRow);
+        } catch (Exception e) {
             System.out.println("There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Parses CPU information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A CPU object.
+     */
     private CPU parseCPU(String[] propertiesRow) {
         return new CPU.CPUBuilder()
                 .setName(propertiesRow[32])  // Column "laptop_cpu"
                 .build();
     }
 
+    /**
+     * Parses RAM information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A RAM object.
+     */
     private RAM parseRAM(String[] propertiesRow) {
         return new RAM.RAMBuilder()
                 .setType(propertiesRow[36])  // Column "laptop_loai_ram"
@@ -324,12 +363,24 @@ public class CellphoneSCrawler implements Crawler {
                 .build();
     }
 
+    /**
+     * Parses storage information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Storage object.
+     */
     private Storage parseStorage(String[] propertiesRow) {
         return new Storage.StorageBuilder()
                 .setSize(propertiesRow[22])  // Column "hdd_sdd"
                 .build();
     }
 
+    /**
+     * Parses connectivity information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Connectivity object.
+     */
     private Connectivity parseConnectivity(String[] propertiesRow) {
         return new Connectivity.ConnectivityBuilder()
                 .setBluetooth(propertiesRow[6])  // Column "bluetooth"
@@ -339,12 +390,24 @@ public class CellphoneSCrawler implements Crawler {
                 .build();
     }
 
+    /**
+     * Parses battery information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Battery object.
+     */
     private Battery parseBattery(String[] propertiesRow) {
         return new Battery.BatteryBuilder()
                 .setCapacity(propertiesRow[4])  // Column "battery"
                 .build();
     }
 
+    /**
+     * Parses laptop case information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A LaptopCase object.
+     */
     private LaptopCase parseLaptopCase(String[] propertiesRow) {
         return new LaptopCase.LaptopCaseBuilder()
                 .setDimensions(propertiesRow[10])  // Column "dimension"
@@ -352,6 +415,15 @@ public class CellphoneSCrawler implements Crawler {
                 .setMaterial(propertiesRow[89])  // Column "laptop_chat_lieu"
                 .build();
     }
+
+    /**
+     * Parses laptop information from laptop, description, and properties rows.
+     *
+     * @param laptopRow      An array of Strings containing laptop information.
+     * @param descriptionRow An array of Strings containing product description.
+     * @param propertiesRow  An array of Strings containing product properties.
+     * @return A Laptop object.
+     */
 
     private Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
         return new Laptop.LaptopBuilder()
@@ -372,6 +444,11 @@ public class CellphoneSCrawler implements Crawler {
                 .build();
     }
 
+    /**
+     * Retrieves a list of Laptop objects from the CSV files.
+     *
+     * @return A list of Laptop objects.
+     */
     @Override
     public List<Laptop> getLaptops() {
         List<Laptop> laptops = new LinkedList<>();

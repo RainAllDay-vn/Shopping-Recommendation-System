@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 
 import java.util.Objects;
 
+
 public class SearchController {
 
     @FXML
@@ -46,7 +47,7 @@ public class SearchController {
     public void handleSearch() {
         String searchText = searchTextField.getText().trim();
         if (!searchText.isEmpty()) {
-            System.out.println("Searching for: " + searchText);
+            System.out.println("Searching for: " + searchText + FilterBarController.getFilterData().toString());
 
             // Implement search logic here
         }

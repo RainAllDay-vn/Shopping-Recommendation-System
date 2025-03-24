@@ -48,7 +48,7 @@ public class SearchController {
         String searchText = searchTextField.getText().trim();
         if (!searchText.isEmpty()) {
             System.out.println("Searching for: " + searchText + FilterBarController.getFilterData().toString());
-
+            
             // Implement search logic here
         }
     }

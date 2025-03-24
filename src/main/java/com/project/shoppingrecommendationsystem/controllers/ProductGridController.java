@@ -2,6 +2,8 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -51,23 +53,31 @@ public class ProductGridController implements Initializable{
 
     private void loadMoreProducts() {
 
-        int column = displayedCards.size() % COLUMNS;
-        int row = displayedCards.size() / COLUMNS;
+        Task<Void> createGridTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                int column = displayedCards.size() % COLUMNS;
+                int row = displayedCards.size() / COLUMNS;
 
-        for (int i = 0; i < PRODUCTS_PER_PAGE && currentProductIndex < allProducts.length; i++, currentProductIndex++) {
-            VBox productCard = createProductCard(allProducts[currentProductIndex]);
+                for (int i = 0; i < PRODUCTS_PER_PAGE && currentProductIndex < allProducts.length; i++, currentProductIndex++) {
+                    VBox productCard = createProductCard(allProducts[currentProductIndex]);
 
-            if (productCard != null) {
-                displayedCards.add(productCard);
-                gridPane.add(productCard, column, row);
+                    if (productCard != null) {
+                        displayedCards.add(productCard);
+                        gridPane.add(productCard, column, row);
 
-                column++;
-                if (column == COLUMNS) {
-                    column = 0;
-                    row++;
+                        column++;
+                        if (column == COLUMNS) {
+                            column = 0;
+                            row++;
+                        }
+                    }
                 }
+                return null;
             }
-        }
+        };
+
+        new Thread(createGridTask).start();
 
         // Hide expand button if all products are loaded
         //expandButton.setVisible(currentProductIndex < allProducts.length);

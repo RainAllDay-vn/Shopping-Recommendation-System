@@ -4,6 +4,8 @@ import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.views.ProductPageController;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -50,14 +52,29 @@ public class ProductCardController {
      public void setProduct(Product product) {
           this.product = product;
 
-          if (product != null) {
-               Image img = new Image(getClass().getResource("/com/project/shoppingrecommendationsystem/app-icon.jpg").toExternalForm());
-
-               productImage.setImage(img);
-               productName.setText(product.getOverview().get("name"));
-               productPrice.setText("Price: " + product.getOverview().get("price"));
-               productDiscount.setText("Discount: " + product.getOverview().get("discount"));
-          }
+          Task<Void> setProductTask = new Task<Void>() {
+               @Override
+               protected Void call() throws Exception {
+                    if (product != null) {
+                         Image img;
+                         try{
+                              img = new Image(product.getOverview().get("productImage"));
+                         }catch(Exception e){
+                              img = new Image(getClass().getResource("/com/project/shoppingrecommendationsystem/app-icon.jpg").toExternalForm());
+                              System.out.println("Cant load image " + product.getOverview().get("productImage"));
+                         }
+                         final Image image = img;
+                         Platform.runLater(()->{
+                              productImage.setImage(image);
+                              productName.setText(product.getOverview().get("name"));
+                              productPrice.setText("Price: " + product.getOverview().get("price"));
+                              productDiscount.setText("Discount: " + product.getOverview().get("discount"));
+                         });
+                    }    
+                    return null;
+               }   
+          };
+          new Thread(setProductTask).start();  
      }
 
 }

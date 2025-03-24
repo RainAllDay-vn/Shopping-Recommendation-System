@@ -47,11 +47,10 @@ public class FilterBarController {
         else{
             System.err.println("More than one filter controller");
         }
-        setCheckBoxColumn(-1, vendorOptions, vendorFilter);
+        setCheckBoxColumn(-9, vendorOptions, vendorFilter);
         setCheckBoxColumn(0, priceOptions, priceFilter);
         setCheckBoxColumn(0, purposeOptions, purposes);
         setCheckBoxColumn(0, screenSizeOptions, screenSizeFilter);
-        setCheckBoxColumn(0, vendorOptions, vendorFilter);
         
     }
     void setCheckBoxColumn(int checkAllIndex, VBox node, List<String> listToAddTo){

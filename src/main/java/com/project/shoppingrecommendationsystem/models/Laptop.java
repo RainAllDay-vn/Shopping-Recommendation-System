@@ -66,6 +66,52 @@ public class Laptop extends Product {
                 '}';
     }
 
+    public boolean match(String[][] query) {
+        try {
+            for (String[] field : query) {
+                field[0] = switch (field[0]) {
+                    case "name" -> name;
+                    case "brand" -> brand;
+                    case "price" -> String.valueOf(discountPrice);
+                    default -> "false";
+                };
+                if (field[0].equals("false") || !matchField(field)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            System.err.println("Invalid query");
+            return false;
+        }
+    }
+
+    private boolean matchField (String[] fields) {
+        try {
+            return switch (fields[1].toLowerCase()) {
+                case "contain" -> fields[2].toLowerCase().contains(fields[0].toLowerCase());
+                case "in" -> {
+                    for (int i=2; i<fields.length; i++) {
+                        if (fields[i].equalsIgnoreCase(fields[0])) {
+                            yield true;
+                        }
+                    }
+                    yield false;
+                }
+                case "between" -> {
+                    int lower = Integer.parseInt(fields[2]);
+                    int upper = Integer.parseInt(fields[3]);
+                    int value = Integer.parseInt(fields[0]);
+                    yield lower <= value && value <= upper;
+                }
+                default -> false;
+            };
+        } catch (Exception e) {
+            System.err.println("Invalid query");
+            return false;
+        }
+    }
+
     public static class LaptopBuilder {
         private String name;
         private String productImage;

@@ -5,6 +5,7 @@ import java.net.URL;
 import com.project.shoppingrecommendationsystem.controllers.IPage;
 import com.project.shoppingrecommendationsystem.controllers.NavigationController;
 import com.project.shoppingrecommendationsystem.views.MainPageController;
+import com.project.shoppingrecommendationsystem.views.ProductPageController;
 
 import javafx.application.Application;
 import javafx.event.Event;
@@ -14,9 +15,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -58,7 +57,7 @@ public class ShoppingApplication extends Application {
         };
         mainPage.init();
         productPage = new IPage() {
-            MainPageController controller;
+            ProductPageController controller;
             Parent view;
             @Override
             public void init() {
@@ -72,6 +71,7 @@ public class ShoppingApplication extends Application {
                 });
                 vbox.getChildren().add(new Label("Hello"));
                 vbox.getChildren().add(button);
+                controller = new ProductPageController();
             }
             @Override
             public Object getController() {

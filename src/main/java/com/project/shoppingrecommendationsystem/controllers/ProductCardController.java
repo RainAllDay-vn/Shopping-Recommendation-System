@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class ProductCardController {
@@ -29,19 +30,26 @@ public class ProductCardController {
      @FXML
      private Label productDiscount;
 
+     @FXML
+     private Button showDetailsButton;
+
      private Product product;
 
-     public ProductCardController() {
-          // No need to load FXML here, JavaFX does it automatically
+     @FXML
+     public void goToProductPage() {
+          if (this.product != null) {
+               NavigationController.goToProduct(this.product);
+          }
      }
 
      @FXML
-     public void initialize() {
-          // Add click event
-          productCardContainer.setOnMouseClicked(e -> goToProductPage(product));
+     public void addToList() {
+          System.out.println("Add to list" + this.product.getOverview());
      }
 
-     public void display() {
+     public void setProduct(Product product) {
+          this.product = product;
+
           if (product != null) {
                Image img = new Image(getClass().getResource("/com/project/shoppingrecommendationsystem/app-icon.jpg").toExternalForm());
 
@@ -52,12 +60,4 @@ public class ProductCardController {
           }
      }
 
-     public void goToProductPage(Product product) {
-          System.out.println("Navigating to product page for: " + product.getOverview().get("name"));
-     }
-
-     public void setProduct(Product product) {
-          this.product = product;
-          display();  // Call display after setting the product
-     }
 }

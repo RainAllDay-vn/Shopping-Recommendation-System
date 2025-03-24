@@ -1,30 +1,31 @@
 package com.project.shoppingrecommendationsystem.views;
 
+import com.project.shoppingrecommendationsystem.controllers.NavigationController;
+import com.sun.tools.javac.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
-public class MainPage {
-    private final Stage primaryStage;
+public class ProductPage {
+    private final Stage productStage;
     @FXML
-    private static BorderPane rootPane;
+    private BorderPane productPagePane;
 
-    public MainPage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    public ProductPage(Stage productStage) {
+        this.productStage = productStage;
         initializeUI();
     }
 
     private void initializeUI() {
         try {
-            // Load root layout
-            rootPane = new BorderPane();
+            productPagePane = new BorderPane();
 
 //            // Checking file path
 //            String fxml = "";
@@ -38,34 +39,35 @@ public class MainPage {
 //            }
 
             // Load CSS
-            rootPane.getStylesheets().add(getClass().getResource
+            productPagePane.getStylesheets().add(getClass().getResource
                     ("/com/project/shoppingrecommendationsystem/styling.css").toExternalForm());
 
             // Load product top bar
-            rootPane.setTop(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+            productPagePane.setTop(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                     ("/com/project/shoppingrecommendationsystem/components/top-bar.fxml"))));
 
-            // Load product grid
-            rootPane.setCenter(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
-                    ("/com/project/shoppingrecommendationsystem/components/product-grid.fxml"))));
-
             // Load chat box
-            rootPane.setRight(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+            productPagePane.setRight(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                     ("/com/project/shoppingrecommendationsystem/components/chat-box.fxml"))));
 
-            // Load filter
-            rootPane.setLeft(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
-                    ("/com/project/shoppingrecommendationsystem/components/filter-bar.fxml"))));
-
-            // Load footer
-            rootPane.setBottom(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                    // Load footer
+            productPagePane.setBottom(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                     ("/com/project/shoppingrecommendationsystem/components/footer-bar.fxml"))));
+
+            // Load temporary button that come back to main scene
+            Button backButton = new Button("Back");
+            backButton.setOnAction(event -> NavigationController.goBack());
+            productPagePane.setLeft(backButton);
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static Parent getRootAsParent() {
-        return rootPane;
+
+    public Parent getRootAsParent() {
+        return productPagePane;
     }
+
 }
+

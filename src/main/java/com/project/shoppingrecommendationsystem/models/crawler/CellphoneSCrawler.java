@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -25,6 +26,7 @@ public class CellphoneSCrawler implements Crawler {
     private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
             .getPath()
             .replace("%20", " ") + "data/CellphoneS/";
+    private final CSVParser parser;
     private final String[] laptopColumn = {"product_id", "name", "sku", "doc_quyen", "manufacturer",
             "url_key", "url_path", "categories", "review", "is_installment", "stock_available_id", "company_stock_id",
             "filter", "is_parent", "price", "prices", "special_price", "promotion_information",
@@ -74,6 +76,11 @@ public class CellphoneSCrawler implements Crawler {
                 throw new RuntimeException("Unable to create directory " + resourceURL);
             }
         }
+        parser = new CSVParserBuilder()
+                .withSeparator(',')
+                .withEscapeChar('\\')
+                .withQuoteChar('\'')
+                .build();
         for (int i = 0; i < propertiesColumn.length; i++) {
             propertiesMap.put(propertiesColumn[i], i);
         }
@@ -229,13 +236,29 @@ public class CellphoneSCrawler implements Crawler {
         return propertiesRow;
     }
 
+    private ICSVWriter getCSVWriter (String filename) throws IOException {
+        return getCSVWriter(filename, false);
+    }
+
+    private ICSVWriter getCSVWriter (String filename, boolean append) throws IOException {
+        return new CSVWriterBuilder(new FileWriter(resourceURL + filename, append))
+                .withParser(parser)
+                .build();
+    }
+
+    private CSVReader getCSVReader (String filename) throws IOException {
+        return new CSVReaderBuilder(new FileReader(resourceURL + filename))
+                .withCSVParser(parser)
+                .build();
+    }
+
     /**
      * Resets the CSV files and write the column headers.
      */
     private void resetSave () {
-        try (CSVWriter laptopWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv"));
-             CSVWriter descriptionWriter = new CSVWriter(new FileWriter(resourceURL + "description.csv"));
-             CSVWriter propertiesWriter = new CSVWriter(new FileWriter(resourceURL + "properties.csv"))) {
+        try (ICSVWriter laptopWriter = getCSVWriter("laptop.csv");
+             ICSVWriter descriptionWriter = getCSVWriter("description.csv");
+             ICSVWriter propertiesWriter = getCSVWriter("properties.csv")) {
             laptopWriter.writeNext(laptopColumn);
             descriptionWriter.writeNext(descriptionColumn);
             propertiesWriter.writeNext(propertiesColumn);
@@ -251,7 +274,7 @@ public class CellphoneSCrawler implements Crawler {
      * @param laptopRows A list of String arrays containing laptop information.
      */
     private void saveLaptop (List<String[]> laptopRows) {
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "laptop.csv", true))) {
+        try (ICSVWriter csvWriter = getCSVWriter("laptop.csv", true)) {
             csvWriter.writeAll(laptopRows);
         } catch (Exception e){
             System.out.println("There was an error when accessing saving file");
@@ -265,7 +288,7 @@ public class CellphoneSCrawler implements Crawler {
      * @param descriptionRows A list of String arrays containing product descriptions.
      */
     private void saveDescriptions (List<String[]> descriptionRows) {
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "description.csv", true))) {
+        try (ICSVWriter csvWriter = getCSVWriter("description.csv", true)) {
             csvWriter.writeAll(descriptionRows);
         } catch (Exception e){
             System.out.println("There was an error when accessing saving file");
@@ -279,7 +302,7 @@ public class CellphoneSCrawler implements Crawler {
      * @param propertiesRows A list of String arrays containing product properties.
      */
     private void saveProperties (List<String[]> propertiesRows) {
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(resourceURL + "properties.csv", true))) {
+        try (ICSVWriter csvWriter = getCSVWriter("properties.csv", true)) {
             csvWriter.writeAll(propertiesRows);
         } catch (Exception e){
             System.out.println("There was an error when accessing saving file");
@@ -345,15 +368,16 @@ public class CellphoneSCrawler implements Crawler {
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))
+                .setLaptopCase(parseLaptopCase(propertiesRow))
                 .build();
     }
 
     @Override
     public List<Laptop> getLaptops() {
         List<Laptop> laptops = new LinkedList<>();
-        try (CSVReader laptopReader = new CSVReader(new FileReader(resourceURL + "laptop.csv"));
-        CSVReader descriptionReader = new CSVReader(new FileReader(resourceURL + "description.csv"));
-        CSVReader propertiesReader = new CSVReader(new FileReader(resourceURL + "properties.csv"))) {
+        try (CSVReader laptopReader = getCSVReader("laptop.csv");
+        CSVReader descriptionReader = getCSVReader("description.csv");
+        CSVReader propertiesReader = getCSVReader("properties.csv")) {
             Iterator<String[]> laptopRowIterator = laptopReader.iterator();
             Iterator<String[]> descriptionRowIterator = descriptionReader.iterator();
             Iterator<String[]> propertiesRowIterator = propertiesReader.iterator();

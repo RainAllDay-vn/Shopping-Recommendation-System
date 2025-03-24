@@ -1,40 +1,34 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
-import com.project.shoppingrecommendationsystem.models.Product;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import java.util.Stack;
+
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Stack;
-
 public class NavigationController {
-
-    public static Parent mainPage;
-    public static Parent productPage;
-    public static Stack<Parent> sceneStack = new Stack<>();
-    public static Stage stage;
-    public static Scene scene;
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    private Stage stage;
+    private Scene scene;
+    Stack<IPage> stack;
+    IPage currentPage;
+    static NavigationController instance;
+    public static void init(Stage stage,IPage homePage){
+        instance = new NavigationController();
+        instance.stage = stage;
+        instance.scene = new Scene(homePage.getRootAsParent());
+        instance.stack = new Stack<>();
+        instance.currentPage = homePage;
+        instance.scene.setRoot(homePage.getRootAsParent());
+        stage.setScene(instance.scene);
     }
-
-    @FXML
-    public static void goToProduct(Product product) {
-
-            // Store current scene before navigating
-            sceneStack.push(stage.getScene().getRoot());
-            // Set new scene
-            stage.getScene().setRoot(productPage);
-    }
-
-
-    public static void goBack() {
-        if (!sceneStack.isEmpty()) {
-            stage.getScene().setRoot(sceneStack.pop());
-        }
-    }
+    public static void push(IPage page){
+        instance.stack.push(instance.currentPage);
+        instance.currentPage = page;
+        instance.scene.setRoot(page.getRootAsParent());
+    } 
+    public static void pop(){
+        instance.currentPage = instance.stack.pop();
+        instance.scene.setRoot(instance.currentPage.getRootAsParent());
+    } 
 }

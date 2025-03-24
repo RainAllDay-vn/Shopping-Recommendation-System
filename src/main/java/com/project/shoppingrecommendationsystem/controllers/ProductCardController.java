@@ -1,17 +1,16 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
-import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Product;
+import com.project.shoppingrecommendationsystem.views.ProductPageController;
+
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 public class ProductCardController {
 
@@ -38,7 +37,8 @@ public class ProductCardController {
      @FXML
      public void goToProductPage() {
           if (this.product != null) {
-               NavigationController.goToProduct(this.product);
+               NavigationController.push(ShoppingApplication.productPage);
+               ((ProductPageController)ShoppingApplication.productPage.getController()).setProduct(product);
           }
      }
 

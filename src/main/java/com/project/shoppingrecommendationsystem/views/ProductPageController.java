@@ -1,26 +1,27 @@
 package com.project.shoppingrecommendationsystem.views;
 
 import com.project.shoppingrecommendationsystem.controllers.NavigationController;
-import com.sun.tools.javac.Main;
+import com.project.shoppingrecommendationsystem.models.Product;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
 
-public class ProductPage {
-    private final Stage productStage;
+public class ProductPageController {
     @FXML
     private BorderPane productPagePane;
 
-    public ProductPage(Stage productStage) {
-        this.productStage = productStage;
+    @FXML
+    public void initialize(){
         initializeUI();
+    }
+
+    public void setProduct(Product productData){
+        
     }
 
     private void initializeUI() {
@@ -56,7 +57,7 @@ public class ProductPage {
 
             // Load temporary button that come back to main scene
             Button backButton = new Button("Back");
-            backButton.setOnAction(event -> NavigationController.goBack());
+            backButton.setOnAction(event -> NavigationController.pop());
             productPagePane.setLeft(backButton);
 
 
@@ -64,10 +65,5 @@ public class ProductPage {
             e.printStackTrace();
         }
     }
-
-    public Parent getRootAsParent() {
-        return productPagePane;
-    }
-
 }
 

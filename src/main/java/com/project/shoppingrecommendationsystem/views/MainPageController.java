@@ -2,29 +2,25 @@ package com.project.shoppingrecommendationsystem.views;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
-public class MainPage {
-    private final Stage primaryStage;
-    @FXML
-    private static BorderPane rootPane;
 
-    public MainPage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+
+public class MainPageController{
+    @FXML
+    private BorderPane rootPane;
+    @FXML
+    public void initialize(){
         initializeUI();
     }
+
 
     private void initializeUI() {
         try {
             // Load root layout
-            rootPane = new BorderPane();
 
 //            // Checking file path
 //            String fxml = "";
@@ -64,8 +60,5 @@ public class MainPage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    public static Parent getRootAsParent() {
-        return rootPane;
     }
 }

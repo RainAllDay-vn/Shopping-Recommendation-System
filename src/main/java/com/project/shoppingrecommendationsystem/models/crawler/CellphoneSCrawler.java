@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
 import com.project.shoppingrecommendationsystem.HelloApplication;
+import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
@@ -17,7 +20,7 @@ import java.util.*;
  * such as product ID, name, description, and properties. The extracted data is then
  * saved into CSV files.
  */
-public class CellphoneSCrawler {
+public class CellphoneSCrawler implements Crawler {
     private final ObjectMapper mapper = new ObjectMapper();
     private final String resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
             .getPath()
@@ -76,14 +79,15 @@ public class CellphoneSCrawler {
         }
     }
 
-    public static void main(String[] args) {
-        CellphoneSCrawler crawler = new CellphoneSCrawler();
-        try {
-            crawler.crawlLaptops();
-        } catch (Exception e) {
-            System.out.println("Crawling did not work");
-            System.out.println(e.getMessage());
-        }
+    /**
+     * Initiates the laptop crawling process.
+     * <p>
+     * This method resets the save files and then crawls all laptops from the CellphoneS website.
+     */
+    @Override
+    public void crawlLaptops() {
+        resetSave();
+        crawlAllLaptops();
     }
 
     /**
@@ -91,7 +95,7 @@ public class CellphoneSCrawler {
      * Fetches product information from the homepage API and extracts laptop details,
      * descriptions, and properties. Saves the extracted data to CSV files.
      */
-    private void crawlLaptops () {
+    private void crawlAllLaptops () {
         List<String[]> laptopRows = new ArrayList<>(laptopColumn.length);
         List<String[]> descriptionRows = new ArrayList<>(descriptionColumn.length);
         List<String[]> propertiesRows = new ArrayList<>(propertiesColumn.length);
@@ -281,5 +285,95 @@ public class CellphoneSCrawler {
             System.out.println("There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
+    }
+
+    private CPU parseCPU(String[] propertiesRow) {
+        return new CPU.CPUBuilder()
+                .setName(propertiesRow[32])  // Column "laptop_cpu"
+                .build();
+    }
+
+    private RAM parseRAM(String[] propertiesRow) {
+        return new RAM.RAMBuilder()
+                .setType(propertiesRow[36])  // Column "laptop_loai_ram"
+                .setSize(propertiesRow[38])  // Column "laptop_ram"
+                .setSlots(propertiesRow[41])  // Column "laptop_so_khe_ram"
+                .build();
+    }
+
+    private Storage parseStorage(String[] propertiesRow) {
+        return new Storage.StorageBuilder()
+                .setSize(propertiesRow[22])  // Column "hdd_sdd"
+                .build();
+    }
+
+    private Connectivity parseConnectivity(String[] propertiesRow) {
+        return new Connectivity.ConnectivityBuilder()
+                .setBluetooth(propertiesRow[6])  // Column "bluetooth"
+                .setWebCam(propertiesRow[31])  // Column "laptop_camera_webcam"
+                .setPorts(propertiesRow[60])  // Column "ports_slots"
+                .setWifi(propertiesRow[86])  // Column "wlan"
+                .build();
+    }
+
+    private Battery parseBattery(String[] propertiesRow) {
+        return new Battery.BatteryBuilder()
+                .setCapacity(propertiesRow[4])  // Column "battery"
+                .build();
+    }
+
+    private LaptopCase parseLaptopCase(String[] propertiesRow) {
+        return new LaptopCase.LaptopCaseBuilder()
+                .setDimensions(propertiesRow[10])  // Column "dimension"
+                .setWeight(propertiesRow[65])  // Column "product_weight"
+                .setMaterial(propertiesRow[89])  // Column "laptop_chat_lieu"
+                .build();
+    }
+
+    private Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        return new Laptop.LaptopBuilder()
+                .setName(laptopRow[1])  // Column "name"
+                .setBrand(laptopRow[4])  // Column "manufacturer"
+                .setSourceURL("https://cellphones.com.vn/" + laptopRow[6])  // Column "url_path"
+                .setPrice(Integer.parseInt(laptopRow[14]))  // Column "price"
+                .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column "special_price"
+                .setProductImage("https://cellphones.com.vn/media/catalog/product" + laptopRow[18])  // Column "thumbnail"
+                .setColor(propertiesRow[131])  // Column "color"
+                .setDescription(descriptionRow[1])
+                .setCpu(parseCPU(propertiesRow))
+                .setRam(parseRAM(propertiesRow))
+                .setStorage(parseStorage(propertiesRow))
+                .setConnectivity(parseConnectivity(propertiesRow))
+                .setBattery(parseBattery(propertiesRow))
+                .build();
+    }
+
+    @Override
+    public List<Laptop> getLaptops() {
+        List<Laptop> laptops = new LinkedList<>();
+        try (CSVReader laptopReader = new CSVReader(new FileReader(resourceURL + "laptop.csv"));
+        CSVReader descriptionReader = new CSVReader(new FileReader(resourceURL + "description.csv"));
+        CSVReader propertiesReader = new CSVReader(new FileReader(resourceURL + "properties.csv"))) {
+            Iterator<String[]> laptopRowIterator = laptopReader.iterator();
+            Iterator<String[]> descriptionRowIterator = descriptionReader.iterator();
+            Iterator<String[]> propertiesRowIterator = propertiesReader.iterator();
+            laptopRowIterator.next();
+            descriptionRowIterator.next();
+            propertiesRowIterator.next();
+            while (laptopRowIterator.hasNext()) {
+                String[] laptopRow = laptopRowIterator.next();
+                String[] descriptionRow = descriptionRowIterator.next();
+                String[] propertiesRow = propertiesRowIterator.next();
+                try {
+                    laptops.add(parseLaptop(laptopRow, descriptionRow, propertiesRow));
+                } catch (Exception e){
+                    System.err.println("There was an error when parsing laptop");
+                    System.err.println(e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("There was an error when accessing saving file");
+        }
+        return laptops;
     }
 }

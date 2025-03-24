@@ -5,7 +5,7 @@ public class LaptopCase {
     private final String dimensions;
     private final String material;
 
-    private LaptopCase(CaseBuilder builder) {
+    private LaptopCase(LaptopCaseBuilder builder) {
         this.weight = builder.weight;
         this.dimensions = builder.dimensions;
         this.material = builder.material;
@@ -32,22 +32,22 @@ public class LaptopCase {
                 '}';
     }
 
-    public static class CaseBuilder {
+    public static class LaptopCaseBuilder {
         private String weight;
         private String dimensions;
         private String material;
 
-        public CaseBuilder setWeight(String weight) {
+        public LaptopCaseBuilder setWeight(String weight) {
             this.weight = weight;
             return this;
         }
 
-        public CaseBuilder setDimensions(String dimensions) {
+        public LaptopCaseBuilder setDimensions(String dimensions) {
             this.dimensions = dimensions;
             return this;
         }
 
-        public CaseBuilder setMaterial(String material) {
+        public LaptopCaseBuilder setMaterial(String material) {
             this.material = material;
             return this;
         }

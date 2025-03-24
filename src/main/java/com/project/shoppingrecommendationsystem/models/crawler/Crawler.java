@@ -9,7 +9,7 @@ public interface Crawler {
     /**
      * Crawls laptop information, removing existing save files (if exists) and fetching fresh data.
      */
-    void crawlLaptop();
+    void crawlLaptops();
 
     /**
      * Retrieves a list of Laptop objects from the saved data files.

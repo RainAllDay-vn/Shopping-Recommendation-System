@@ -47,22 +47,22 @@ public class Laptop extends Product {
 
     @Override
     public String toString() {
-        return "Laptop{" +
-                "id=" + id +
-                ", cpu=" + cpu +
-                ", ram=" + ram +
-                ", storage=" + storage +
-                ", connectivity=" + connectivity +
-                ", battery=" + battery +
-                ", laptopCase=" + laptopCase +
-                ", name='" + name + '\'' +
-                ", productImage='" + productImage + '\'' +
-                ", price=" + price +
-                ", discountPrice=" + discountPrice +
-                ", sourceURL='" + sourceURL + '\'' +
-                ", brand='" + brand + '\'' +
-                ", color='" + color + '\'' +
-                ", description='" + description + '\'' +
+        return "Laptop{" + "\n" +
+                "    id=" + id + "\n" +
+                "    cpu=" + cpu + "\n" +
+                "    ram=" + ram + "\n" +
+                "    storage=" + storage + "\n" +
+                "    connectivity=" + connectivity + "\n" +
+                "    battery=" + battery + "\n" +
+                "    laptopCase=" + laptopCase + "\n" +
+                "    name='" + name + '\'' + "\n" +
+                "    productImage='" + productImage + '\'' + "\n" +
+                "    price=" + price + "\n" +
+                "    discountPrice=" + discountPrice + "\n" +
+                "    sourceURL='" + sourceURL + '\'' + "\n" +
+                "    brand='" + brand + '\'' + "\n" +
+                "    color='" + color + '\'' + "\n" +
+                "    description='" + description + '\'' + "\n" +
                 '}';
     }
 

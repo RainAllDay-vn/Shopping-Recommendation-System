@@ -104,7 +104,7 @@ public class RAM {
             return this;
         }
 
-        private RAM build() {
+        public RAM build() {
             return new RAM(this);
         }
     }

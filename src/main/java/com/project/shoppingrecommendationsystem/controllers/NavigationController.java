@@ -1,9 +1,6 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import java.util.Stack;
-
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="filterBar" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
     <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
         <!-- Title -->

@@ -2,6 +2,7 @@ package com.project.shoppingrecommendationsystem.views;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.util.Objects;
 public class MainPageController{
     @FXML
     private BorderPane rootPane;
+    @FXML
+    private ScrollPane productGrid;
     @FXML
     public void initialize(){
         initializeUI();
@@ -42,7 +45,7 @@ public class MainPageController{
                     ("/com/project/shoppingrecommendationsystem/components/top-bar.fxml"))));
 
             // Load product grid
-            rootPane.setCenter(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+            productGrid.setContent(FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                     ("/com/project/shoppingrecommendationsystem/components/product-grid.fxml"))));
 
             // Load chat box

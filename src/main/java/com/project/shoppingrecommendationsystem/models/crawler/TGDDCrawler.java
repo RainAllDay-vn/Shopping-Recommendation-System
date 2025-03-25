@@ -14,10 +14,27 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.*;
 
+/**
+ * CellphoneSCrawler class is responsible for crawling laptop data from CellphoneS website
+ * and parsing saved data into Laptop objects. It fetches product information using the
+ * website's API and extracts relevant details such as product ID, name, description,
+ * and properties.
+ */
 public class TGDDCrawler extends Crawler {
     private WebDriver driver;
     private final HashMap<String, Integer> propertiesMap = new HashMap<>();
 
+    /**
+     * Constructs a CellphoneSCrawler object.
+     * <p>
+     * This constructor performs the following actions:
+     * <ul>
+     * <li>Initializes the resource directory where the scraped data will be saved. If the directory does not exist, it creates it.</li>
+     * <li>Populates the {@code propertiesMap} with keys based on the {@code propertiesColumns} array. The values are the corresponding indices from the array.</li>
+     * </ul>
+     *
+     * @throws RuntimeException if the resource directory cannot be created.
+     */
     public TGDDCrawler() {
         super("data/TGDD/");
         this.laptopColumn = new String[]{"data-index", "data-id", "data-issetup", "data-maingroup", "data-subgroup",
@@ -54,6 +71,11 @@ public class TGDDCrawler extends Crawler {
         crawlAllLaptops(limit);
     }
 
+    /**
+     * Crawls the CellphoneS website for laptop data.
+     * Fetches product information from the homepage API and extracts laptop details,
+     * descriptions, and properties. Saves the extracted data to CSV files.
+     */
     private void crawlAllLaptops(int limit) {
         String pageURL = "https://www.thegioididong.com";
         driver = new ChromeDriver(new ChromeOptions().addArguments("--headless"));
@@ -88,6 +110,12 @@ public class TGDDCrawler extends Crawler {
         driver.quit();
     }
 
+    /**
+     * Extracts laptop information from a product Element.
+     *
+     * @param product The product Element.
+     * @return An array of Strings containing laptop information.
+     */
     private String[] extractLaptop (Element product) {
         List<String> row = new ArrayList<>();
         extractDataFromAttribute(product, row);
@@ -99,6 +127,7 @@ public class TGDDCrawler extends Crawler {
         extractUnitSold(product, row);
         return row.toArray(new String[0]);
     }
+
     /**
      * Extracts the product description from the HTML body.
      * <p>
@@ -143,6 +172,12 @@ public class TGDDCrawler extends Crawler {
         return propertiesRow;
     }
 
+    /**
+     * Fetches the homepage API for product data.
+     *
+     * @param pageIndex The page index to fetch.
+     * @return The JSON response from the API as a JsonNode.
+     */
     private JsonNode fetchHomepageAPI (int pageIndex) {
         String script = """
             return (async function() {

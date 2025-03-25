@@ -30,12 +30,19 @@ public class ProductGridController {
 
     int currentCellCount = 0;
     private static final int PRODUCT_PER_PAGE = 5;
-    private static final int COLUMNS = 5;
+    private static final int COLUMNS = 4;
     List<Product> products;
 
     public static void addProducts(List<Product> products){
         instance.products = products;
-        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() : instance.currentCellCount +PRODUCT_PER_PAGE;
+        int end = instance.currentCellCount + PRODUCT_PER_PAGE;
+        if(end >= products.size()){
+            end = products.size();
+            instance.expandButton.setDisable(true);
+        }
+        else{
+            instance.expandButton.setDisable(false);
+        }
         instance.addProductCard(products.subList(instance.currentCellCount, end));
     }
 
@@ -66,8 +73,11 @@ public class ProductGridController {
 
     @FXML
     private void expandProducts() {
-        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() 
-                : instance.currentCellCount + PRODUCT_PER_PAGE;
+        int end = instance.currentCellCount + PRODUCT_PER_PAGE;
+        if(end >= products.size()){
+            end = products.size();
+            expandButton.setDisable(true);
+        }
         addProductCard(products.subList(instance.currentCellCount, end));
     }
 

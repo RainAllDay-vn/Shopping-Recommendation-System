@@ -4,11 +4,10 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="rootVBox" spacing="10" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductGridController">
+<VBox fx:id="rootVBox" alignment="TOP_CENTER" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductGridController">
 
-    <GridPane fx:id="gridPane" hgap="10" vgap="10"/>
+    <GridPane fx:id="gridPane" hgap="10" vgap="10" />
 
-    <Button fx:id="expandButton" text="Expand" onAction="#expandProducts"/>
+    <Button fx:id="expandButton" disable="true" onAction="#expandProducts" text="Expand" />
 
 </VBox>

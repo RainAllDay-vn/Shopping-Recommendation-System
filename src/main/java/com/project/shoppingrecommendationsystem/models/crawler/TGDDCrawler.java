@@ -3,6 +3,7 @@ package com.project.shoppingrecommendationsystem.models.crawler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
@@ -360,21 +361,112 @@ public class TGDDCrawler extends Crawler {
     }
 
     /**
-     * @param laptopRow
-     * @param descriptionRow
-     * @param propertiesRow
-     * @return
+     * Parses CPU information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A CPU object.
      */
-    @Override
-    Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
-        return null;
+    private CPU parseCPU(String[] propertiesRow) {
+        return new CPU.CPUBuilder()
+                .setName(propertiesRow[1])
+                .setBaseFrequency(propertiesRow[4])
+                .setTurboFrequency(propertiesRow[5])
+                .setCores(propertiesRow[2])
+                .setThreads(propertiesRow[3])
+                .build();
     }
 
     /**
-     * @return
+     * Parses RAM information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A RAM object.
+     */
+    private RAM parseRAM(String[] propertiesRow) {
+        return new RAM.RAMBuilder()
+                .setSize(propertiesRow[6])
+                .setClock(propertiesRow[8])
+                .setType(propertiesRow[7])
+                .setMaxSize(propertiesRow[9])
+                .build();
+    }
+
+    /**
+     * Parses storage information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Storage object.
+     */
+    private Storage parseStorage(String[] propertiesRow) {
+        return new Storage.StorageBuilder()
+                .setSize(propertiesRow[10])
+                .build();
+    }
+
+    /**
+     * Parses connectivity information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Connectivity object.
+     */
+    private Connectivity parseConnectivity(String[] propertiesRow) {
+        return new Connectivity.ConnectivityBuilder()
+                .setPorts(propertiesRow[18])
+                .setWifi(propertiesRow[19])
+                .setWebCam(propertiesRow[20])
+                .build();
+    }
+
+    /**
+     * Parses battery information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Battery object.
+     */
+    private Battery parseBattery(String[] propertiesRow) {
+        return new Battery.BatteryBuilder()
+                .setCapacity(propertiesRow[24])
+                .build();
+    }
+
+    /**
+     * Parses laptop case information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A LaptopCase object.
+     */
+    private LaptopCase parseLaptopCase(String[] propertiesRow) {
+        return new LaptopCase.LaptopCaseBuilder()
+                .setDimensions(propertiesRow[22])
+                .setMaterial(propertiesRow[23])
+                .build();
+    }
+
+    /**
+     * Parses laptop information from laptop, description, and properties rows.
+     *
+     * @param laptopRow      An array of Strings containing laptop information.
+     * @param descriptionRow An array of Strings containing product description.
+     * @param propertiesRow  An array of Strings containing product properties.
+     * @return A Laptop object.
      */
     @Override
-    public List<Laptop> getLaptops() {
-        return super.getLaptops();
+    Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        return new Laptop.LaptopBuilder()
+                .setName(laptopRow[17])  // Column 'data-name'
+                .setProductImage(laptopRow[28])  // Column 'imageURL'
+                .setPrice((int)Double.parseDouble(laptopRow[8]))  // Column 'data-price-root'
+                .setDiscountPrice((int)Double.parseDouble(laptopRow[19]))  // Column 'data-price'
+                .setSourceURL("https://www.thegioididong.com/" + laptopRow[11])  // Column 'sourceURL'
+                .setBrand(laptopRow[20])  // Column 'data-brand'
+                .setColor(laptopRow[24])
+                .setDescription(descriptionRow[1])
+                .setCpu(parseCPU(propertiesRow))
+                .setRam(parseRAM(propertiesRow))
+                .setStorage(parseStorage(propertiesRow))
+                .setConnectivity(parseConnectivity(propertiesRow))
+                .setBattery(parseBattery(propertiesRow))
+                .setLaptopCase(parseLaptopCase(propertiesRow))
+                .build();
     }
 }

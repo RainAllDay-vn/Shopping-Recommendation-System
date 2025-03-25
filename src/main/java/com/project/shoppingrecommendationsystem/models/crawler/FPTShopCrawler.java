@@ -205,6 +205,15 @@ public class FPTShopCrawler extends Crawler{
         return propertiesRow;
     }
 
+    /**
+     * Parses a JSON string based on a given path.
+     *
+     * @param json The JSON string to parse.
+     * @param path An array of strings representing the path to the desired value.
+     * Path elements can be field names or array indices (as strings).
+     * The special keyword "slice" will iterate through all elements of the current JsonNode.
+     * @return The parsed value as a string, joined with commas if multiple values are found, or null if parsing fails.
+     */
     private String parseJson(String json, String[] path) {
         try {
             List<JsonNode> nodes = List.of(mapper.readTree(json));
@@ -235,6 +244,12 @@ public class FPTShopCrawler extends Crawler{
         }
     }
 
+    /**
+     * Parses CPU information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A CPU object.
+     */
     private CPU parseCPU(String[] propertiesRow) {
         return new CPU.CPUBuilder()
                 .setName("%s %s %s".formatted(
@@ -249,6 +264,12 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses RAM information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A RAM object.
+     */
     private RAM parseRAM(String[] propertiesRow) {
         return new RAM.RAMBuilder()
                 .setSize(parseJson(propertiesRow[3],new String[]{"0", "value"}))
@@ -259,6 +280,12 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses storage information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Storage object.
+     */
     private Storage parseStorage(String[] propertiesRow) {
         String size = parseJson(propertiesRow[4],new String[]{"6", "value", "displayValue"});
         if (size == null) {
@@ -277,6 +304,12 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses connectivity information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Connectivity object.
+     */
     private Connectivity parseConnectivity(String[] propertiesRow) {
         return new Connectivity.ConnectivityBuilder()
                 .setPorts(parseJson(propertiesRow[6],new String[]{"0", "value", "slice"}))
@@ -286,6 +319,12 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses battery information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Battery object.
+     */
     private Battery parseBattery(String[] propertiesRow) {
         return new Battery.BatteryBuilder()
                 .setCapacity(parseJson(propertiesRow[12], new String[]{"1", "value", "slice", "displayValue"}))
@@ -293,6 +332,12 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses laptop case information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A LaptopCase object.
+     */
     private LaptopCase parseLaptopCase(String[] propertiesRow) {
         return new LaptopCase.LaptopCaseBuilder()
                 .setWeight(parseJson(propertiesRow[15],new String[]{"1", "value", "slice", "displayValue"}))
@@ -301,6 +346,14 @@ public class FPTShopCrawler extends Crawler{
                 .build();
     }
 
+    /**
+     * Parses laptop information from laptop, description, and properties rows.
+     *
+     * @param laptopRow      An array of Strings containing laptop information.
+     * @param descriptionRow An array of Strings containing product description.
+     * @param propertiesRow  An array of Strings containing product properties.
+     * @return A Laptop object.
+     */
     Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
         return new Laptop.LaptopBuilder()
                 .setName(laptopRow[3])  // Column 'displayName'

@@ -1,12 +1,21 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class RAM {
+    @CsvBindByName(column = "RAM-SIZE")
     private final String size;
+    @CsvBindByName(column = "RAM-CHANNELS")
     private final String channels;
+    @CsvBindByName(column = "RAM-CLOCK")
     private final String clock;
+    @CsvBindByName(column = "RAM-TYPE")
     private final String type;
+    @CsvBindByName(column = "RAM-UPGRADABLE")
     private final String upgradable;
+    @CsvBindByName(column = "RAM-SLOTS")
     private final String slots;
+    @CsvBindByName(column = "RAM-MAX-SIZE")
     private final String maxSize;
 
     private RAM(RAMBuilder builder) {

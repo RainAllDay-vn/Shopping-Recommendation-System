@@ -1,11 +1,19 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class Storage {
+    @CsvBindByName(column = "STORAGE-SIZE")
     private final String size;
+    @CsvBindByName(column = "STORAGE-BUS")
     private final String bus;
+    @CsvBindByName(column = "STORAGE-STORAGETYPE")
     private final String storageType;
+    @CsvBindByName(column = "STORAGE-CHANNELS")
     private final String channels;
+    @CsvBindByName(column = "STORAGE-UPGRADABLE")
     private final String upgradable;
+    @CsvBindByName(column = "STORAGE-SLOTS")
     private final String slots;
 
     private Storage (StorageBuilder builder) {

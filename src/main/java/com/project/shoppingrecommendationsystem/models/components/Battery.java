@@ -1,8 +1,13 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class Battery {
+    @CsvBindByName(column = "BATTERY-CAPACITY")
     private final String capacity;
+    @CsvBindByName(column = "BATTERY-FULLY-CHARGING-TIME")
     private final String fullyChargingTime;
+    @CsvBindByName(column = "BATTERY-CHARGE-POWER")
     private final String chargePower;
 
     private Battery(BatteryBuilder builder) {

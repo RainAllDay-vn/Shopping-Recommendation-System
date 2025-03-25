@@ -1,8 +1,13 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class LaptopCase {
+    @CsvBindByName(column = "LAPTOPCASE-WEIGHT")
     private final String weight;
+    @CsvBindByName(column = "LAPTOPCASE-DIMENSIONS")
     private final String dimensions;
+    @CsvBindByName(column = "LAPTOPCASE-MATERIAL")
     private final String material;
 
     private LaptopCase(LaptopCaseBuilder builder) {

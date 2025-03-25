@@ -1,18 +1,26 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import com.opencsv.bean.CsvRecurse;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 public class Laptop extends Product {
+    @CsvRecurse
     private final CPU cpu;
+    @CsvRecurse
     private final RAM ram;
+    @CsvRecurse
     private final Storage storage;
+    @CsvRecurse
     private final Connectivity connectivity;
+    @CsvRecurse
     private final Battery battery;
+    @CsvRecurse
     private final LaptopCase laptopCase;
+    @CsvRecurse
     private final Display display;
 
     private Laptop(LaptopBuilder builder) {
-        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.source,
+        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.source, builder.sourceURL,
                 builder.brand, builder.color, builder.description);
         this.cpu = builder.cpu;
         this.ram = builder.ram;
@@ -23,7 +31,7 @@ public class Laptop extends Product {
         this.display = builder.display;
     }
 
-    public CPU getCPU() {
+    public CPU getCpu() {
         return cpu;
     }
 

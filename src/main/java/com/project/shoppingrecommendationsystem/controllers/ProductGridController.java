@@ -3,6 +3,7 @@ package com.project.shoppingrecommendationsystem.controllers;
 import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,12 +13,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class ProductGridController implements Initializable{
+public class ProductGridController {
+
+    static ProductGridController instance;
 
     @FXML
     private VBox rootVBox;
@@ -28,64 +28,56 @@ public class ProductGridController implements Initializable{
     @FXML
     private Button expandButton;
 
-    private static final int PRODUCTS_PER_PAGE = 6;
-    private static final int COLUMNS = 3;
-    private Product[] allProducts;
-    private List<VBox> displayedCards = new ArrayList<>();
-    private int currentProductIndex = 0;
+    int currentCellCount = 0;
+    private static final int PRODUCT_PER_PAGE = 5;
+    private static final int COLUMNS = 5;
+    List<Product> products;
 
-    public void setProducts(Product[] products) {
-        if (products == null || products.length == 0) {
-            System.err.println("No products available.");
-            return;
-        }
-        this.allProducts = products;
-        currentProductIndex = 0; // Reset index when setting new products
-        displayedCards.clear();
-        gridPane.getChildren().clear(); // Clear grid before loading new products
-        loadMoreProducts();
+    public static void addProducts(List<Product> products){
+        instance.products = products;
+        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() : instance.currentCellCount +PRODUCT_PER_PAGE;
+        instance.addProductCard(products.subList(instance.currentCellCount, end));
+    }
+
+    
+
+    void addProductCard(List<Product> products){
+        Task<Void> addProductsTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                for(Product product : products){
+                    VBox productCard = createProductCard(product);
+                    final int cellCount = currentCellCount;
+                    Platform.runLater(()->
+                        gridPane.add(productCard,cellCount%COLUMNS,cellCount/COLUMNS)
+                    );
+                    currentCellCount++;
+                }       
+                return null;
+            }
+        };
+        new Thread(addProductsTask).start();
+    }
+
+    public static void clear(){
+        instance.gridPane.getChildren().clear();
+        instance.currentCellCount = 0;
     }
 
     @FXML
     private void expandProducts() {
-        loadMoreProducts();
+        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() : instance.currentCellCount + PRODUCT_PER_PAGE;
+        addProductCard(products.subList(instance.currentCellCount, end));
     }
 
-    private void loadMoreProducts() {
-
-        Task<Void> createGridTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                int column = displayedCards.size() % COLUMNS;
-                int row = displayedCards.size() / COLUMNS;
-
-                for (int i = 0; i < PRODUCTS_PER_PAGE && currentProductIndex < allProducts.length; i++, currentProductIndex++) {
-                    VBox productCard = createProductCard(allProducts[currentProductIndex]);
-
-                    if (productCard != null) {
-                        displayedCards.add(productCard);
-                        gridPane.add(productCard, column, row);
-
-                        column++;
-                        if (column == COLUMNS) {
-                            column = 0;
-                            row++;
-                        }
-                    }
-                }
-                return null;
-            }
-        };
-
-        new Thread(createGridTask).start();
-
-        // Hide expand button if all products are loaded
-        //expandButton.setVisible(currentProductIndex < allProducts.length);
+    @FXML
+    public void initialize(){
+        instance =  this;
     }
 
-    private VBox createProductCard(Product product) {
+    private static VBox  createProductCard(Product product) {
         try {
-            FXMLLoader card = new FXMLLoader(getClass().getResource
+            FXMLLoader card = new FXMLLoader(ProductGridController.class.getResource
                     ("/com/project/shoppingrecommendationsystem/components/product-card.fxml"));
             VBox productCard = card.load();
             ProductCardController controller = card.getController();
@@ -95,14 +87,5 @@ public class ProductGridController implements Initializable{
             e.printStackTrace();
             return null; // Return null instead of an empty VBox for better error handling
         }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        allProducts = new Product[PRODUCTS_PER_PAGE];
-        for(int i = 0; i < PRODUCTS_PER_PAGE; i++) {
-            allProducts[i] = Laptop.buildTestLaptop();
-        }
-        loadMoreProducts();
     }
 }

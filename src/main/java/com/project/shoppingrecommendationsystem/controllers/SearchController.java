@@ -9,7 +9,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+
+import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Product;
 
 
 public class SearchController {
@@ -48,7 +53,14 @@ public class SearchController {
         String searchText = searchTextField.getText().trim();
         if (!searchText.isEmpty()) {
             System.out.println("Searching for: " + searchText + FilterBarController.getFilterData().toString());
-            
+            //Test
+            List<Product> products = new LinkedList<>();
+            for(int i = 0; i< 10; i++){
+                products.add(Laptop.buildTestLaptop());
+            }
+            ProductGridController.clear();
+            ProductGridController.addProducts(products);
+            //End test
             // Implement search logic here
         }
     }

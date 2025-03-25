@@ -74,7 +74,13 @@ public class ProductCardController {
                     return null;
                }   
           };
-          new Thread(setProductTask).start();  
+          Thread thread = new Thread(setProductTask);
+          thread.setDaemon(true);
+          try{
+               thread.start();  
+          }catch(Exception e){
+               System.err.println(e);
+          }
      }
 
 }

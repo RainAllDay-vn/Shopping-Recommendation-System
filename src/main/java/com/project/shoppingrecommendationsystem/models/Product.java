@@ -7,18 +7,20 @@ public abstract class Product {
     final String productImage;
     final int price;
     final int discountPrice;
+    final String source;
     final String sourceURL;
 
     final String brand;
     final String color;
     final String description;
 
-    Product(String name, String productImage, int price, int discountPrice, String sourceURL, String brand, String color, String description) {
+    Product(String name, String productImage, int price, int discountPrice, String source, String sourceURL, String brand, String color, String description) {
         this.id = ++counter;
         this.name = name;
         this.productImage = productImage;
         this.price = price;
         this.discountPrice = discountPrice;
+        this.source = source;
         this.sourceURL = sourceURL;
         this.brand = brand;
         this.color = color;
@@ -43,6 +45,10 @@ public abstract class Product {
 
     public int getDiscountPrice() {
         return discountPrice;
+    }
+
+    public String getSource() {
+        return source;
     }
 
     public String getSourceURL() {

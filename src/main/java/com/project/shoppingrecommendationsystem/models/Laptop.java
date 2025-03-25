@@ -9,16 +9,18 @@ public class Laptop extends Product {
     private final Connectivity connectivity;
     private final Battery battery;
     private final LaptopCase laptopCase;
+    private final Display display;
 
     private Laptop(LaptopBuilder builder) {
-        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.brand,
-                builder.color, builder.description);
+        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.sourceURL, builder.source,
+                builder.brand, builder.color, builder.description);
         this.cpu = builder.cpu;
         this.ram = builder.ram;
         this.storage = builder.storage;
         this.connectivity = builder.connectivity;
         this.battery = builder.battery;
         this.laptopCase = builder.laptopCase;
+        this.display = builder.display;
     }
 
     public CPU getCPU() {
@@ -45,6 +47,10 @@ public class Laptop extends Product {
         return laptopCase;
     }
 
+    public Display getDisplay() {
+        return display;
+    }
+
     @Override
     public String toString() {
         return "Laptop{" + "\n" +
@@ -55,6 +61,7 @@ public class Laptop extends Product {
                 "    connectivity=" + connectivity + "\n" +
                 "    battery=" + battery + "\n" +
                 "    laptopCase=" + laptopCase + "\n" +
+                "    display=" + display + "\n" +
                 "    name='" + name + '\'' + "\n" +
                 "    productImage='" + productImage + '\'' + "\n" +
                 "    price=" + price + "\n" +
@@ -117,6 +124,7 @@ public class Laptop extends Product {
         private String productImage;
         private int price;
         private int discountPrice;
+        private String source;
         private String sourceURL;
 
         private String brand;
@@ -129,6 +137,7 @@ public class Laptop extends Product {
         private Connectivity connectivity;
         private Battery battery;
         private LaptopCase laptopCase;
+        private Display display;
 
         public LaptopBuilder setName(String name) {
             this.name = name;
@@ -147,6 +156,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setDiscountPrice(int discountPrice) {
             this.discountPrice = discountPrice;
+            return this;
+        }
+
+        public LaptopBuilder setSource(String source) {
+            this.source = source;
             return this;
         }
 
@@ -197,6 +211,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setLaptopCase(LaptopCase laptopCase) {
             this.laptopCase = laptopCase;
+            return this;
+        }
+
+        public LaptopBuilder setDisplay(Display display) {
+            this.display = display;
             return this;
         }
 

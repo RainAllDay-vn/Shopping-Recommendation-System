@@ -391,6 +391,21 @@ public class TGDDCrawler extends Crawler {
     }
 
     /**
+     * Parses Display information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Display object.
+     */
+    private Display parseDisplay(String[] propertiesRow) {
+        return new Display.DisplayBuilder()
+                .setScreenSize(propertiesRow[11])
+                .setScreenResolution(propertiesRow[12])
+                .setRefreshRate(propertiesRow[13])
+                .setGpuName(propertiesRow[14])
+                .build();
+    }
+
+    /**
      * Parses storage information from a properties row.
      *
      * @param propertiesRow An array of Strings containing product properties.
@@ -456,12 +471,14 @@ public class TGDDCrawler extends Crawler {
                 .setProductImage(laptopRow[28])  // Column 'imageURL'
                 .setPrice((int)Double.parseDouble(laptopRow[8]))  // Column 'data-price-root'
                 .setDiscountPrice((int)Double.parseDouble(laptopRow[19]))  // Column 'data-price'
+                .setSource("TGDD")
                 .setSourceURL("https://www.thegioididong.com/" + laptopRow[11])  // Column 'sourceURL'
                 .setBrand(laptopRow[20])  // Column 'data-brand'
                 .setColor(laptopRow[24])
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
+                .setDisplay(parseDisplay(propertiesRow))
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))

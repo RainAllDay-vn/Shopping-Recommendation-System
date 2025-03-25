@@ -283,6 +283,34 @@ public class FPTShopCrawler extends Crawler{
     }
 
     /**
+     * Parses Display information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Display object.
+     */
+    private Display parseDisplay(String[] propertiesRow) {
+        if (parseJson(propertiesRow[2],new String[]{"2", "value"}) != null) {
+            return new Display.DisplayBuilder()
+                    .setGpuName(parseJson(propertiesRow[2],new String[]{"2", "value"}))
+                    .setGpuBaseClock(parseJson(propertiesRow[2],new String[]{"3", "value"}))
+                    .setGpuBoostClock(parseJson(propertiesRow[2],new String[]{"4", "value"}))
+                    .setScreenSize(parseJson(propertiesRow[5],new String[]{"0", "value", "displayValue"}))
+                    .setScreenResolution(parseJson(propertiesRow[5],new String[]{"2", "value"}))
+                    .setRefreshRate(parseJson(propertiesRow[5],new String[]{"4", "value", "displayValue"}))
+                    .build();
+        } else {
+            return new Display.DisplayBuilder()
+                    .setGpuName(parseJson(propertiesRow[2],new String[]{"8", "value"}))
+                    .setGpuBaseClock(parseJson(propertiesRow[2],new String[]{"9", "value"}))
+                    .setGpuBoostClock(parseJson(propertiesRow[2],new String[]{"10", "value"}))
+                    .setScreenSize(parseJson(propertiesRow[5],new String[]{"0", "value", "displayValue"}))
+                    .setScreenResolution(parseJson(propertiesRow[5],new String[]{"2", "value"}))
+                    .setRefreshRate(parseJson(propertiesRow[5],new String[]{"4", "value", "displayValue"}))
+                    .build();
+        }
+    }
+
+    /**
      * Parses storage information from a properties row.
      *
      * @param propertiesRow An array of Strings containing product properties.
@@ -362,12 +390,14 @@ public class FPTShopCrawler extends Crawler{
                 .setProductImage(parseJson(laptopRow[14], new String[]{"src"}))  // Column 'image'
                 .setPrice(Integer.parseInt(laptopRow[15]))  // Column 'originalPrice'
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column 'currentPrice'
+                .setSource("FPTShop")
                 .setSourceURL("https://fptshop.com.vn/" + laptopRow[6])  // Column 'slug'
                 .setBrand(parseJson(laptopRow[9], new String[]{"name"}))  // Column 'brand'
                 .setColor(parseJson(propertiesRow[16], new String[]{"6", "value", "0"}))
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
+                .setDisplay(parseDisplay(propertiesRow))
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))

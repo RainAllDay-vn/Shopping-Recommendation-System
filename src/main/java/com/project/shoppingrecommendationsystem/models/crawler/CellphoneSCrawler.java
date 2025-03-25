@@ -257,6 +257,22 @@ public class CellphoneSCrawler extends Crawler {
     }
 
     /**
+     * Parses Display information from a properties row.
+     *
+     * @param propertiesRow An array of Strings containing product properties.
+     * @return A Display object.
+     */
+    private Display parseDisplay(String[] propertiesRow) {
+        return new Display.DisplayBuilder()
+                .setScreenResolution(propertiesRow[12])
+                .setScreenSize(propertiesRow[13])
+                .setRefreshRate(propertiesRow[44])
+                .setGpuType(propertiesRow[45])
+                .setGpuName(propertiesRow[83])
+                .build();
+    }
+
+    /**
      * Parses storage information from a properties row.
      *
      * @param propertiesRow An array of Strings containing product properties.
@@ -322,6 +338,7 @@ public class CellphoneSCrawler extends Crawler {
         return new Laptop.LaptopBuilder()
                 .setName(laptopRow[1])  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
+                .setSource("CellphoneS")
                 .setSourceURL("https://cellphones.com.vn/" + laptopRow[6])  // Column "url_path"
                 .setPrice(Integer.parseInt(laptopRow[14]))  // Column "price"
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column "special_price"
@@ -330,6 +347,7 @@ public class CellphoneSCrawler extends Crawler {
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
+                .setDisplay(parseDisplay(propertiesRow))
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))

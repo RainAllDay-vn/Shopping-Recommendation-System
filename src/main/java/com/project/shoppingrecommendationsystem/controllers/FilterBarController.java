@@ -5,6 +5,8 @@ import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -54,33 +56,53 @@ public class FilterBarController {
         
     }
     void setCheckBoxColumn(int checkAllIndex, VBox node, List<String> listToAddTo){
-        for(int i = 0; i< node.getChildren().size(); i++){
-            if(i == checkAllIndex){
-                ((CheckBox)node.getChildren().getFirst()).selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-                        for(Node child: node.getChildren()){
-                            ((CheckBox)child).setSelected(arg2);
+        final List<Node> checkBoxes = node.getChildren();
+        final CheckBox checkAll = checkAllIndex>= 0 && checkAllIndex < checkBoxes.size()?
+                                    (CheckBox)checkBoxes.get(checkAllIndex): null;
+        EventHandler onMouseClicked = new EventHandler<ActionEvent>() {
+            static int checkedBoxCount =0;
+            @Override
+            public void handle(ActionEvent event) {
+                CheckBox source = (CheckBox)event.getSource();
+                //source.setSelected(!source.isSelected());
+                if(source == checkAll){
+                    if(!source.isSelected()){
+                        checkedBoxCount = 0;
+                        listToAddTo.clear();
+                    }
+                    else{
+                        checkedBoxCount = checkBoxes.size()-1;
+                    }
+                    for(Node child : checkBoxes){
+                        if(child == source){
+                            continue;
+                        }
+                        CheckBox box = (CheckBox)child;
+                        if(source.isSelected() && !box.isSelected()){
+                            listToAddTo.add(box.getText());
+                        }
+                        box.setSelected(source.isSelected());
+                    }
+                }
+                else{
+                    if(source.isSelected()){
+                        checkedBoxCount++;
+                        listToAddTo.add(source.getText());
+                        if(checkedBoxCount == checkBoxes.size()-1){
+                            checkAll.setSelected(true);
                         }
                     }
-                });
-            }
-            else{
-                CheckBox checkBox = (CheckBox)node.getChildren().get(i);
-                checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-                        if(arg2){
-                            listToAddTo.add(checkBox.getText());
-                        }
-                        else{
-                            listToAddTo.remove(checkBox.getText());
-                        }
+                    else{
+                        checkedBoxCount--;
+                        listToAddTo.remove(source.getText());
+                        checkAll.setSelected(false);
                     }
-                    
-                });
+                }
             }
+            
+        };
+        for(Node box:checkBoxes){
+            ((CheckBox)box).setOnAction(onMouseClicked);
         }
     }
 

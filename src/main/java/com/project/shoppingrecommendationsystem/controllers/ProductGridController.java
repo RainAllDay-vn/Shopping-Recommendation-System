@@ -66,7 +66,8 @@ public class ProductGridController {
 
     @FXML
     private void expandProducts() {
-        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() : instance.currentCellCount + PRODUCT_PER_PAGE;
+        int end = products.size()< instance.currentCellCount + PRODUCT_PER_PAGE ? products.size() 
+                : instance.currentCellCount + PRODUCT_PER_PAGE;
         addProductCard(products.subList(instance.currentCellCount, end));
     }
 

@@ -55,7 +55,7 @@ public class SearchController {
             System.out.println("Searching for: " + searchText + FilterBarController.getFilterData().toString());
             //Test
             List<Product> products = new LinkedList<>();
-            for(int i = 0; i< 10; i++){
+            for(int i = 0; i< 50; i++){
                 products.add(Laptop.buildTestLaptop());
             }
             ProductGridController.clear();

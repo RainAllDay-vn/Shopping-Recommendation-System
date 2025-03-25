@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,6 +52,8 @@ public abstract class Crawler {
      */
     public abstract void crawlLaptops(int limit);
 
+    abstract Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow);
+
     /**
      * Retrieves a list of Laptop objects from the saved data files.
      * <p>
@@ -58,7 +62,33 @@ public abstract class Crawler {
      *
      * @return A List of Laptop objects representing the crawled laptop data.
      */
-    public abstract List<Laptop> getLaptops();
+    public List<Laptop> getLaptops() {
+        List<Laptop> laptops = new LinkedList<>();
+        try (CSVReader laptopReader = getCSVReader("laptop.csv");
+             CSVReader descriptionReader = getCSVReader("description.csv");
+             CSVReader propertiesReader = getCSVReader("properties.csv")) {
+            Iterator<String[]> laptopRowIterator = laptopReader.iterator();
+            Iterator<String[]> descriptionRowIterator = descriptionReader.iterator();
+            Iterator<String[]> propertiesRowIterator = propertiesReader.iterator();
+            laptopRowIterator.next();
+            descriptionRowIterator.next();
+            propertiesRowIterator.next();
+            while (laptopRowIterator.hasNext()) {
+                String[] laptopRow = laptopRowIterator.next();
+                String[] descriptionRow = descriptionRowIterator.next();
+                String[] propertiesRow = propertiesRowIterator.next();
+                try {
+                    laptops.add(parseLaptop(laptopRow, descriptionRow, propertiesRow));
+                } catch (Exception e){
+                    System.err.println("There was an error when parsing laptop");
+                    System.err.println(e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("There was an error when accessing saving file");
+        }
+        return laptops;
+    }
 
     /**
      * Creates an ICSVWriter for a given filename with the append option set to false.

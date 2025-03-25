@@ -316,7 +316,7 @@ public class CellphoneSCrawler extends Crawler {
      * @return A Laptop object.
      */
 
-    private Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
         return new Laptop.LaptopBuilder()
                 .setName(laptopRow[1])  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
@@ -333,39 +333,5 @@ public class CellphoneSCrawler extends Crawler {
                 .setBattery(parseBattery(propertiesRow))
                 .setLaptopCase(parseLaptopCase(propertiesRow))
                 .build();
-    }
-
-    /**
-     * Retrieves a list of Laptop objects from the CSV files.
-     *
-     * @return A list of Laptop objects.
-     */
-    @Override
-    public List<Laptop> getLaptops() {
-        List<Laptop> laptops = new LinkedList<>();
-        try (CSVReader laptopReader = getCSVReader("laptop.csv");
-        CSVReader descriptionReader = getCSVReader("description.csv");
-        CSVReader propertiesReader = getCSVReader("properties.csv")) {
-            Iterator<String[]> laptopRowIterator = laptopReader.iterator();
-            Iterator<String[]> descriptionRowIterator = descriptionReader.iterator();
-            Iterator<String[]> propertiesRowIterator = propertiesReader.iterator();
-            laptopRowIterator.next();
-            descriptionRowIterator.next();
-            propertiesRowIterator.next();
-            while (laptopRowIterator.hasNext()) {
-                String[] laptopRow = laptopRowIterator.next();
-                String[] descriptionRow = descriptionRowIterator.next();
-                String[] propertiesRow = propertiesRowIterator.next();
-                try {
-                    laptops.add(parseLaptop(laptopRow, descriptionRow, propertiesRow));
-                } catch (Exception e){
-                    System.err.println("There was an error when parsing laptop");
-                    System.err.println(e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("There was an error when accessing saving file");
-        }
-        return laptops;
     }
 }

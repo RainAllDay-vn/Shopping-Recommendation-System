@@ -1,9 +1,9 @@
 package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,6 +12,7 @@ import org.jsoup.nodes.Node;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * FPTShopCrawler class is responsible for crawling laptop data from FPTShop website.
@@ -50,14 +51,6 @@ public class FPTShopCrawler extends Crawler{
     public void crawlLaptops(int limit) {
         resetSave();
         crawlAllLaptops(limit);
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public List<Laptop> getLaptops() {
-        return List.of();
     }
 
     /**
@@ -162,7 +155,7 @@ public class FPTShopCrawler extends Crawler{
         String[] laptopRow = new String[laptopColumn.length];
         laptopRow[0] = String.valueOf(jsonNode.get("code").toString());
         for (int i = 1; i < laptopColumn.length; i++) {
-            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]));
+            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]).asText());
         }
         return laptopRow;
     }
@@ -181,7 +174,7 @@ public class FPTShopCrawler extends Crawler{
         try {
             descriptionContainer = productPage.getElementsByClass("description-container").getFirst();
         } catch (NoSuchElementException e) {
-            descriptionRow[0] = "";
+            descriptionRow[1] = "";
             return descriptionRow;
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -210,6 +203,121 @@ public class FPTShopCrawler extends Crawler{
             propertiesRow[i] = String.valueOf(properties.get(i-1).get("attributes"));
         }
         return propertiesRow;
+    }
+
+    private String parseJson(String json, String[] path) {
+        try {
+            List<JsonNode> nodes = List.of(mapper.readTree(json));
+            for (int i = 0; i < path.length; i++) {
+                String field = path[i];
+                if (field.matches("\\d+")) {
+                    nodes = nodes.stream()
+                            .map(node -> node.get(Integer.parseInt(field)))
+                            .toList();
+                } else if (field.equals("slice")) {
+                    List<JsonNode> temp = new ArrayList<>();
+                    for (JsonNode node : nodes) {
+                        node.forEach(temp::add);
+                    }
+                    nodes = temp;
+                } else {
+                    nodes = nodes.stream()
+                            .map(node -> node.get(field))
+                            .toList();
+                }
+            }
+            return nodes.stream()
+                    .map(JsonNode::asText)
+                    .collect(Collectors.joining(", "));
+        } catch (Exception e) {
+            System.out.println("[INFO] : " + "Parsing has failed (%s)".formatted(Arrays.toString(path)));
+            return null;
+        }
+    }
+
+    private CPU parseCPU(String[] propertiesRow) {
+        return new CPU.CPUBuilder()
+                .setName("%s %s %s".formatted(
+                        parseJson(propertiesRow[1],new String[]{"0", "value"}),
+                        parseJson(propertiesRow[1],new String[]{"1", "value"}),
+                        parseJson(propertiesRow[1],new String[]{"2", "value"})))
+                .setBaseFrequency(parseJson(propertiesRow[1],new String[]{"3", "value", "displayValue"}))
+                .setTurboFrequency(parseJson(propertiesRow[1],new String[]{"4", "value", "displayValue"}))
+                .setCores(parseJson(propertiesRow[1],new String[]{"5", "value"}))
+                .setThreads(parseJson(propertiesRow[1],new String[]{"6", "value"}))
+                .setCache(parseJson(propertiesRow[1],new String[]{"7", "value"}))
+                .build();
+    }
+
+    private RAM parseRAM(String[] propertiesRow) {
+        return new RAM.RAMBuilder()
+                .setSize(parseJson(propertiesRow[3],new String[]{"0", "value"}))
+                .setClock(parseJson(propertiesRow[3],new String[]{"2", "value", "displayValue"}))
+                .setType(parseJson(propertiesRow[3],new String[]{"1", "value"}))
+                .setSlots(parseJson(propertiesRow[3],new String[]{"5", "value"}))
+                .setMaxSize(parseJson(propertiesRow[3],new String[]{"6", "value"}))
+                .build();
+    }
+
+    private Storage parseStorage(String[] propertiesRow) {
+        String size = parseJson(propertiesRow[4],new String[]{"6", "value", "displayValue"});
+        if (size == null) {
+            size = parseJson(propertiesRow[4],new String[]{"9", "value", "displayValue"});
+        }
+        String bus = parseJson(propertiesRow[4],new String[]{"5", "value"});
+        if (bus == null) {
+            bus = parseJson(propertiesRow[4],new String[]{"8", "value"});
+        }
+        return new Storage.StorageBuilder()
+                .setSize(size)
+                .setBus(bus)
+                .setStorageType(parseJson(propertiesRow[4],new String[]{"0", "value"}))
+                .setUpgradable(parseJson(propertiesRow[4],new String[]{"4", "value"}))
+                .setSlots(parseJson(propertiesRow[4],new String[]{"2", "value"}))
+                .build();
+    }
+
+    private Connectivity parseConnectivity(String[] propertiesRow) {
+        return new Connectivity.ConnectivityBuilder()
+                .setPorts(parseJson(propertiesRow[6],new String[]{"0", "value", "slice"}))
+                .setWifi(parseJson(propertiesRow[6],new String[]{"1", "value", "slice"}))
+                .setBluetooth(parseJson(propertiesRow[6],new String[]{"2", "value", "slice"}))
+                .setWebCam(parseJson(propertiesRow[6],new String[]{"3", "value", "slice"}))
+                .build();
+    }
+
+    private Battery parseBattery(String[] propertiesRow) {
+        return new Battery.BatteryBuilder()
+                .setCapacity(parseJson(propertiesRow[12], new String[]{"1", "value", "slice", "displayValue"}))
+                .setChargePower(parseJson(propertiesRow[12],new String[]{"2", "value", "slice", "displayValue"}))
+                .build();
+    }
+
+    private LaptopCase parseLaptopCase(String[] propertiesRow) {
+        return new LaptopCase.LaptopCaseBuilder()
+                .setWeight(parseJson(propertiesRow[15],new String[]{"1", "value", "slice", "displayValue"}))
+                .setDimensions(parseJson(propertiesRow[15],new String[]{"0", "value"}))
+                .setMaterial(parseJson(propertiesRow[15],new String[]{"4", "value", "slice"}))
+                .build();
+    }
+
+    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        return new Laptop.LaptopBuilder()
+                .setName(laptopRow[3])  // Column 'displayName'
+                .setProductImage(parseJson(laptopRow[14], new String[]{"src"}))  // Column 'image'
+                .setPrice(Integer.parseInt(laptopRow[15]))  // Column 'originalPrice'
+                .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column 'currentPrice'
+                .setSourceURL("https://fptshop.com.vn/" + laptopRow[6])  // Column 'slug'
+                .setBrand(parseJson(laptopRow[9], new String[]{"name"}))  // Column 'brand'
+                .setColor(parseJson(propertiesRow[16], new String[]{"6", "value", "0"}))
+                .setDescription(descriptionRow[1])
+                .setCpu(parseCPU(propertiesRow))
+                .setRam(parseRAM(propertiesRow))
+                .setStorage(parseStorage(propertiesRow))
+                .setConnectivity(parseConnectivity(propertiesRow))
+                .setBattery(parseBattery(propertiesRow))
+                .setLaptopCase(parseLaptopCase(propertiesRow))
+                .build();
     }
 }
 

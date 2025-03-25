@@ -95,11 +95,13 @@ public class CellphoneSCrawler extends Crawler {
                     break;
                 }
             } catch (Exception e) {
-                System.err.println("An error occurred while crawling ...");
-                System.err.println(e.getMessage());
+                System.err.println("[ERROR] : An error occurred while crawling new laptops");
+                System.out.println(e.getMessage());
                 break;
             }
             for (JsonNode product : products) {
+                String productId = product.path("general").get("product_id").asText();
+                System.out.println("[INFO] : Extracting information for laptop #" + productId);
                 String[] laptopRow;
                 String[] descriptionRow;
                 String[] propertiesRow;
@@ -108,7 +110,8 @@ public class CellphoneSCrawler extends Crawler {
                     descriptionRow = extractDescription(product);
                     propertiesRow = extractProperties(product);
                 } catch (Exception e) {
-                    System.err.println("An error occurred while extracting information");
+                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+                    System.out.println(e.getMessage());
                     continue;
                 }
                 saveLaptopRow(laptopRow);
@@ -192,7 +195,6 @@ public class CellphoneSCrawler extends Crawler {
      */
     private String[] extractDescription (JsonNode product) {
         String productId = product.path("general").get("product_id").asText();
-        System.out.println("Extracting description for " + productId);
         String[] descriptionRow = new String[2];
         descriptionRow[0] = productId;
         String productURL = product.path("general").get("url_path").asText();

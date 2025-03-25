@@ -1,21 +1,35 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
+import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
+
+import java.util.*;
 
 public class ProductDatabase {
+    private final List<Crawler> crawlers;
     private final List<Laptop> laptops;
 
     public ProductDatabase() {
+        crawlers = new ArrayList<>();
+        crawlers.add(new CellphoneSCrawler());
+        crawlers.add(new FPTShopCrawler());
+        crawlers.add(new TGDDCrawler());
         laptops = new ArrayList<>();
+        crawlers.stream()
+                .map(Crawler::getLaptops)
+                .flatMap(Collection::stream)
+                .forEach(laptops::add);
     }
 
-    public void loadTestLaptop() {
-        for (int i = 0; i < 10; i++) {
-            laptops.add(Laptop.buildTestLaptop());
-        }
+    public void crawl (int limit) {
+        laptops.clear();
+        crawlers.forEach(crawler -> crawler.crawlLaptops(limit));
+        crawlers.stream()
+                .map(Crawler::getLaptops)
+                .flatMap(Collection::stream)
+                .forEach(laptops::add);
     }
 
     public List<Laptop> findAllLaptops() {
@@ -24,8 +38,7 @@ public class ProductDatabase {
 
     public Optional<Laptop> findLaptopById(int id) {
         for (Laptop laptop : laptops) {
-            LinkedHashMap<String, String> overview = laptop.getOverview();
-            if (overview.getOrDefault("id", "").equals(String.valueOf(id))) {
+            if (laptop.getId() == id) {
                 return Optional.of(laptop);
             }
         }

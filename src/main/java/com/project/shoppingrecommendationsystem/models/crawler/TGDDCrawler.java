@@ -87,7 +87,7 @@ public class TGDDCrawler extends Crawler {
         while ((currentPage-1)*20 <= total && processed < limit) {
             JsonNode jsonNode = fetchHomepageAPI(currentPage++);
             if (jsonNode == null) {
-                System.err.println("Fetching error");
+                System.err.println("[ERROR] : An error occurred while crawling new laptops");
                 break;
             }
             total = jsonNode.get("total").asInt();
@@ -100,8 +100,8 @@ public class TGDDCrawler extends Crawler {
                     saveDescriptionRow(extractDescription(laptopRow[1], body));
                     savePropertiesRow(extractProperties(laptopRow[1], body));
                 } catch (Exception e) {
-                    System.err.println("Crawl an item failed");
-                    System.out.println(product);
+                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+                    System.out.println(e.getMessage());
                 }
                 if (++processed == limit) {
                     break;
@@ -201,8 +201,7 @@ public class TGDDCrawler extends Crawler {
         String response = (String) ((JavascriptExecutor) driver).executeScript(script);
         try {
             return mapper.readTree(response);
-        } catch (JsonProcessingException e) {
-            System.err.println(e.getMessage());
+        } catch (JsonProcessingException ignored) {
             return null;
         }
     }

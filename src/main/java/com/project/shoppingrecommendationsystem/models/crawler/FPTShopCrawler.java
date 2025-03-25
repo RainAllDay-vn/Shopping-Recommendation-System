@@ -69,6 +69,7 @@ public class FPTShopCrawler extends Crawler{
                 count+=50;
                 max = jsonNode.get("totalCount").asInt();
             } catch (Exception e) {
+                System.err.println("[ERROR] : An error occurred while crawling new laptops");
                 System.out.println(e.getMessage());
                 break;
             }
@@ -83,7 +84,8 @@ public class FPTShopCrawler extends Crawler{
                         return;
                     }
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+                    System.out.println(e.getMessage());
                 }
             }
         }

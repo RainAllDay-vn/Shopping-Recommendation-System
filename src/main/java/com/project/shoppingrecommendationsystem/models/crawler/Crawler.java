@@ -80,12 +80,13 @@ public abstract class Crawler {
                 try {
                     laptops.add(parseLaptop(laptopRow, descriptionRow, propertiesRow));
                 } catch (Exception e){
-                    System.err.println("There was an error when parsing laptop");
-                    System.err.println(e.getMessage());
+                    System.err.println("[ERROR] : An error occurred while trying to parse laptop #" + descriptionRow[1]);
+                    System.out.println(e.getMessage());
                 }
             }
         } catch (Exception e) {
-            System.err.println("There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when accessing saving file");
+            System.out.println(e.getMessage());
         }
         return laptops;
     }
@@ -139,7 +140,7 @@ public abstract class Crawler {
             descriptionWriter.writeNext(descriptionColumn);
             propertiesWriter.writeNext(propertiesColumn);
         } catch (Exception e){
-            System.out.println("There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
@@ -153,7 +154,7 @@ public abstract class Crawler {
         try (ICSVWriter csvWriter = getCSVWriter("laptop.csv", true)) {
             csvWriter.writeNext(laptopRow);
         } catch (Exception e) {
-            System.out.println("There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
@@ -167,7 +168,7 @@ public abstract class Crawler {
         try (ICSVWriter csvWriter = getCSVWriter("description.csv", true)) {
             csvWriter.writeNext(descriptionRow);
         } catch (Exception e) {
-            System.out.println("There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }
@@ -181,7 +182,7 @@ public abstract class Crawler {
         try (ICSVWriter csvWriter = getCSVWriter("properties.csv", true)) {
             csvWriter.writeNext(propertiesRow);
         } catch (Exception e) {
-            System.out.println("There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
     }

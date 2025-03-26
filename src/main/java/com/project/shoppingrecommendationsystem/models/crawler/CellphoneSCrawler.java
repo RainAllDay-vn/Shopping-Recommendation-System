@@ -1,7 +1,6 @@
 package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.opencsv.*;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
@@ -132,7 +131,6 @@ public class CellphoneSCrawler extends Crawler {
      * @return The JSON response from the API as a String.
      */
     private String fetchHomepageAPI (int pageIndex) {
-        resetSave();
         String requestBody = "{" +
                 "  \"query\": \"query " +
                 "GetProductsByCateId { products( filter: { static: { categories: [\\\"380\\\"], " +

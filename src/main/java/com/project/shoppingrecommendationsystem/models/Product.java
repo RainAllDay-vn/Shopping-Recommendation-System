@@ -1,104 +1,81 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import java.util.LinkedHashMap;
+import com.opencsv.bean.CsvBindByName;
 
 public abstract class Product {
+    private static int counter = 0;
+    @CsvBindByName
+    final int id;
+    @CsvBindByName
+    final String name;
+    @CsvBindByName
+    final String productImage;
+    @CsvBindByName
+    final int price;
+    @CsvBindByName
+    final int discountPrice;
+    @CsvBindByName
+    final String source;
+    @CsvBindByName
+    final String sourceURL;
 
-    private final int id;
-    private final String name;
-    private final String description;
-    private final String productImage;
-    private final int price;
-    private final String sourceURL;
-    private final LinkedHashMap<String, String> hardware;
+    @CsvBindByName
+    final String brand;
+    @CsvBindByName
+    final String color;
+    @CsvBindByName
+    final String description;
 
-    public Product(int id, String name, String description, String productImage, int price, String sourceURL) {
-        this.id = id;
+    Product(String name, String productImage, int price, int discountPrice, String source, String sourceURL, String brand, String color, String description) {
+        this.id = ++counter;
         this.name = name;
-        this.description = description;
         this.productImage = productImage;
         this.price = price;
+        this.discountPrice = discountPrice;
+        this.source = source;
         this.sourceURL = sourceURL;
-        this.hardware = new LinkedHashMap<>();
+        this.brand = brand;
+        this.color = color;
+        this.description = description;
     }
 
-    public void updateHardware(String key, String value) {
-        hardware.put(key, value);
+    public int getId() {
+        return id;
     }
 
-    public LinkedHashMap<String, String> getOverview() {
-        LinkedHashMap<String, String> overview = new LinkedHashMap<>();
-        overview.put("id", String.valueOf(id));
-        overview.put("name", name);
-        overview.put("description", description);
-        overview.put("productImage", productImage);
-        overview.put("price", String.valueOf(price));
-        overview.put("sourceURL", String.valueOf(sourceURL));
-        return overview;
+    public String getName() {
+        return name;
     }
 
-    public LinkedHashMap<String, String> getHardware() {
-        return new LinkedHashMap<>(hardware);
+    public String getProductImage() {
+        return productImage;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public String getSourceURL() {
+        return sourceURL;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getColor() {
+        return color;
     }
 
     public String getDescription() {
         return description;
-    }
-
-    /**
-     * Evaluates whether the given query conditions match the object's attributes.
-     *
-     * @param query A 2D String array where each sub-array represents a constraint.
-     *              - The first element of each constraint is the attribute name.
-     *              - The second element is the operator (e.g., "in", "between").
-     *              - The remaining elements are values used for comparison.
-     * @return {@code true} if all constraints match the object's attributes, {@code false} otherwise.
-     */
-    public boolean match (String[][] query) {
-        try {
-            for (String[] constraint : query) {
-                constraint[0] = switch (constraint[0]) {
-                    case "name" -> name;
-                    case "price" -> String.valueOf(price);
-                    default -> hardware.getOrDefault(constraint[0], "");
-                };
-                if (constraint[0].isEmpty() || !matchField(constraint)) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Evaluates whether a single constraint matches the given field value.
-     *
-     * @param constraint A String array where:
-     *                   - constraint[0] is the field value.
-     *                   - constraint[1] is the operator ("in" or "between").
-     *                   - Remaining elements are values for comparison.
-     * @return {@code true} if the constraint is satisfied, {@code false} otherwise.
-     */
-    private boolean matchField (String[] constraint) {
-        try {
-            switch (constraint[1]) {
-                case "in":
-                    for (int i = 2; i < constraint.length; i++) {
-                        if (constraint[i].equals(constraint[0])) return true;
-                    }
-                    return false;
-                case "between":
-                    int number = Integer.parseInt(constraint[0]);
-                    int lower = Integer.parseInt(constraint[2]);
-                    int upper = Integer.parseInt(constraint[3]);
-                    return lower <= number && number <= upper;
-                default:
-                    return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

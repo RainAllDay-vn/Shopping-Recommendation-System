@@ -3,6 +3,8 @@ package com.project.shoppingrecommendationsystem.models;
 import com.opencsv.bean.CsvRecurse;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
+import java.util.Arrays;
+
 public class Laptop extends Product {
     @CsvRecurse
     private final CPU cpu;
@@ -84,13 +86,16 @@ public class Laptop extends Product {
     public boolean match(String[][] query) {
         try {
             for (String[] field : query) {
-                field[0] = switch (field[0]) {
+                String[] copy = Arrays.copyOf(field, field.length);
+                copy[0] = switch (copy[0]) {
                     case "name" -> name;
                     case "brand" -> brand;
                     case "price" -> String.valueOf(discountPrice);
+                    case "description" -> description;
                     default -> "false";
                 };
-                if (field[0].equals("false") || !matchField(field)) {
+                System.out.println(Arrays.toString(copy));
+                if (copy[0].equals("false") || !matchField(copy)) {
                     return false;
                 }
             }
@@ -104,7 +109,7 @@ public class Laptop extends Product {
     private boolean matchField (String[] fields) {
         try {
             return switch (fields[1].toLowerCase()) {
-                case "contain" -> fields[2].toLowerCase().contains(fields[0].toLowerCase());
+                case "contain" -> fields[0].toLowerCase().contains(fields[2].toLowerCase());
                 case "in" -> {
                     for (int i=2; i<fields.length; i++) {
                         if (fields[i].equalsIgnoreCase(fields[0])) {

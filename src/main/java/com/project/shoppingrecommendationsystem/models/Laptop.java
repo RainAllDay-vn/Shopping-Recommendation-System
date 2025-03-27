@@ -95,7 +95,6 @@ public class Laptop extends Product {
                     case "description" -> description;
                     default -> "false";
                 };
-                System.out.println(Arrays.toString(copy));
                 if (copy[0].equals("false") || !matchField(copy)) {
                     return false;
                 }

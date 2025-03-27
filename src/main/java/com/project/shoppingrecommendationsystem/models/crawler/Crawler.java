@@ -27,7 +27,7 @@ public abstract class Crawler {
         this.resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
                 .replace("%20", " ") + folder;
-        File resourceDir = new File(this.resourceURL);
+        File resourceDir = new File(this.resourceURL + "images/");
         if (!resourceDir.exists()) {
             if (!resourceDir.mkdirs()) {
                 throw new RuntimeException("Unable to create directory " + this.resourceURL);

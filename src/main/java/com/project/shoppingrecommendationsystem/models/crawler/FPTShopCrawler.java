@@ -9,8 +9,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.*;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -22,6 +32,7 @@ import java.util.stream.Collectors;
  */
 public class FPTShopCrawler extends Crawler{
     private final Pattern compiledPattern = Pattern.compile("attributeItem");
+    private static final int MAX_THREADS = 10;
 
     /**
      * Constructs a FPTShopCrawler object.
@@ -59,6 +70,7 @@ public class FPTShopCrawler extends Crawler{
      * @param limit The maximum number of laptops to crawl.
      */
     private void crawlAllLaptops (int limit) {
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         int processed = 0;
         int count = 0;
         int max = 1;
@@ -74,21 +86,14 @@ public class FPTShopCrawler extends Crawler{
                 break;
             }
             for (JsonNode item : jsonNode.get("items")) {
-                try {
-                    Document productPage = Jsoup.connect("https://fptshop.com.vn/" + item.get("slug").asText()).get();
-                    String code = item.get("code").asText();
-                    saveLaptopRow(extractLaptopRow(item));
-                    saveDescriptionRow(extractDescriptionRow(code, productPage));
-                    savePropertiesRow(extractPropertiesRow(code, productPage));
-                    if (++processed == limit) {
-                        return;
-                    }
-                } catch (Exception e) {
-                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
-                    System.out.println(e.getMessage());
+                executor.submit(() -> this.extractAndSaveLaptop(item));
+                if (++processed == limit) {
+                    executor.shutdown();
+                    return;
                 }
             }
         }
+        executor.shutdown();
     }
 
     /**
@@ -114,6 +119,51 @@ public class FPTShopCrawler extends Crawler{
                 .ignoreContentType(true)
                 .post();
         return mapper.readTree(response.body().text());
+    }
+
+    private void extractAndSaveLaptop (JsonNode item) {
+        System.out.println("[INFO] : Extracting " + item.get("code").asText());
+        try {
+            Document productPage = Jsoup.connect("https://fptshop.com.vn/" + item.get("slug").asText()).get();
+            String code = item.get("code").asText();
+            String[] laptopRow = extractLaptopRow(item);
+            String[] descriptionRow = extractDescriptionRow(code, productPage);
+            String[] propertiesRow = extractPropertiesRow(code, productPage);
+            downloadImage(laptopRow);
+            save(laptopRow, descriptionRow, propertiesRow);
+        } catch (Exception e) {
+            System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        saveLaptopRow(laptopRow);
+        saveDescriptionRow(descriptionRow);
+        savePropertiesRow(propertiesRow);
+    }
+
+    private void downloadImage (String[] laptopRow) {
+        String imageUrl = parseJson(laptopRow[14], new String[]{"src"});
+        if (imageUrl == null) {
+            laptopRow[14] = "";
+            return;
+        }
+        imageUrl = imageUrl.replace(" ", "%20");
+        String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
+        String outputPath = resourceURL + "images/" + laptopRow[0] + "." + extension;
+        try (ReadableByteChannel in = Channels.newChannel(new URI(imageUrl).toURL().openStream());
+             FileOutputStream out = new FileOutputStream(outputPath)) {
+
+            FileChannel channel = out.getChannel();
+            channel.transferFrom(in, 0, Long.MAX_VALUE);
+        } catch (Exception e) {
+            System.err.println("[ERROR] : An error occurred while downloading image");
+            System.out.println(e.getMessage());
+            laptopRow[14] = "";
+            return;
+        }
+        laptopRow[14] = outputPath;
     }
 
     /**
@@ -155,9 +205,16 @@ public class FPTShopCrawler extends Crawler{
      */
     private String[] extractLaptopRow(JsonNode jsonNode) {
         String[] laptopRow = new String[laptopColumn.length];
-        laptopRow[0] = String.valueOf(jsonNode.get("code").toString());
+        laptopRow[0] = jsonNode.get("code").asText();
         for (int i = 1; i < laptopColumn.length; i++) {
-            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]));
+            JsonNode node = jsonNode.get(laptopColumn[i]);
+            if (node == null) {
+                laptopRow[i] = "";
+            } else if (node.isObject()) {
+                laptopRow[i] = String.valueOf(node);
+            } else {
+                laptopRow[i] = node.asText();
+            }
         }
         return laptopRow;
     }
@@ -219,8 +276,7 @@ public class FPTShopCrawler extends Crawler{
     private String parseJson(String json, String[] path) {
         try {
             List<JsonNode> nodes = List.of(mapper.readTree(json));
-            for (int i = 0; i < path.length; i++) {
-                String field = path[i];
+            for (String field : path) {
                 if (field.matches("\\d+")) {
                     nodes = nodes.stream()
                             .map(node -> node.get(Integer.parseInt(field)))
@@ -387,7 +443,7 @@ public class FPTShopCrawler extends Crawler{
     Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
         return new Laptop.LaptopBuilder()
                 .setName(laptopRow[3])  // Column 'displayName'
-                .setProductImage(parseJson(laptopRow[14], new String[]{"src"}))  // Column 'image'
+                .setProductImage(laptopRow[14])  // Column 'image'
                 .setPrice(Integer.parseInt(laptopRow[15]))  // Column 'originalPrice'
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column 'currentPrice'
                 .setSource("FPTShop")

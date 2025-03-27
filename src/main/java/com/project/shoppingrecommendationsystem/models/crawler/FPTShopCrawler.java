@@ -157,7 +157,7 @@ public class FPTShopCrawler extends Crawler{
         String[] laptopRow = new String[laptopColumn.length];
         laptopRow[0] = String.valueOf(jsonNode.get("code").toString());
         for (int i = 1; i < laptopColumn.length; i++) {
-            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]).asText());
+            laptopRow[i] = String.valueOf(jsonNode.get(laptopColumn[i]));
         }
         return laptopRow;
     }

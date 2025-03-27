@@ -31,7 +31,12 @@ public class ProductCardController {
           URL defaultImage = ShoppingApplication.class.getResource("product-default.png");
           if (product.getProductImage() != null) {
                System.out.println(product.getProductImage());
-               productImage.setImage(new Image(product.getProductImage()));
+               Image image = new Image(product.getProductImage());
+               if (image.isError() && defaultImage != null) {
+                    productImage.setImage(new Image(defaultImage.toString()));
+               } else {
+                    productImage.setImage(image);
+               }
           } else if (defaultImage != null) {
                productImage.setImage(new Image(defaultImage.toString()));
           }

@@ -15,6 +15,7 @@ public class ShoppingApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         productDatabase = ProductDatabase.getInstance();
+        productDatabase.crawl(4);
 
         stage.setTitle("Shopping Recommendation System");
         stage.setFullScreen(false);

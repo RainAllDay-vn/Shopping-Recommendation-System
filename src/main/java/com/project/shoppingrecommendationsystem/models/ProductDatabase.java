@@ -60,6 +60,12 @@ public class ProductDatabase {
                 .forEach(laptops::add);
     }
 
+    public void crawl (Crawler crawler) {
+        laptops.clear();
+        crawler.crawlLaptops();
+        laptops.addAll(crawler.getLaptops());
+    }
+
     public void saveLaptops () {
         try (Writer writer = new FileWriter(resourceURL + "laptops.csv")){
             StatefulBeanToCsv<Laptop> beanToCsv = new StatefulBeanToCsvBuilder<Laptop>(writer).build();

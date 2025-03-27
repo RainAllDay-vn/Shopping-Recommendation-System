@@ -334,13 +334,13 @@ public class CellphoneSCrawler extends Crawler {
 
     Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
         return new Laptop.LaptopBuilder()
-                .setName(laptopRow[1])  // Column "name"
+                .setName(laptopRow[1].replace("\"", ""))  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
                 .setSource("CellphoneS")
                 .setSourceURL("https://cellphones.com.vn/" + laptopRow[6])  // Column "url_path"
                 .setPrice(Integer.parseInt(laptopRow[14]))  // Column "price"
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column "special_price"
-                .setProductImage("https://cellphones.com.vn/media/catalog/product" + laptopRow[18])  // Column "thumbnail"
+                .setProductImage("https://cellphones.com.vn/media/catalog/product" + laptopRow[18].replace("\"", ""))  // Column "thumbnail"
                 .setColor(propertiesRow[131])  // Column "color"
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))

@@ -1,10 +1,6 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
-import com.project.shoppingrecommendationsystem.models.Laptop;
-import com.project.shoppingrecommendationsystem.models.ProductDatabase;
 import com.project.shoppingrecommendationsystem.views.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 

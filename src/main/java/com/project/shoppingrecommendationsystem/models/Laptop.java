@@ -4,6 +4,7 @@ import com.opencsv.bean.CsvRecurse;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Laptop extends Product {
     @CsvRecurse
@@ -83,7 +84,7 @@ public class Laptop extends Product {
                 '}';
     }
 
-    public boolean match(String[][] query) {
+    public boolean match(List<String[]> query) {
         try {
             for (String[] field : query) {
                 String[] copy = Arrays.copyOf(field, field.length);

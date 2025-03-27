@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 
 <ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
     <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
         <!-- Title -->
@@ -23,18 +23,16 @@
                 <Font size="16.0" />
             </font>
         </Label>
-      <VBox fx:id="vendorOptions" spacing="5">
-         <children>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung" />
-         </children>
-      </VBox>
+        <VBox fx:id="vendorOptions" spacing="5">
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung"/>
+        </VBox>
 
         <!-- Price Filter -->
         <Label styleClass="content_price" stylesheets="@../styling.css" text="Mức giá">

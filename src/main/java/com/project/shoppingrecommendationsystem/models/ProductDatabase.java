@@ -84,13 +84,6 @@ public class ProductDatabase {
         return laptops;
     }
 
-    public List<Laptop> findAllLaptops(int limit, int offset) {
-        return laptops.stream()
-                .skip(offset)
-                .limit(limit)
-                .toList();
-    }
-
     public Optional<Laptop> findLaptopById(int id) {
         for (Laptop laptop : laptops) {
             if (laptop.getId() == id) {
@@ -100,9 +93,11 @@ public class ProductDatabase {
         return Optional.empty();
     }
 
-    public List<Laptop> findLaptop (String[][] query) {
+    public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
         return laptops.stream()
                 .filter(laptop -> laptop.match(query))
+                .skip(offset)
+                .limit(limit)
                 .toList();
     }
 }

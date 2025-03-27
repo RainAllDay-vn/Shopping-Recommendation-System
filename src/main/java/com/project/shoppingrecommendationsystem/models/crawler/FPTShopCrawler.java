@@ -9,15 +9,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -172,9 +169,8 @@ public class FPTShopCrawler extends Crawler{
      * @param productPage The product page Document.
      * @return The JSON representation of the product properties as a JsonNode.
      * @throws IOException If an I/O error occurs.
-     * @throws CsvValidationException If a CSV validation error occurs.
      */
-    private JsonNode extractScript (Document productPage) throws IOException, CsvValidationException {
+    private JsonNode extractScript (Document productPage) throws IOException {
         String script = productPage.getElementsByTag("script")
                 .stream()
                 .map(Node::toString)

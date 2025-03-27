@@ -3,19 +3,15 @@ package com.project.shoppingrecommendationsystem.controllers;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Product;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 
-import java.io.InputStream;
+import java.io.File;
 import java.net.URL;
-import java.util.Objects;
-import java.util.Optional;
 
 public class ProductCardController {
-
+     private static final Image defaultImage = loadDefaultImage();
      @FXML
      private ImageView productImage;
      @FXML
@@ -24,24 +20,29 @@ public class ProductCardController {
      private Label productPrice;
      @FXML
      private Label productDiscount;
-     private Product product;
 
-     public void setProduct(Product product) {
-          this.product = product;
-          URL defaultImage = ShoppingApplication.class.getResource("product-default.png");
-          if (product.getProductImage() != null) {
-               System.out.println(product.getProductImage());
-               Image image = new Image(product.getProductImage());
-               if (image.isError() && defaultImage != null) {
-                    productImage.setImage(new Image(defaultImage.toString()));
-               } else {
-                    productImage.setImage(image);
-               }
-          } else if (defaultImage != null) {
-               productImage.setImage(new Image(defaultImage.toString()));
+    public void setProduct(Product product) {
+        try {
+            File imageFile = new File(product.getProductImage());
+            Image image = new Image(imageFile.toURI().toString());
+            assert !image.isError();
+            productImage.setImage(image);
+        } catch (Exception e) {
+            System.err.printf("[ERROR] Loading product image failed (Path:%s)\n", product.getProductImage());
+            productImage.setImage(defaultImage);
+        }
+        productName.setText(product.getName());
+        productPrice.setText(String.valueOf(product.getPrice()));
+        productDiscount.setText(String.valueOf(product.getDiscountPrice()));
+     }
+
+     private static Image loadDefaultImage() {
+          URL imageURL = ShoppingApplication.class.getResource("product-default.png");
+          try {
+              assert imageURL != null;
+              return new Image(imageURL.toString());
+          } catch (Exception e) {
+               throw new RuntimeException("[FATAL] : Error loading default image");
           }
-          productName.setText(product.getName());
-          productPrice.setText(String.valueOf(product.getPrice()));
-          productDiscount.setText(String.valueOf(product.getDiscountPrice()));
      }
 }

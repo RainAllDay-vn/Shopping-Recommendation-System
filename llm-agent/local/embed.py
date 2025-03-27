@@ -20,7 +20,7 @@ User need to set up environment variable GOOGLE_APPLICATION_CREDENTIALS to the p
 """
 
 def populate_vector_db_secure(docs: list[Document],
-                                embedding_model_name: str = "textembedding-gecko-multilingual@001",
+                                embedding_model_name: str = "textembedding-gecko-multilingual@002",
                                 
                                 persist_path: str = r"F:\GitHub\RAG-with-metadata-filtering\vector-store\test_collection",
                                 collection_name: str = "test_collection") -> QdrantVectorStore:

@@ -2,7 +2,8 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.views.ProductPageController;
+import com.project.shoppingrecommendationsystem.views.ProgramLayout;
+import com.project.shoppingrecommendationsystem.views.ProgramPages;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -39,8 +40,9 @@ public class ProductCardController {
      @FXML
      public void goToProductPage() {
           if (this.product != null) {
-               NavigationController.push(ShoppingApplication.productPage);
-               ((ProductPageController)ShoppingApplication.productPage.getController()).setProduct(product);
+               ProgramLayout.push(ProgramPages.productPage);
+               ProductPageController controller =  (ProductPageController)ProgramPages.productPage.getController();
+               controller.setProduct(product);
           }
      }
 

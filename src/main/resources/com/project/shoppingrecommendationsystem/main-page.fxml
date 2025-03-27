@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.views.MainPageController">
-    <center>
-
-    </center>
-    <right>
-
-    </right>
-    <top>
-
-    </top>
-   <left>
-      <ScrollPane prefHeight="786.0" prefWidth="344.0" BorderPane.alignment="CENTER" />
-   </left>
-   <bottom>
-      <Label alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" text="####Footer " BorderPane.alignment="CENTER" />
-   </bottom>
-   <center>
-      <ScrollPane fx:id="productGrid" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
-      </ScrollPane>
-   </center>
-</BorderPane>
+<HBox prefHeight="704.0" prefWidth="685.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <ImageView fx:id="productImage" fitHeight="279.0" fitWidth="393.0" pickOnBounds="true" preserveRatio="true" />
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Spec" />
+                  <VBox fx:id="specBox" prefHeight="200.0" prefWidth="100.0" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+      <VBox prefHeight="704.0" prefWidth="418.0">
+         <children>
+            <Text fx:id="nameBox" strokeType="OUTSIDE" strokeWidth="0.0" text="Name" />
+            <Text fx:id="priceBox" strokeType="OUTSIDE" strokeWidth="0.0" text="Price" />
+            <Button mnemonicParsing="false" onAction="#onClickSeeWebsite" text="See website" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

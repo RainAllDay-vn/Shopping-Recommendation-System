@@ -4,7 +4,7 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import com.project.shoppingrecommendationsystem.HelloApplication;
+import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
@@ -17,12 +17,13 @@ import java.io.Writer;
 import java.util.*;
 
 public class ProductDatabase {
+    private static final ProductDatabase instance = new ProductDatabase();
     private final String resourceURL;
     private final List<Crawler> crawlers;
     private final List<Laptop> laptops;
 
-    public ProductDatabase() {
-        resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
+    private ProductDatabase() {
+        resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
                 .replace("%20", " ") + "data/database/";
         File resourceDir = new File(this.resourceURL);
@@ -40,6 +41,10 @@ public class ProductDatabase {
                 .map(Crawler::getLaptops)
                 .flatMap(Collection::stream)
                 .forEach(laptops::add);
+    }
+
+    public static ProductDatabase getInstance() {
+        return instance;
     }
 
     public void crawl() {
@@ -71,6 +76,13 @@ public class ProductDatabase {
 
     public List<Laptop> findAllLaptops() {
         return laptops;
+    }
+
+    public List<Laptop> findAllLaptops(int limit, int offset) {
+        return laptops.stream()
+                .skip(offset)
+                .limit(limit)
+                .toList();
     }
 
     public Optional<Laptop> findLaptopById(int id) {

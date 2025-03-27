@@ -1,0 +1,137 @@
+ /***********************  FILTER BAR    *****************************/
+
+/*==================Custom checkbox =================*/
+
+.custom_checkbox{
+    -fx-padding:0 0 0 20px;
+    -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
+}
+
+.custom_checkbox .text{
+    -fx-translate-x:80px;
+    -fx-font-size:14px;
+    -fx-transition: all 0.3s ease-in-out; /* Hiệu ứng mượt */
+}
+
+.custom_checkbox:hover .text {
+    -fx-text-fill:red;
+    -fx-font-size: 16px;  /* Khi di chuột vào, chữ to hơn */
+    -fx-font-weight:bold;
+}
+
+.custom_checkbox .box:hover {
+    -fx-background-color: white;  /* Màu nền */
+    -fx-border-color: gray;       /* Màu viền */
+    -fx-border-radius: 10px;       /* Bo góc hộp vuông */
+    -fx-background-radius: 10px;   /* Bo góc nền */
+    -fx-padding: 2px;
+}
+
+.custom_checkbox:selected .box {
+    -fx-border-color: #2c7dc6; /*Màu viền khi chọn*/
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.custom_checkbox:selected .box:hover{
+    -fx-background-color:  #D3D3D3; /*Màu nền khi giữ chuột trong ô*/
+}
+
+
+
+/* ==================Hãng sản xuất====================*/
+
+.content_manufacturer{
+    -fx-translate-x:112px;
+    -fx-font-weight: bold;
+    -fx-font-size:18px;
+}
+
+.button_1 {
+    -fx-pref-width: 124px;   /* Kích thước đồng nhất */
+    -fx-pref-height: 34px;
+    -fx-background-color: white; /* Màu xanh */
+    -fx-text-fill: black; /* Chữ màu trắng */
+    -fx-font-size: 14px;
+    -fx-border-radius: 10px;
+    -fx-margin:10px 0px;
+    -fx-border-color:black;
+    -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
+    -fx-transition: all 0.3s ease-in-out; /* Hiệu ứng mượt */
+}
+
+.button_1:hover {
+    -fx-background-color: #dcdcdc; /* Đổi màu khi di chuột vào */
+    -fx-font-size: 16px;  /* Khi di chuột vào, chữ to hơn */
+    -fx-font-weight:bold;
+}
+
+.button_1:pressed {
+    -fx-background-color: #dcdcdc;/* Đổi màu khi giữ chuột */
+}
+
+/*=================Mức giá=================*/
+
+.content_price{
+    -fx-translate-x:130px;
+    -fx-font-weight: bold;
+    -fx-font-size:18px;
+}
+
+
+/*=================Nhu cầu===================*/
+
+.content_demand{
+    -fx-translate-x:130px;
+    -fx-font-weight: bold;
+    -fx-font-size:18px;
+}
+
+/*==============Kích thước màn hình================*/
+
+.content_screen{
+    -fx-translate-x:80px;
+    -fx-font-weight: bold;
+    -fx-font-size:18px;
+}
+
+ /***********************  TOP BAR    *****************************/
+
+#topBar{
+    -fx-padding: 5px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+}
+
+#searchTextField{
+    -fx-background-color: white;
+    -fx-text-fill: #333;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+    -fx-border-radius:50%;
+    -fx-border-color: black;
+}
+#searchTextField:focused {
+    -fx-border-color: transparent;
+    -fx-background-color: white;
+}
+
+#searchTextField .text {
+    -fx-prompt-text-fill: #999; /* Màu chữ nhạt */
+}
+
+#searchButton{
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-padding: 8px;
+    -fx-border-radius:50%;
+    -fx-border-color: black;
+}
+
+#searchButton:hover {
+    -fx-background-color: gray;
+    -fx-cursor: hand; 
+}
+

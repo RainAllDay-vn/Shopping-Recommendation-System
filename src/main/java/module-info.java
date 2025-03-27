@@ -2,6 +2,8 @@ module com.project.shoppingrecommendationsystem {
     exports com.project.shoppingrecommendationsystem;
     exports com.project.shoppingrecommendationsystem.models;
     exports com.project.shoppingrecommendationsystem.models.components;
+    exports com.project.shoppingrecommendationsystem.views;
+    exports com.project.shoppingrecommendationsystem.controllers;
 
     requires com.fasterxml.jackson.databind;
     requires com.opencsv;
@@ -16,4 +18,5 @@ module com.project.shoppingrecommendationsystem {
     requires org.seleniumhq.selenium.firefox_driver;
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
+    opens com.project.shoppingrecommendationsystem.controllers to javafx.fxml;
 }

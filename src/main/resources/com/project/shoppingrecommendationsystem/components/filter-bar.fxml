@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
+
+        <!-- Title -->
+        <Label fx:id="greenText" alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
+            <font>
+                <Font size="22.0" />
+            </font>
+        </Label>
+
+        <!-- Manufacturer Filter -->
+        <Label styleClass="content_manufacturer" stylesheets="@../styling.css" text="Hãng sản xuất">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+      <VBox fx:id="vendorOptions" spacing="5">
+         <children>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung" />
+         </children>
+      </VBox>
+
+        <!-- Price Filter -->
+        <Label styleClass="content_price" stylesheets="@../styling.css" text="Mức giá">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <VBox fx:id="priceOptions" spacing="5">
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 10 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 10 - 15 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 15 - 20 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 20 - 25 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 25 - 30 triệu" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 30 triệu" />
+        </VBox>
+
+        <!-- Usage Filter -->
+        <Label styleClass="content_demand" stylesheets="@../styling.css" text="Nhu cầu">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <VBox fx:id="purposeOptions" spacing="5">
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Gaming" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Văn phòng" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Đồ họa" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lập trình" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Sinh viên" />
+        </VBox>
+
+        <!-- Screen Size Filter -->
+        <Label styleClass="content_screen" stylesheets="@../styling.css" text="Kích thước màn hình">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <VBox fx:id="screenSizeOptions" spacing="5">
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 13 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="13 - 14 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="15 - 16 inch" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 16 inch" />
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -5,8 +5,16 @@ import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.openqa.selenium.json.Json;
 
+import java.io.FileOutputStream;
+import java.net.URI;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * CellphoneSCrawler class is responsible for crawling laptop data from CellphoneS website.
@@ -15,7 +23,9 @@ import java.util.*;
  * saved into CSV files.
  */
 public class CellphoneSCrawler extends Crawler {
+    private static final int MAX_THREADS = 10;
     private final Map<String, Integer> propertiesMap = new HashMap<>();
+
 
     /**
      * Constructs a CellphoneSCrawler object.
@@ -84,6 +94,7 @@ public class CellphoneSCrawler extends Crawler {
      * descriptions, and properties. Saves the extracted data to CSV files.
      */
     private void crawlAllLaptops (int limit) {
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         int count = 0;
         for (int pageIndex=1; pageIndex<=10; pageIndex++) {
             JsonNode products;
@@ -99,29 +110,14 @@ public class CellphoneSCrawler extends Crawler {
                 break;
             }
             for (JsonNode product : products) {
-                String productId = product.path("general").get("product_id").asText();
-                System.out.println("[INFO] : Extracting information for laptop #" + productId);
-                String[] laptopRow;
-                String[] descriptionRow;
-                String[] propertiesRow;
-                try {
-                    laptopRow = extractLaptop(product);
-                    descriptionRow = extractDescription(product);
-                    propertiesRow = extractProperties(product);
-                } catch (Exception e) {
-                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
-                    System.out.println(e.getMessage());
-                    continue;
-                }
-                saveLaptopRow(laptopRow);
-                saveDescriptionRow(descriptionRow);
-                savePropertiesRow(propertiesRow);
-                count++;
-                if (count >= limit) {
+                executor.submit(() -> this.extractAndSaveLaptop(product));
+                if (++count >= limit) {
+                    executor.shutdown();
                     return;
                 }
             }
         }
+        executor.shutdown();
     }
 
     /**
@@ -158,6 +154,49 @@ public class CellphoneSCrawler extends Crawler {
         }
     }
 
+    private void extractAndSaveLaptop (JsonNode product) {
+        String productId = product.path("general").get("product_id").asText();
+        System.out.println("[INFO] : Extracting information for laptop #" + productId);
+        String[] laptopRow;
+        String[] descriptionRow;
+        String[] propertiesRow;
+        try {
+            laptopRow = extractLaptop(product);
+            descriptionRow = extractDescription(product);
+            propertiesRow = extractProperties(product);
+            downloadImage(laptopRow);
+        } catch (Exception e) {
+            System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+            System.out.println(e.getMessage());
+            return;
+        }
+        save(laptopRow, descriptionRow, propertiesRow);
+    }
+
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        saveLaptopRow(laptopRow);
+        saveDescriptionRow(descriptionRow);
+        savePropertiesRow(propertiesRow);
+    }
+
+    private void downloadImage (String[] laptopRow) {
+        String imageUrl = "https://cellphones.com.vn/media/catalog/product" + laptopRow[18];
+        imageUrl = imageUrl.replace(" ", "%20");
+        String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
+        String outputPath = resourceURL + "images/" + laptopRow[0] + "." + extension;
+        try (ReadableByteChannel in = Channels.newChannel(new URI(imageUrl).toURL().openStream());
+             FileOutputStream out = new FileOutputStream(outputPath)) {
+            FileChannel channel = out.getChannel();
+            channel.transferFrom(in, 0, Long.MAX_VALUE);
+        } catch (Exception e) {
+            System.err.println("[ERROR] : An error occurred while downloading image");
+            System.out.println(e.getMessage());
+            laptopRow[18] = "";
+            return;
+        }
+        laptopRow[18] = outputPath;
+    }
+
     /**
      * Extracts laptop information from a product JSON node.
      *
@@ -178,6 +217,8 @@ public class CellphoneSCrawler extends Crawler {
             JsonNode value = entry.getValue();
             if (value.isNumber()) {
                 laptopRow.add(String.valueOf(value.asInt()));
+            } else if (value.isTextual()){
+                laptopRow.add(value.asText());
             } else {
                 laptopRow.add(value.toString());
             }
@@ -340,7 +381,7 @@ public class CellphoneSCrawler extends Crawler {
                 .setSourceURL("https://cellphones.com.vn/" + laptopRow[6])  // Column "url_path"
                 .setPrice(Integer.parseInt(laptopRow[14]))  // Column "price"
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column "special_price"
-                .setProductImage("https://cellphones.com.vn/media/catalog/product" + laptopRow[18].replace("\"", ""))  // Column "thumbnail"
+                .setProductImage(laptopRow[18])  // Column "thumbnail"
                 .setColor(propertiesRow[131])  // Column "color"
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))

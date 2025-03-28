@@ -106,22 +106,22 @@ public class Laptop extends Product {
         }
     }
 
-    private boolean matchField (String[] fields) {
+    private boolean matchField (String[] field) {
         try {
-            return switch (fields[1].toLowerCase()) {
-                case "contain" -> fields[0].toLowerCase().contains(fields[2].toLowerCase());
+            return switch (field[1].toLowerCase()) {
+                case "contain" -> field[0].toLowerCase().contains(field[2].toLowerCase());
                 case "in" -> {
-                    for (int i=2; i<fields.length; i++) {
-                        if (fields[i].equalsIgnoreCase(fields[0])) {
+                    for (int i=2; i<field.length; i++) {
+                        if (field[i].equalsIgnoreCase(field[0])) {
                             yield true;
                         }
                     }
                     yield false;
                 }
                 case "between" -> {
-                    int lower = Integer.parseInt(fields[2]);
-                    int upper = Integer.parseInt(fields[3]);
-                    int value = Integer.parseInt(fields[0]);
+                    int lower = field[2].isEmpty() ? 0 : Integer.parseInt(field[2]);
+                    int upper = field[3].isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(field[3]);
+                    int value = Integer.parseInt(field[0]);
                     yield lower <= value && value <= upper;
                 }
                 default -> false;

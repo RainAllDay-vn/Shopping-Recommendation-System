@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
     <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
         <!-- Title -->
@@ -24,14 +21,14 @@
             </font>
         </Label>
         <VBox fx:id="vendorOptions" spacing="5">
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell"/>
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung"/>
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung" />
         </VBox>
 
         <!-- Price Filter -->
@@ -41,42 +38,13 @@
             </font>
         </Label>
         <VBox fx:id="priceOptions" spacing="5">
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 10 triệu" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 10 - 15 triệu" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 15 - 20 triệu" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 20 - 25 triệu" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 25 - 30 triệu" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 30 triệu" />
-        </VBox>
-
-        <!-- Usage Filter -->
-        <Label styleClass="content_demand" stylesheets="@../styling.css" text="Nhu cầu">
-            <font>
-                <Font size="16.0" />
-            </font>
-        </Label>
-        <VBox fx:id="purposeOptions" spacing="5">
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Gaming" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Văn phòng" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Đồ họa" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lập trình" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Sinh viên" />
-        </VBox>
-
-        <!-- Screen Size Filter -->
-        <Label styleClass="content_screen" stylesheets="@../styling.css" text="Kích thước màn hình">
-            <font>
-                <Font size="16.0" />
-            </font>
-        </Label>
-        <VBox fx:id="screenSizeOptions" spacing="5">
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 13 inch" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="13 - 14 inch" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="15 - 16 inch" />
-            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 16 inch" />
+            <RadioButton selected="true" styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 10 triệu" userData="10-"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 10 - 15 triệu" userData="10-15"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 15 - 20 triệu" userData="15-20"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 20 - 25 triệu" userData="20-25"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 25 - 30 triệu" userData="25-30"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 30 triệu" userData="30+"/>
         </VBox>
     </VBox>
 </ScrollPane>

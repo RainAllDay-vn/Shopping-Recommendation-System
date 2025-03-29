@@ -97,42 +97,9 @@
 
  /***********************  TOP BAR    *****************************/
 
-#topBar{
-    -fx-padding: 5px;
-    -fx-border-radius: 30px;
-    -fx-background-radius: 30px;
-}
+.custom_topBar{
+    -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
 
-#searchTextField{
-    -fx-background-color: white;
-    -fx-text-fill: #333;
-    -fx-font-size: 14px;
-    -fx-padding: 10px;
-    -fx-border-radius: 30px;
-    -fx-background-radius: 30px;
-    -fx-border-radius:50%;
-    -fx-border-color: black;
-}
-#searchTextField:focused {
-    -fx-border-color: transparent;
-    -fx-background-color: white;
-}
-
-#searchTextField .text {
-    -fx-prompt-text-fill: #999; /* Màu chữ nhạt */
-}
-
-#searchButton{
-    -fx-background-color: white;
-    -fx-background-radius: 50%;
-    -fx-padding: 8px;
-    -fx-border-radius:50%;
-    -fx-border-color: black;
-}
-
-#searchButton:hover {
-    -fx-background-color: gray;
-    -fx-cursor: hand; 
 }
 
 /***********************Product Card***************************/

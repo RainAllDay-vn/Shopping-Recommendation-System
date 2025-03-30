@@ -1,7 +1,8 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.models.Product;
+import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.views.ProductDetails;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -12,16 +13,16 @@ import java.net.URL;
 
 public class ProductCardController {
      private static final Image defaultImage = loadDefaultImage();
-     @FXML
-     private ImageView productImage;
-     @FXML
-     private Label productName;
-     @FXML
-     private Label productPrice;
-     @FXML
-     private Label productDiscount;
 
-    public void setProduct(Product product) {
+     @FXML private ImageView productImage;
+     @FXML private Label productName;
+     @FXML private Label productPrice;
+     @FXML private Label productDiscount;
+
+     private Laptop product;
+
+    public void setProduct(Laptop product) {
+        this.product = product;
         try {
             File imageFile = new File(product.getProductImage());
             Image image = new Image(imageFile.toURI().toString());
@@ -44,5 +45,11 @@ public class ProductCardController {
           } catch (Exception e) {
                throw new RuntimeException("[FATAL] : Error loading default image");
           }
+     }
+
+     @FXML
+     private void goToProductDetails() {
+        ProductDetails productDetails = new ProductDetails(this.product);
+         MainPageController.getInstance().displayDetails(productDetails.getRoot());
      }
 }

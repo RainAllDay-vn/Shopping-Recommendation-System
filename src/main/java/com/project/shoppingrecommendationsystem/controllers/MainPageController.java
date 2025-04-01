@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 public class MainPageController implements Initializable {
     @FXML
     private BorderPane root;
-    private Node productGrid;
+    @FXML private Node productGrid;
     private Node filterBar;
     private Node accessBar;
     private static MainPageController instance;

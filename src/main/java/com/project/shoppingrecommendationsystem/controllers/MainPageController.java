@@ -2,14 +2,10 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.views.*;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class MainPageController implements Initializable {
+public class MainPageController {
     @FXML
     private BorderPane root;
     @FXML private Node productGrid;
@@ -17,10 +13,9 @@ public class MainPageController implements Initializable {
     private Node accessBar;
     private static MainPageController instance;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         instance = this;
-
         productGrid = new ProductGrid().getRoot();
         filterBar = new FilterBar().getRoot();
         accessBar = new AccessBar().getRoot();
@@ -44,5 +39,10 @@ public class MainPageController implements Initializable {
     public void displayMain(){
         root.setLeft(filterBar);
         root.setCenter(productGrid);
+    }
+
+    public void displayMyList(){
+        root.setCenter(new FavouriteGrid().getRoot());
+        root.setLeft(accessBar);
     }
 }

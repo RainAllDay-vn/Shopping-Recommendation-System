@@ -1,108 +1,137 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.components.*;
 import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import javafx.scene.control.Label;
+import java.awt.Desktop;
+import java.net.URI;
 
-public class ProductDetailsController{
-    @FXML private Label  descriptionText;
-    @FXML private VBox productCardDetails;
+public class ProductDetailsController {
 
-    @FXML private Label batteryCapacityText;
-    @FXML private Label batteryFullChargingTimeText;
-    @FXML private Label batteryChargePowerText;
+    @FXML private Label descriptionText;
+    @FXML private VBox productCardDetailsBox;
+    @FXML private HBox cpuNameRow, cpuBaseFrequencyRow, cpuTurboFrequencyRow, cpuCoresRow, cpuThreadsRow, cpuCacheRow;
+    @FXML private Label cpuNameText, cpuBaseFrequencyText, cpuTurboFrequencyText, cpuCoresText, cpuThreadsText, cpuCacheText;
+    @FXML private HBox ramSizeRow, ramTypeRow, ramChannelsRow, ramClockRow, ramUpgradableRow, ramSlotsRow, ramMaxSizeRow;
+    @FXML private Label ramSizeText, ramTypeText, ramChannelsText, ramClockText, ramUpgradableText, ramSlotsText, ramMaxSizeText;
+    @FXML private HBox storageSizeRow, storageBusRow, storageTypeRow, storageChannelsRow, storageUpgradableRow, storageSlotsRow;
+    @FXML private Label storageSizeText, storageBusText, storageTypeText, storageChannelsText, storageUpgradableText, storageSlotsText;
+    @FXML private HBox displayScreenSizeRow, displayScreenResolutionRow, displayRefreshRateRow, displayGPUNameRow, displayGPUTypeRow, displayGPUBaseClockRow, displayGPUBoostClockRow;
+    @FXML private Label displayScreenSizeText, displayScreenResolutionText, displayRefreshRateText, displayGPUNameText, displayGPUTypeText, displayGPUBaseClockText, displayGPUBoostClockText;
+    @FXML private HBox connectivityPortsRow, connectivityWifiRow, connectivityBluetoothRow, connectivityFingerprintRow, connectivityWebcamRow;
+    @FXML private Label connectivityPortsText, connectivityWifiText, connectivityBluetoothText, connectivityFingerprintText, connectivityWebcamText;
+    @FXML private HBox batteryCapacityRow, batteryFullChargingTimeRow, batteryChargePowerRow;
+    @FXML private Label batteryCapacityText, batteryFullChargingTimeText, batteryChargePowerText;
+    @FXML private HBox laptopCaseWeightRow, laptopCaseDimensionsRow, laptopCaseMaterialRow;
+    @FXML private Label laptopCaseWeightText, laptopCaseDimensionsText, laptopCaseMaterialText;
 
-    @FXML private Label connectivityPortsText;
-    @FXML private Label connectivityWifiText;
-    @FXML private Label connectivityBluetoothText;
-    @FXML private Label connectivityFingerprintText;
-    @FXML private Label connectivityWebcamText;
+    private void setLabelText(Label label, String value, HBox row) {
+        if (value == null || value.trim().isEmpty() || "null".equalsIgnoreCase(value.trim())) {
+            hideRow(row);
+        } else {
+            value = value.replaceAll("<br\\s*/?>", "");
+            value = value.replaceAll("\"", "");
+            label.setText(value);
+            label.setVisible(true);
+            label.setManaged(true);
+            if (row != null) {
+                row.setVisible(true);
+                row.setManaged(true);
+            }
+        }
+    }
 
-    @FXML private Label CPUNameText;
-    @FXML private Label CPUBaseFrequencyText;
-    @FXML private Label CPUTurboFrequencyText;
-    @FXML private Label CPUCoresText;
-    @FXML private Label CPUThreadsText;
-    @FXML private Label CPUCacheText;
+    private void hideRow(HBox row) {
+        if (row != null) {
+            row.setVisible(false);
+            row.setManaged(false);
+        }
+    }
 
-    @FXML private Label displayGPUNameText;
-    @FXML private Label displayGPUTypeText;
-    @FXML private Label displayGPUBaseClockText;
-    @FXML private Label displayGPUBoostClockText;
-    @FXML private Label displayScreenSizeText;
-    @FXML private Label displayScreenResolutionText;
-    @FXML private Label displayRefreshRateText;
+    public void goToWebPage(Laptop product) {
+        String url = product.getSourceURL().replaceAll("\"", "");
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    @FXML private Label laptopCaseWeightText;
-    @FXML private Label laptopCaseDimensionsText;
-    @FXML private Label laptopCaseMaterialText;
+    public void setProductDetails(Laptop product) {
+        ProductCard productCard = new ProductCard(product, event -> goToWebPage(product));
+        productCardDetailsBox.getChildren().add(productCard.getRoot());
 
-    @FXML private Label RAMSizeText;
-    @FXML private Label RAMChannelsText;
-    @FXML private Label RAMClockText;
-    @FXML private Label RAMTypeText;
-    @FXML private Label RAMUpgradableText;
-    @FXML private Label RAMSlotsText;
-    @FXML private Label RAMMaxSizeText;
+        setLabelText(descriptionText, product.getDescription(), null);
 
-    @FXML private Label storageSizeText;
-    @FXML private Label storageBusText;
-    @FXML private Label storageTypeText;
-    @FXML private Label storageChannelsText;
-    @FXML private Label storageUpgradableText;
-    @FXML private Label storageSlotsText;
+        setCPUDetails(product.getCpu());
+        setRAMDetails(product.getRam());
+        setStorageDetails(product.getStorage());
+        setDisplayDetails(product.getDisplay());
+        setConnectivityDetails(product.getConnectivity());
+        setBatteryDetails(product.getBattery());
+        setLaptopCaseDetails(product.getLaptopCase());
+    }
 
+    private void setCPUDetails(CPU cpu) {
+        setLabelText(cpuNameText, cpu.getName(), cpuNameRow);
+        setLabelText(cpuBaseFrequencyText, cpu.getBaseFrequency(), cpuBaseFrequencyRow);
+        setLabelText(cpuTurboFrequencyText, cpu.getTurboFrequency(), cpuTurboFrequencyRow);
+        setLabelText(cpuCoresText, cpu.getCores(), cpuCoresRow);
+        setLabelText(cpuThreadsText, cpu.getThreads(), cpuThreadsRow);
+        setLabelText(cpuCacheText, cpu.getCache(), cpuCacheRow);
+    }
 
+    private void setRAMDetails(RAM ram) {
+        setLabelText(ramSizeText, ram.getSize(), ramSizeRow);
+        setLabelText(ramTypeText, ram.getType(), ramTypeRow);
+        setLabelText(ramChannelsText, ram.getChannels(), ramChannelsRow);
+        setLabelText(ramClockText, ram.getClock(), ramClockRow);
+        setLabelText(ramUpgradableText, ram.getUpgradable(), ramUpgradableRow);
+        setLabelText(ramSlotsText, ram.getSlots(), ramSlotsRow);
+        setLabelText(ramMaxSizeText, ram.getMaxSize(), ramMaxSizeRow);
+    }
 
-    public void setProductDetails(Laptop product){
-        productCardDetails.getChildren().add(new ProductCard(product).getRoot());
-        descriptionText.setText(product.getDescription());
+    private void setStorageDetails(Storage storage) {
+        setLabelText(storageSizeText, storage.getSize(), storageSizeRow);
+        setLabelText(storageBusText, storage.getBus(), storageBusRow);
+        setLabelText(storageTypeText, storage.getStorageType(), storageTypeRow);
+        setLabelText(storageChannelsText, storage.getChannels(), storageChannelsRow);
+        setLabelText(storageUpgradableText, storage.getUpgradable(), storageUpgradableRow);
+        setLabelText(storageSlotsText, storage.getSlots(), storageSlotsRow);
+    }
 
-        batteryCapacityText.setText(product.getBattery().getCapacity());
-        batteryFullChargingTimeText.setText(product.getBattery().getFullyChargingTime());
-        batteryChargePowerText.setText(product.getBattery().getChargePower());
+    private void setDisplayDetails(Display display) {
+        setLabelText(displayScreenSizeText, display.getScreenSize(), displayScreenSizeRow);
+        setLabelText(displayScreenResolutionText, display.getScreenResolution(), displayScreenResolutionRow);
+        setLabelText(displayRefreshRateText, display.getRefreshRate(), displayRefreshRateRow);
+        setLabelText(displayGPUNameText, display.getGpuName(), displayGPUNameRow);
+        setLabelText(displayGPUTypeText, display.getGpuType(), displayGPUTypeRow);
+        setLabelText(displayGPUBaseClockText, display.getGpuBaseClock(), displayGPUBaseClockRow);
+        setLabelText(displayGPUBoostClockText, display.getGpuBoostClock(), displayGPUBoostClockRow);
+    }
 
-        connectivityPortsText.setText(product.getConnectivity().getPorts());
-        connectivityWifiText.setText(product.getConnectivity().getWifi());
-        connectivityBluetoothText.setText(product.getConnectivity().getBluetooth());
-        connectivityFingerprintText.setText(product.getConnectivity().getFingerprint());
-        connectivityWebcamText.setText(product.getConnectivity().getWebCam());
+    private void setConnectivityDetails(Connectivity connectivity) {
+        setLabelText(connectivityPortsText, connectivity.getPorts(), connectivityPortsRow);
+        setLabelText(connectivityWifiText, connectivity.getWifi(), connectivityWifiRow);
+        setLabelText(connectivityBluetoothText, connectivity.getBluetooth(), connectivityBluetoothRow);
+        setLabelText(connectivityFingerprintText, connectivity.getFingerprint(), connectivityFingerprintRow);
+        setLabelText(connectivityWebcamText, connectivity.getWebCam(), connectivityWebcamRow);
+    }
 
-        CPUNameText.setText(product.getCpu().getName());
-        CPUBaseFrequencyText.setText(product.getCpu().getBaseFrequency());
-        CPUTurboFrequencyText.setText(product.getCpu().getTurboFrequency());
-        CPUCoresText.setText(product.getCpu().getCores());
-        CPUThreadsText.setText(product.getCpu().getThreads());
-        CPUCacheText.setText(product.getCpu().getCache());
+    private void setBatteryDetails(Battery battery) {
+        setLabelText(batteryCapacityText, battery.getCapacity(), batteryCapacityRow);
+        setLabelText(batteryFullChargingTimeText, battery.getFullyChargingTime(), batteryFullChargingTimeRow);
+        setLabelText(batteryChargePowerText, battery.getChargePower(), batteryChargePowerRow);
+    }
 
-        displayGPUNameText.setText(product.getDisplay().getGpuName());
-        displayGPUTypeText.setText(product.getDisplay().getGpuType());
-        displayGPUBaseClockText.setText(product.getDisplay().getGpuBaseClock());
-        displayGPUBoostClockText.setText(product.getDisplay().getGpuBoostClock());
-        displayScreenSizeText.setText(product.getDisplay().getScreenSize());
-        displayScreenResolutionText.setText(product.getDisplay().getScreenResolution());
-        displayRefreshRateText.setText(product.getDisplay().getRefreshRate());
-
-        laptopCaseWeightText.setText(product.getLaptopCase().getWeight());
-        laptopCaseDimensionsText.setText(product.getLaptopCase().getDimensions());
-        laptopCaseMaterialText.setText(product.getLaptopCase().getMaterial());
-
-        RAMSizeText.setText(product.getRam().getSize());
-        RAMChannelsText.setText(product.getRam().getChannels());
-        RAMClockText.setText(product.getRam().getClock());
-        RAMTypeText.setText(product.getRam().getType());
-        RAMUpgradableText.setText(product.getRam().getUpgradable());
-        RAMSlotsText.setText(product.getRam().getSlots());
-        RAMMaxSizeText.setText(product.getRam().getMaxSize());
-
-        storageSizeText.setText(product.getStorage().getSize());
-        storageBusText.setText(product.getStorage().getBus());
-        storageTypeText.setText(product.getStorage().getStorageType());
-        storageChannelsText.setText(product.getStorage().getChannels());
-        storageUpgradableText.setText(product.getStorage().getUpgradable());
-        storageSlotsText.setText(product.getStorage().getSlots());
+    private void setLaptopCaseDetails(LaptopCase laptopCase) {
+        setLabelText(laptopCaseWeightText, laptopCase.getWeight(), laptopCaseWeightRow);
+        setLabelText(laptopCaseDimensionsText, laptopCase.getDimensions(), laptopCaseDimensionsRow);
+        setLabelText(laptopCaseMaterialText, laptopCase.getMaterial(), laptopCaseMaterialRow);
     }
 }

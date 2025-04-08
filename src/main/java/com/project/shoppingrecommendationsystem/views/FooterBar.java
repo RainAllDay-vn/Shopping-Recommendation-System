@@ -1,7 +1,9 @@
 package com.project.shoppingrecommendationsystem.views;
 
-public class FooterBar extends View {
+import com.project.shoppingrecommendationsystem.controllers.FooterBarController;
+
+public class FooterBar extends View<FooterBarController> {
     public FooterBar() {
-        root = load("components/footer-bar.fxml");
+        root = load("components/footer-bar.fxml", new FooterBarController());
     }
 }

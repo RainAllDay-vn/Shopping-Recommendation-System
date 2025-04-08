@@ -1,11 +1,12 @@
 package com.project.shoppingrecommendationsystem.views;
 
+import com.project.shoppingrecommendationsystem.controllers.MainPageController;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-public class MainPage extends View {
+public class MainPage extends View<MainPageController> {
     public MainPage() {
-        root = load("main-page.fxml");
+        root = load("main-page.fxml", new MainPageController());
     }
 
     @Override

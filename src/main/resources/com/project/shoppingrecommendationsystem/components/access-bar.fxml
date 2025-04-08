@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox  spacing="10" xmlns="http://javafx.com/javafx/21" prefWidth="350.0"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.AccessBarController">
-    <Button fx:id="goToMainButton" text="Go back" onAction="#goToMain"/>
-
+      xmlns:fx="http://javafx.com/fxml/1" >
+    <Button fx:id="goToMainButton" text="Go back"/>
+    <VBox fx:id="productVisitedBox" > </VBox>
 </VBox>

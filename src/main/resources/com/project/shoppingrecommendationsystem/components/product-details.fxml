@@ -2,243 +2,209 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductDetailsController"
-            fitToWidth="true">
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fitToWidth="true">
     <VBox spacing="25" style="-fx-padding: 20;">
-
         <HBox fx:id="productContainer" spacing="30" alignment="TOP_LEFT">
-            <VBox fx:id="productCardDetails" spacing="10" style="-fx-pref-width: 300;"/>
+            <VBox fx:id="productCardDetailsBox" spacing="10" style="-fx-pref-width: 300;">
+            </VBox>
             <VBox spacing="15" style="-fx-pref-width: 500;">
                 <Label text="Description" styleClass="section-header"/>
                 <Label fx:id="descriptionText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
             </VBox>
         </HBox>
 
-
         <VBox spacing="20">
-
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="Processor" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="processorPane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUNameText" wrapText="true" styleClass="detail-content" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Base Frequency:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUBaseFrequencyText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Turbo Frequency:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUTurboFrequencyText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="Cores:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUCoresText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="Threads:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUThreadsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-                    <Label text="Cache:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                    <Label fx:id="CPUCacheText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="cpuNameRow" spacing="15">
+                        <Label text="Name:" styleClass="detail-label"/>
+                        <Label fx:id="cpuNameText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="cpuBaseFrequencyRow" spacing="15">
+                        <Label text="Base Frequency:" styleClass="detail-label"/>
+                        <Label fx:id="cpuBaseFrequencyText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="cpuTurboFrequencyRow" spacing="15">
+                        <Label text="Turbo Frequency:" styleClass="detail-label"/>
+                        <Label fx:id="cpuTurboFrequencyText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="cpuCoresRow" spacing="15">
+                        <Label text="Cores:" styleClass="detail-label"/>
+                        <Label fx:id="cpuCoresText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="cpuThreadsRow" spacing="15">
+                        <Label text="Threads:" styleClass="detail-label"/>
+                        <Label fx:id="cpuThreadsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="cpuCacheRow" spacing="15">
+                        <Label text="Cache:" styleClass="detail-label"/>
+                        <Label fx:id="cpuCacheText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="Memory" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="memoryPane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Size:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMSizeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMTypeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Channels:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMChannelsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="Clock Speed:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMClockText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="Upgradable:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMUpgradableText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-                    <Label text="Slots:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMSlotsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-                    <Label text="Max Capacity:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                    <Label fx:id="RAMMaxSizeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="ramSizeRow" spacing="15">
+                        <Label text="Size:" styleClass="detail-label"/>
+                        <Label fx:id="ramSizeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramTypeRow" spacing="15">
+                        <Label text="Type:" styleClass="detail-label"/>
+                        <Label fx:id="ramTypeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramChannelsRow" spacing="15">
+                        <Label text="Channels:" styleClass="detail-label"/>
+                        <Label fx:id="ramChannelsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramClockRow" spacing="15">
+                        <Label text="Clock Speed:" styleClass="detail-label"/>
+                        <Label fx:id="ramClockText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramUpgradableRow" spacing="15">
+                        <Label text="Upgradable:" styleClass="detail-label"/>
+                        <Label fx:id="ramUpgradableText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramSlotsRow" spacing="15">
+                        <Label text="Slots:" styleClass="detail-label"/>
+                        <Label fx:id="ramSlotsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="ramMaxSizeRow" spacing="15">
+                        <Label text="Max Capacity:" styleClass="detail-label"/>
+                        <Label fx:id="ramMaxSizeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="Storage" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="storagePane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Size:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageSizeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageTypeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Bus Interface:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageBusText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="Channels:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageChannelsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="Upgradable:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageUpgradableText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-                    <Label text="Slots:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                    <Label fx:id="storageSlotsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="storageSizeRow" spacing="15">
+                        <Label text="Size:" styleClass="detail-label"/>
+                        <Label fx:id="storageSizeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="storageBusRow" spacing="15">
+                        <Label text="Bus Interface:" styleClass="detail-label"/>
+                        <Label fx:id="storageBusText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="storageTypeRow" spacing="15">
+                        <Label text="Type:" styleClass="detail-label"/>
+                        <Label fx:id="storageTypeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="storageChannelsRow" spacing="15">
+                        <Label text="Channels:" styleClass="detail-label"/>
+                        <Label fx:id="storageChannelsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="storageUpgradableRow" spacing="15">
+                        <Label text="Upgradable:" styleClass="detail-label"/>
+                        <Label fx:id="storageUpgradableText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="storageSlotsRow" spacing="15">
+                        <Label text="Slots:" styleClass="detail-label"/>
+                        <Label fx:id="storageSlotsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="Display" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="displayPane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Screen Size:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayScreenSizeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Resolution:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayScreenResolutionText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Refresh Rate:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayRefreshRateText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="GPU Name:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayGPUNameText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="GPU Type:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayGPUTypeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-                    <Label text="Base Clock:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayGPUBaseClockText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-                    <Label text="Boost Clock:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                    <Label fx:id="displayGPUBoostClockText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="displayScreenSizeRow" spacing="15">
+                        <Label text="Screen Size:" styleClass="detail-label"/>
+                        <Label fx:id="displayScreenSizeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayScreenResolutionRow" spacing="15">
+                        <Label text="Resolution:" styleClass="detail-label"/>
+                        <Label fx:id="displayScreenResolutionText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayRefreshRateRow" spacing="15">
+                        <Label text="Refresh Rate:" styleClass="detail-label"/>
+                        <Label fx:id="displayRefreshRateText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayGPUNameRow" spacing="15">
+                        <Label text="GPU Name:" styleClass="detail-label"/>
+                        <Label fx:id="displayGPUNameText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayGPUTypeRow" spacing="15">
+                        <Label text="GPU Type:" styleClass="detail-label"/>
+                        <Label fx:id="displayGPUTypeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayGPUBaseClockRow" spacing="15">
+                        <Label text="Base Clock:" styleClass="detail-label"/>
+                        <Label fx:id="displayGPUBaseClockText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="displayGPUBoostClockRow" spacing="15">
+                        <Label text="Boost Clock:" styleClass="detail-label"/>
+                        <Label fx:id="displayGPUBoostClockText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
             <VBox spacing="10">
                 <Label text="Connectivity" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;"  fx:id="connectivityPane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Ports:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="connectivityPortsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Wi-Fi:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="connectivityWifiText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Bluetooth:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="connectivityBluetoothText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                    <Label text="Fingerprint Sensor:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="connectivityFingerprintText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                    <Label text="Webcam:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Label fx:id="connectivityWebcamText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="connectivityPortsRow" spacing="15">
+                        <Label text="Ports:" styleClass="detail-label"/>
+                        <Label fx:id="connectivityPortsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="connectivityWifiRow" spacing="15">
+                        <Label text="Wi-Fi:" styleClass="detail-label"/>
+                        <Label fx:id="connectivityWifiText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="connectivityBluetoothRow" spacing="15">
+                        <Label text="Bluetooth:" styleClass="detail-label"/>
+                        <Label fx:id="connectivityBluetoothText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="connectivityFingerprintRow" spacing="15">
+                        <Label text="Fingerprint Sensor:" styleClass="detail-label"/>
+                        <Label fx:id="connectivityFingerprintText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="connectivityWebcamRow" spacing="15">
+                        <Label text="Webcam:" styleClass="detail-label"/>
+                        <Label fx:id="connectivityWebcamText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="Battery" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="batteryPane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Capacity:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="batteryCapacityText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Charge Time:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="batteryFullChargingTimeText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Charge Power:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="batteryChargePowerText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="batteryCapacityRow" spacing="15">
+                        <Label text="Capacity:" styleClass="detail-label"/>
+                        <Label fx:id="batteryCapacityText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="batteryFullChargingTimeRow" spacing="15">
+                        <Label text="Charge Time:" styleClass="detail-label"/>
+                        <Label fx:id="batteryFullChargingTimeText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="batteryChargePowerRow" spacing="15">
+                        <Label text="Charge Power:" styleClass="detail-label"/>
+                        <Label fx:id="batteryChargePowerText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
 
-            <VBox spacing="10" >
+            <VBox spacing="10">
                 <Label text="LaptopCase" styleClass="section-header"/>
-                <GridPane hgap="15" vgap="8" style="-fx-border-color: black; -fx-border-width: 1;" fx:id="laptopCasePane">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-                    </columnConstraints>
-
-                    <Label text="Weight:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="laptopCaseWeightText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Dimensions:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="laptopCaseDimensionsText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                    <Label text="Material:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="laptopCaseMaterialText" wrapText="true" maxWidth="500"
-                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                </GridPane>
+                <VBox spacing="8" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;">
+                    <HBox fx:id="laptopCaseWeightRow" spacing="15">
+                        <Label text="Weight:" styleClass="detail-label"/>
+                        <Label fx:id="laptopCaseWeightText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="laptopCaseDimensionsRow" spacing="15">
+                        <Label text="Dimensions:" styleClass="detail-label"/>
+                        <Label fx:id="laptopCaseDimensionsText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                    <HBox fx:id="laptopCaseMaterialRow" spacing="15">
+                        <Label text="Material:" styleClass="detail-label"/>
+                        <Label fx:id="laptopCaseMaterialText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
+                    </HBox>
+                </VBox>
             </VBox>
         </VBox>
     </VBox>

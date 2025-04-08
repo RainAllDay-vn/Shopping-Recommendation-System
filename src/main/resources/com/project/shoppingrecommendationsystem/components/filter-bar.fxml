@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
         <!-- Title -->

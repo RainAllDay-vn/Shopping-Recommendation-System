@@ -97,6 +97,7 @@
 
  /***********************  TOP BAR    *****************************/
 
+<<<<<<< HEAD
 #topBar{
     -fx-padding: 5px;
     -fx-border-radius: 30px;
@@ -135,3 +136,24 @@
     -fx-cursor: hand; 
 }
 
+=======
+.custom_topBar{
+    -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
+
+}
+
+/***********************Product Card***************************/
+
+
+.custom_product{
+    -fx-border-width:2px;
+    -fx-background-radius: 15px; /* Bo góc nền, phải giống với border-radius */
+    -fx-border-radius: 15px; /* Bo góc viền */
+    -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
+    -fx-clip: rect(0, 100%, 100%, 0); /* Đảm bảo phần nền không bị lộ viền */
+
+}
+.custom_product:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 20, 0.5, 0, 15);
+}
+>>>>>>> hieu/4-design-homepage

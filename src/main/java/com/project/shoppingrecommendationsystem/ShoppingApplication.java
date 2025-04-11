@@ -1,5 +1,6 @@
 package com.project.shoppingrecommendationsystem;
 
+<<<<<<< HEAD
 import java.io.IOException;
 
 import com.project.shoppingrecommendationsystem.controllers.IPage;
@@ -32,10 +33,34 @@ public class ShoppingApplication extends Application {
         stage.setTitle("Shopping Recommendation System");
         stage.setResizable(false);
         stage.setFullScreen(false);
+=======
+import com.project.shoppingrecommendationsystem.models.ProductDatabase;
+import com.project.shoppingrecommendationsystem.views.MainPage;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class ShoppingApplication extends Application {
+    private ProductDatabase productDatabase;
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        productDatabase = ProductDatabase.getInstance();
+
+        stage.setTitle("Shopping Recommendation System");
+        stage.setFullScreen(false);
+
+        stage.setScene(new MainPage().getScene());
+>>>>>>> hieu/4-design-homepage
         stage.show();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> hieu/4-design-homepage

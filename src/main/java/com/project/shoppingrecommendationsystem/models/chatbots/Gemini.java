@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.openqa.selenium.internal.Debug;
 
 public class Gemini extends ChatBot {
+    //Free ApI kEy Ho hoo
     String postUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA8MNbRBXb4FgGMXkqJyF6gXugWyq-Ut60";
 
     String chatContext = "you are a chat bot for a laptop recommendation website, do your best to recommend the customer, the user messages are wrapper in <user></user> tag, your previous messages are wrapped in <bot></bot> tag and your replies are automatically wrapped in <bot></bot> so no need to add it in your reply you can also call functions from the <functions></functions> tag, all of them accepts only one string as parameter and to call them you must use <func=\"function_name\" parameter = \"parameter\" >";

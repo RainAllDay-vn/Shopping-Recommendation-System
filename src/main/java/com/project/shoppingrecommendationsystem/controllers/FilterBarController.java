@@ -1,6 +1,9 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
+import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
+import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotCallables;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -29,6 +32,7 @@ public class FilterBarController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Init nodes;
         for (Node node : vendorOptions.getChildren()) {
             if (!(node instanceof CheckBox checkBox)) {
                 continue;
@@ -42,6 +46,18 @@ public class FilterBarController implements Initializable {
             });
         }
         initializePriceRadioButtons();
+
+        //Add chat box function
+        String desc = "used when user wants to filter laptop, if you call it just pass parameter reply Hi from gemini";
+        ChatBotCallables action = new ChatBotCallables() {
+
+            @Override
+            public void call(String parameter) {
+                System.out.println(parameter);
+            }
+            
+        };
+        ChatBot.registerAction("filter", desc,action);
     }
 
     private void initializePriceRadioButtons() {

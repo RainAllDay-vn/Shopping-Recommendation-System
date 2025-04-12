@@ -1,176 +1,257 @@
 package com.project.shoppingrecommendationsystem.models.chatbots;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class Gemini extends ChatBot {
-    //Free ApI kEy Ho hoo
-    String postUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA8MNbRBXb4FgGMXkqJyF6gXugWyq-Ut60";
 
-    String chatContext = "you are a chat bot for a laptop recommendation website, do your best to recommend the customer, the user messages are wrapper in <user></user> tag, your previous messages are wrapped in <bot></bot> tag and your replies are automatically wrapped in <bot></bot> so no need to add it in your reply you can also call functions from the <functions></functions> tag, all of them accepts only one string as parameter and to call them you must use <func=\"function_name\" parameter = \"parameter\" >";
-    String chatHistory = "";
-    String functionCanCall = "";
-    Map<String,ChatBotCallables> functions = new HashMap<>();
-
-    private String sendPostRequest(String urlString, String payload) {
-        HttpURLConnection connection = null;
-        StringBuilder response = new StringBuilder();
-
-        try {
-            // Create URL object
-            URL url = new URI(urlString).toURL();
-
-            // Open a connection to the URL
-            connection = (HttpURLConnection) url.openConnection();
-
-            // Set the HTTP method to POST
-            connection.setRequestMethod("POST");
-
-            // Set headers
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-
-            // Enable input/output streams
-            connection.setDoOutput(true);
-
-            // Write the payload to the output stream
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-
-            // Read the response
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error occurred during request: " + e.getMessage(); // Handle any exceptions
-        } finally {
-            if (connection != null) {
-                connection.disconnect(); // Close the connection
-            }
-        }
-
-        return response.toString(); // Return the response as a string
-    }
-
-    private String parseBotResponse(String response) {
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
-            JSONArray candidates = jsonResponse.getJSONArray("candidates");
-
-            // Check if there's at least one candidate
-            if (candidates.length() > 0) {
-                JSONObject firstCandidate = candidates.getJSONObject(0);
-                JSONObject content = firstCandidate.getJSONObject("content");
-                JSONArray parts = content.getJSONArray("parts");
-
-                // Check if there's at least one part in the response
-                if (parts.length() > 0) {
-                    return parse(parts.getJSONObject(0).getString("text")); // Return the text from the first part)
-                }
-            }
-
-            return "No valid response received.";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null; // If anything goes wrong, return null
-        }
-    }
-    private String parse(String botRes){
-        System.out.println(botRes);
-        String funcPattern = "<func=\"(.*?)\" parameter=\"(.*?)\" >";
-
-        // List to hold function name and parameter arrays
-        List<String[]> parsedFunctions = new ArrayList<>();
-
-        // Extracting <func> calls using regex
-        Pattern funcRegex = Pattern.compile(funcPattern);
-        Matcher funcMatcher = funcRegex.matcher(botRes);
-        
-        // Extract function calls and remove them from the chat
-        String cleanedChatText = botRes;
-        while (funcMatcher.find()) {
-            // Extract function name and parameter
-            String functionName = funcMatcher.group(1);
-            String functionParameter = funcMatcher.group(2);
-            
-            // Store parsed function details in a String array
-            String[] functionDetails = {functionName, functionParameter};
-            parsedFunctions.add(functionDetails);
-            
-            // Remove the <func> tags from the text
-            cleanedChatText = cleanedChatText.replace(funcMatcher.group(0), "");
-        }
-
-        // Output the parsed function calls as arrays
-        if (parsedFunctions.isEmpty()) {
-            System.out.println("No function calls found.");
-        } else {
-            System.out.println("Parsed Function Calls:");
-            parsedFunctions.forEach(function -> 
-                System.out.println("Function Name: " + function[0] + ", Parameter: " + function[1])
-            );
-            for(String[] func : parsedFunctions){
-                ChatBotCallables function =functions.get(func[0]);
-                if(function == null){
-                    System.out.println(func[0] + " does not exist");
-                } 
-                function.call(func[1]);
-            }
-        }
-
-        // Output the cleaned chat text (with <func> tags removed)
-        System.out.println("\nCleaned Chat (without function calls):");
-        return cleanedChatText.trim();
-    }
+    // A wild free tier gemini API key has appeared
+    private final String postUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA8MNbRBXb4FgGMXkqJyF6gXugWyq-Ut60";
+    private final String systemPrompt = "You are a chatbot for a laptop recommendation website. Help users choose laptops and use registered tools when needed.";
+    private final List<JSONObject> chatHistory = new ArrayList<>();
+    private final Map<String, ChatBotCallable> registeredFunctions = new HashMap<>();
+    private final JSONArray toolsArray = new JSONArray();
+    private final JSONArray functionDeclarations = new JSONArray();
 
     @Override
     public void onInit() {
+        JSONObject toolObject = new JSONObject();
+        toolObject.put("function_declarations", functionDeclarations);
+        toolsArray.put(toolObject);
+    }
 
+    public void onRegisterAction(String name, String desc, ChatBotCallable action) {
+        registeredFunctions.put(name, action);
+        JSONObject func = new JSONObject();
+        ChatBotCallableInfo info = action.getInfo();
+
+        // Build the function declaration.
+        func.put("name", info.getName());
+        func.put("description", info.getDescription());
+
+        // Build the parameters schema.
+        JSONObject parameters = new JSONObject();
+        parameters.put("type", "object");
+        JSONObject properties = new JSONObject();
+        JSONArray required = new JSONArray();
+
+        for (ChatBotParameter param : info.getParameters()) {
+            JSONObject paramDef = new JSONObject();
+            paramDef.put("description", param.getDescription());
+            if (param.getType().equals(String.class)) {
+                paramDef.put("type", "string");
+            } else if (param.getType().equals(Integer.class) || param.getType().equals(int.class)) {
+                paramDef.put("type", "integer");
+            } else if (param.getType().equals(Boolean.class) || param.getType().equals(boolean.class)) {
+                paramDef.put("type", "boolean");
+            } else {
+                paramDef.put("type", "string"); // fallback if type is not recognized
+            }
+            properties.put(param.getName(), paramDef);
+            required.put(param.getName());
+        }
+        parameters.put("properties", properties);
+        parameters.put("required", required);
+        func.put("parameters", parameters);
+
+        // Append the function declaration to our list.
+        functionDeclarations.put(func);
     }
 
     @Override
     public String onPrompt(String message) {
-        chatHistory += "<user>" + message + "</user>";
-        final String context ="<context>" + chatContext + "</context><functions>"+functionCanCall + "</functions><chat history>" + chatHistory + "</chat history>";
-        System.out.println(context);
+        
+        JSONObject userMsg = new JSONObject();
+        userMsg.put("role", "user");
+        JSONArray userParts = new JSONArray();
+        userMsg.put("parts", userParts);
+        // If the conversation is new, prepend the system prompt.
+        if (chatHistory.isEmpty()) {
+            userParts.put(new JSONObject().put("text", systemPrompt + " " + message));
+        } else {
+            userParts.put(new JSONObject().put("text", message));
+        }
+
+        return doPrompt(userMsg);
+    }
+
+    private String doPrompt(JSONObject userMsg){
+        chatHistory.add(userMsg);
+        JSONArray messages = new JSONArray();
+        for (JSONObject msg : chatHistory) {
+            messages.put(msg);
+        }
         JSONObject payload = new JSONObject();
-        JSONArray contentsArray = new JSONArray();
-        JSONObject contentObject = new JSONObject();
-        JSONArray partsArray = new JSONArray();
-        partsArray.put(new JSONObject().put("text", context));
-        contentObject.put("parts", partsArray);
-        contentsArray.put(contentObject);
-        payload.put("contents", contentsArray);
+        payload.put("contents", messages);
+        if (functionDeclarations.length() > 0) {
+            payload.put("tools", toolsArray);
+        }
+        //System.out.println(payload.toString());
         String response = sendPostRequest(postUrl, payload.toString());
-        String botReply = parseBotResponse(response);
-        chatHistory += "<bot>" + botReply + "</bot>";
-        return botReply;
+        return handleResponse(response);
     }
 
-    @Override
-    public void onRegisterAction(String name,String functionContext, ChatBotCallables action) {
-        functions.put(name, action);
-        functionCanCall += "<name =" +name + ",description =" + functionContext + "/>,";
+    private String sendPostRequest(String urlString, String payload) {
+        HttpURLConnection connection = null;
+        StringBuilder response = new StringBuilder();
+        try {
+            URL url = new URI(urlString).toURL();
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+        return response.toString();
     }
 
+    
+    private String handleResponse(String rawJson) {
+        try {
+            JSONObject json = new JSONObject(rawJson);
+            JSONArray candidates = json.getJSONArray("candidates");
+            if (candidates.length() > 0) {
+                JSONObject candidate = candidates.getJSONObject(0);
+                if (candidate.has("content")) {
+                    JSONObject content = candidate.getJSONObject("content");
+                    if (content.has("parts")) {
+                        JSONArray parts = content.getJSONArray("parts");
+                        if (parts.length() > 0) {
+                            JSONObject firstPart = parts.getJSONObject(0);
+                            // Check for a function call.
+                            if (firstPart.has("functionCall")) {
+                                JSONObject functionCall = firstPart.getJSONObject("functionCall");
+                                return handleFunctionCall(functionCall);
+                            } else if (firstPart.has("text")) {
+                                String text = firstPart.getString("text");
+                                addAssistantMessage(text,"text");
+                                return text;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error processing response: " + e.getMessage();
+        }
+        return "No valid reply received.";
+    }
+    private String handleFunctionCall(JSONObject functionCall) {
+        try {
+            JSONObject callMsg = new JSONObject();
+            callMsg.put("role", "model");
+            callMsg.put("parts", new JSONArray().put(new JSONObject().put("functionCall", functionCall)));
+            chatHistory.add(callMsg);
+            String name = functionCall.getString("name");
+            JSONObject args = functionCall.getJSONObject("args");
+            ChatBotCallable callable = registeredFunctions.get(name);
+            if (callable == null) {
+                return "Error: Unregistered function " + name;
+            }
+
+            List<ChatBotInputParameter> inputList = new ArrayList<>();
+            for (ChatBotParameter param : callable.getInfo().getParameters()) {
+                Object rawValue = args.has(param.getName()) ? args.get(param.getName()) : null;
+                Object value = castToType(rawValue, param.getType());
+                ChatBotInputParameter inputParam = new ChatBotInputParameter() {
+                    @Override
+                    public String getName() {
+                        return param.getName();
+                    }
+
+                    @Override
+                    public Class<?> getType() {
+                        return param.getType();
+                    }
+
+                    @Override
+                    public Object getValue() {
+                        return value;
+                    }
+                };
+                inputList.add(inputParam);
+            }
+
+            ChatBotReturn result = callable.call(inputList.toArray(new ChatBotInputParameter[0]));
+
+            // Record the function result in the conversation history.
+            JSONObject functionMsg = new JSONObject();
+            functionMsg.put("role", "user");
+            JSONObject functionResPart = new JSONObject();
+            functionResPart.put("name", name);
+            functionResPart.put("response", result.toJSON());
+            JSONArray parts = new JSONArray();
+            parts.put(new JSONObject().put("functionResponse", functionResPart));
+            functionMsg.put("parts", parts);
+            return doPrompt(functionMsg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error in function call: " + e.getMessage();
+        }
+    }
+
+    /**
+     * Casts a raw JSON value to the specified Java type.
+     */
+    private Object castToType(Object value, Class<?> type) {
+        if (value == null) return null;
+        try {
+            if (type.equals(String.class)) {
+                return value.toString();
+            } else if (type.equals(Integer.class) || type.equals(int.class)) {
+                return Integer.parseInt(value.toString());
+            } else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+                return Boolean.parseBoolean(value.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return value;
+    }
+
+    /**
+     * Adds an assistant message to the conversation history.
+     */
+    private void addAssistantMessage(String text,String type) {
+        JSONObject msg = new JSONObject();
+        msg.put("role", "assistant");
+        JSONArray parts = new JSONArray();
+        parts.put(new JSONObject().put(type, text));
+        msg.put("parts", parts);
+        chatHistory.add(msg);
+    }
 }

@@ -1,0 +1,88 @@
+{
+    "contents": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "You are a chatbot for a laptop recommendation website. Help users choose laptops and use registered tools when needed. Hello"
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "parts": [
+                {
+                    "text":"Hello! I'm here to help you find the perfect laptop. To get started, tell me a bit about what you're looking for. What will you primarily use the laptop for (e.g., work, gaming, school, general use)? What's your budget? Are there any specific features you need (e.g., a long battery life, a specific operating system, a particular screen size)? The more information you give me, the better I can assist you.\n"
+                }
+            ]
+        },
+        {
+            "role":"user",
+            "parts":[
+                {
+                    "text":"Call all declared functions"
+                }
+                ]
+        },
+        {
+            "role":"assistant",
+            "parts": [
+                {
+                    "text": "I am sorry, I cannot call all declared functions as I need a specific command to execute the `filter` function. What command would you like to use with the `filter` function? For example, would you like to 'select_all' or 'clear_filters'?\n"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "select all"
+                }
+            ]
+        },
+        {
+            "role": "model",
+            "parts": [
+                {
+                    "args": {
+                        "command": "select_all"
+                    },
+                    "name": "filter"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "functionResponse": {
+                        "response": "Hi from gemini",
+                        "name": "filter"
+                    }
+                }
+            ]
+        }
+    ],
+    "tools": [
+        {
+            "function_declarations": [
+                {
+                    "name": "filter",
+                    "description": "Controls filter panel buttons based on provided command.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "command": {
+                                "description": "Command to control filter panel buttons (e.g., 'select_all', 'clear_filters').",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "command"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

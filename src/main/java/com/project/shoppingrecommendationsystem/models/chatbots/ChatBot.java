@@ -15,7 +15,7 @@ public abstract class ChatBot {
     public static String prompt(String message){
         return instance.onPrompt(message);
     }
-    public static void registerAction(String name,String functionContext,ChatBotCallables action){
+    public static void registerAction(String name,String functionContext,ChatBotCallable action){
         if(instance == null){
             System.out.println("no chat bot instance");
             return;
@@ -24,5 +24,5 @@ public abstract class ChatBot {
     }
     public abstract void onInit();
     public abstract String onPrompt(String message);
-    public abstract void onRegisterAction(String name,String functionContext,ChatBotCallables action);
+    public abstract void onRegisterAction(String name,String functionContext,ChatBotCallable action);
 }

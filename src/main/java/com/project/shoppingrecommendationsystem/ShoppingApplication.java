@@ -1,7 +1,5 @@
 package com.project.shoppingrecommendationsystem;
 
-import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
-import com.project.shoppingrecommendationsystem.models.chatbots.Gemini;
 import com.project.shoppingrecommendationsystem.views.MainPage;
 import com.project.shoppingrecommendationsystem.views.Overlay;
 import javafx.application.Application;
@@ -25,7 +23,6 @@ public class ShoppingApplication extends Application {
     }
 
     public static void main(String[] args) {
-        ChatBot.Init(new Gemini());
         launch(args);
     }
 }

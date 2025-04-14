@@ -2,6 +2,7 @@ module com.project.shoppingrecommendationsystem {
     exports com.project.shoppingrecommendationsystem;
     exports com.project.shoppingrecommendationsystem.models;
     exports com.project.shoppingrecommendationsystem.models.components;
+    exports com.project.shoppingrecommendationsystem.models.chatbots;
     exports com.project.shoppingrecommendationsystem.views;
     exports com.project.shoppingrecommendationsystem.controllers;
 

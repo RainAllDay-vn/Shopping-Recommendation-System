@@ -66,10 +66,9 @@ public class ProductGridController {
         );
     }
 
-
     public void goToProductDetails(Laptop product) {
         ProductDetails productDetails = new ProductDetails(product);
-        MainPageController.getInstance().displayDetails(productDetails.getRoot());
+        Messenger.getInstance().getMainPageController().displayDetails(productDetails.getRoot());
     }
 
     protected List<Laptop> fetchNextPage(int offset) {

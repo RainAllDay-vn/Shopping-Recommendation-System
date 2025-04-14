@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Gemini extends ChatBot {
-
     // A wild free tier gemini API key has appeared
     private final String postUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA8MNbRBXb4FgGMXkqJyF6gXugWyq-Ut60";
     private final String systemPrompt = "You are a chatbot for a laptop recommendation website. Help users choose laptops and use registered tools when needed.";
@@ -24,13 +23,6 @@ public class Gemini extends ChatBot {
     private final Map<String, ChatBotCallable> registeredFunctions = new HashMap<>();
     private final JSONArray toolsArray = new JSONArray();
     private final JSONArray functionDeclarations = new JSONArray();
-
-    @Override
-    public void onInit() {
-        JSONObject toolObject = new JSONObject();
-        toolObject.put("function_declarations", functionDeclarations);
-        toolsArray.put(toolObject);
-    }
 
     public void onRegisterAction(String name, String desc, ChatBotCallable action) {
         registeredFunctions.put(name, action);
@@ -95,7 +87,7 @@ public class Gemini extends ChatBot {
         }
         JSONObject payload = new JSONObject();
         payload.put("contents", messages);
-        if (functionDeclarations.length() > 0) {
+        if (!functionDeclarations.isEmpty()) {
             payload.put("tools", toolsArray);
         }
         //System.out.println(payload.toString());

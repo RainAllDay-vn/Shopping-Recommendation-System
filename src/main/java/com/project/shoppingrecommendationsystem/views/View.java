@@ -9,23 +9,18 @@ import javafx.scene.layout.FlowPane;
 import java.io.IOException;
 import java.util.Objects;
 
-public abstract class View<Controller> {
-    protected Controller controller;
+public abstract class View {
     Node root;
 
-    Node load (String path, Controller controller) {
+    Node load (String path) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     Objects.requireNonNull(ShoppingApplication.class.getResource(path))
             );
-            loader.setController(controller);
-            root = loader.load();
-            this.controller = controller;
-            return root;
+            return loader.load();
         } catch (IOException e) {
             System.err.println("[ERROR] Could not load " + path);
             System.out.println(e.getMessage());
-            e.printStackTrace();
         } catch (NullPointerException e) {
             System.err.println("[ERROR] Could not find " + path) ;
             System.out.println(e.getMessage());
@@ -39,9 +34,5 @@ public abstract class View<Controller> {
 
     public Scene getScene () {
         return root.getScene();
-    }
-
-    public Controller getController(){
-        return controller;
     }
 }

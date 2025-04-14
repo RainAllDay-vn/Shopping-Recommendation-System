@@ -34,7 +34,6 @@ public class MainPageController implements Initializable {
 
     public void displayDetails(Node content){
         root.setCenter(content);
-        root.setLeft(accessBar);
     }
 
     public void displayMain(){
@@ -44,7 +43,6 @@ public class MainPageController implements Initializable {
 
     public void displayMyList(){
         root.setCenter(new FavouriteGrid().getRoot());
-        root.setLeft(accessBar);
     }
 
     public void toggleChatBox () {

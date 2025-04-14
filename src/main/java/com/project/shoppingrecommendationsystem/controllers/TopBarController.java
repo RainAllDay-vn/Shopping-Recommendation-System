@@ -27,8 +27,8 @@ public class TopBarController implements Initializable {
     @Override
     public void initialize (URL url, ResourceBundle resourceBundle) {
         logo.setImage(appLogo);
-        logo.setOnMouseClicked(e -> MainPageController.getInstance().displayMain());
-        titleLabel.setOnMouseClicked(e -> MainPageController.getInstance().displayMain());
+        logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
+        titleLabel.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
     }
 
     @FXML

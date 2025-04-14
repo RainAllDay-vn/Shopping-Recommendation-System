@@ -15,17 +15,16 @@ import java.io.File;
 import java.net.URL;
 
 public class ProductCardController {
-     private static final Image defaultImage = loadDefaultImage();
+    private static final Image defaultImage = loadDefaultImage();
 
-     @FXML private ImageView productImage;
-     @FXML private Label productName;
-     @FXML private Label productPrice;
-     @FXML private Label productDiscount;
-     @FXML private Button showMoreButton;
-     @FXML private Button toggleFavouriteStatusButton;
+    @FXML private ImageView productImage;
+    @FXML private Label productName;
+    @FXML private Label productPrice;
+    @FXML private Label productDiscount;
+    @FXML private Button showMoreButton;
+    @FXML private Button toggleFavouriteStatusButton;
 
-
-     private Laptop product;
+    private Laptop product;
 
     public void setProduct(Laptop product) {
         this.product = product;

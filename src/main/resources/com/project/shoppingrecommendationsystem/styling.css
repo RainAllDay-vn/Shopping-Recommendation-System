@@ -116,3 +116,12 @@
 .custom_product:hover{
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 20, 0.5, 0, 15);
 }
+
+ .section-header {
+ }
+
+ .detail-content {
+ }
+
+ .detail-label {
+ }

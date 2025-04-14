@@ -5,9 +5,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fitToWidth="true">
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fitToWidth="true"
+            fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductDetailsController">
     <VBox spacing="25" style="-fx-padding: 20;">
-        <HBox fx:id="productContainer" spacing="30" alignment="TOP_LEFT">
+        <HBox spacing="30">
             <VBox fx:id="productCardDetailsBox" spacing="10" style="-fx-pref-width: 300;">
             </VBox>
             <VBox spacing="15" style="-fx-pref-width: 500;">

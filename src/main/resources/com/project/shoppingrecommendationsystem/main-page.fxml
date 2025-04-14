@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.project.shoppingrecommendationsystem.controllers.MainPageController">
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.MainPageController">
     <center>
 
     </center>
@@ -24,9 +20,6 @@
       <Label alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" text="####Footer " BorderPane.alignment="CENTER" />
    </bottom>
    <center>
-       <ScrollPane fx:id="productGrid" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0"
-                   BorderPane.alignment="CENTER">
-           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0"/>
-       </ScrollPane>
+
    </center>
 </BorderPane>

@@ -1,7 +1,9 @@
 package com.project.shoppingrecommendationsystem.views;
 
-public class ChatBox extends View {
+import com.project.shoppingrecommendationsystem.controllers.ChatBoxController;
+
+public class ChatBox extends View<ChatBoxController> {
     public ChatBox() {
-        root = load("components/chat-box.fxml");
+        root = load("components/chat-box.fxml", new ChatBoxController());
     }
 }

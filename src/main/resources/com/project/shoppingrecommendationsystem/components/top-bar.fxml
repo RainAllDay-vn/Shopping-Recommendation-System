@@ -11,16 +11,18 @@
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.project.shoppingrecommendationsystem.controllers.TopBarController">
 
-    <ImageView fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true"/>
+    <ImageView fx:id="logo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" />
 
     <Label prefHeight="78" prefWidth="365" text="Shopping Recommended System">
         <font>
-            <Font size="22"/>
+            <Font size="22" />
         </font>
     </Label>
 
-    <TextField fx:id="searchTextField" prefHeight="40" prefWidth="525" promptText="What product you have in mind today"/>
+    <TextField fx:id="searchTextField" prefHeight="40" prefWidth="525" promptText="What product you have in mind today" />
 
-    <Button fx:id="searchButton" text="Search"/>
+    <Button fx:id="searchButton" text="Search" />
+
+    <Button fx:id="goToList" text="My list"/>
 
 </HBox>

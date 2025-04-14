@@ -1,7 +1,9 @@
 package com.project.shoppingrecommendationsystem.views;
 
-public class TopBar extends View {
+import com.project.shoppingrecommendationsystem.controllers.TopBarController;
+
+public class TopBar extends View<TopBarController> {
     public TopBar() {
-        root = load("components/top-bar.fxml");
+        root = load("components/top-bar.fxml", new TopBarController());
     }
 }

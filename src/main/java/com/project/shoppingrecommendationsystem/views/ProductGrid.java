@@ -1,7 +1,9 @@
 package com.project.shoppingrecommendationsystem.views;
 
-public class ProductGrid extends View {
+import com.project.shoppingrecommendationsystem.controllers.ProductGridController;
+
+public class ProductGrid extends View<ProductGridController> {
     public ProductGrid() {
-        root = load("components/product-grid.fxml");
+        root = load("components/product-grid.fxml", new ProductGridController());
     }
 }

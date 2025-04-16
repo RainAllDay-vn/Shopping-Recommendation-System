@@ -3,255 +3,185 @@ package com.project.shoppingrecommendationsystem.models.chatbots;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import com.project.shoppingrecommendationsystem.models.chatbots.GeminiUtils.FunctionResponse;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class Gemini extends ChatBot {
 
-    // A wild free tier gemini API key has appeared
+    // Free tier Gemini API key.
     private final String postUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA8MNbRBXb4FgGMXkqJyF6gXugWyq-Ut60";
-    private final String systemPrompt = "You are a chatbot for a laptop recommendation website. Help users choose laptops and use registered tools when needed.";
-    private final List<JSONObject> chatHistory = new ArrayList<>();
-    private final Map<String, ChatBotCallable> registeredFunctions = new HashMap<>();
-    private final JSONArray toolsArray = new JSONArray();
-    private final JSONArray functionDeclarations = new JSONArray();
+    // System prompt for context.
+    private final String systemPrompt = "You are a chatbot for a laptop recommendation website. You have a number of tools that you can use to change the UI, use it to enhance user experience. Help users choose laptops and use registered tools when needed.";
+
+    // This list stores conversation messages; each message is a JSONObject with keys "role" and "parts".
+
+    private JSONArray contents = new JSONArray();
+    private JSONArray tools = new JSONArray();
+    private JSONArray functionDeclarations = new JSONArray();
+
+
+    public List<Class<?>> supportedTypes = Arrays.asList(
+            String.class, boolean.class, int.class, float.class
+    );
+    //entry using class_name.method
+    Map<String, FunctionInfo> actionsMap = new HashMap<>();
+
+    public static class FunctionInfo {
+        Object instance;
+        Method method;
+        Class<?>[] paramType = {};
+        public FunctionInfo(Object instance, Method method, Class<?>[] paramType) {
+            this.instance = instance;
+            this.method = method;
+            this.paramType = paramType;
+        }
+        public Object getInstance() {
+            return instance;
+        }
+        public Method getMethod() {
+            return method;
+        }
+        public Class<?>[] getParamType(){
+            return this.paramType;
+        }
+    }
 
     @Override
     public void onInit() {
-        JSONObject toolObject = new JSONObject();
-        toolObject.put("function_declarations", functionDeclarations);
-        toolsArray.put(toolObject);
-    }
-
-    public void onRegisterAction(String name, String desc, ChatBotCallable action) {
-        registeredFunctions.put(name, action);
-        JSONObject func = new JSONObject();
-        ChatBotCallableInfo info = action.getInfo();
-
-        // Build the function declaration.
-        func.put("name", info.getName());
-        func.put("description", info.getDescription());
-
-        // Build the parameters schema.
-        JSONObject parameters = new JSONObject();
-        parameters.put("type", "object");
-        JSONObject properties = new JSONObject();
-        JSONArray required = new JSONArray();
-
-        for (ChatBotParameter param : info.getParameters()) {
-            JSONObject paramDef = new JSONObject();
-            paramDef.put("description", param.getDescription());
-            if (param.getType().equals(String.class)) {
-                paramDef.put("type", "string");
-            } else if (param.getType().equals(Integer.class) || param.getType().equals(int.class)) {
-                paramDef.put("type", "integer");
-            } else if (param.getType().equals(Boolean.class) || param.getType().equals(boolean.class)) {
-                paramDef.put("type", "boolean");
-            } else {
-                paramDef.put("type", "string"); // fallback if type is not recognized
-            }
-            properties.put(param.getName(), paramDef);
-            required.put(param.getName());
-        }
-        parameters.put("properties", properties);
-        parameters.put("required", required);
-        func.put("parameters", parameters);
-
-        // Append the function declaration to our list.
-        functionDeclarations.put(func);
+        tools.put(new JSONObject().put("functionDeclarations",functionDeclarations));
+        contents.put(new JSONObject().put("role","user").put("parts", new JSONArray().put(new JSONObject().put("text", systemPrompt))));
     }
 
     @Override
-    public String onPrompt(String message) {
-        
-        JSONObject userMsg = new JSONObject();
-        userMsg.put("role", "user");
-        JSONArray userParts = new JSONArray();
-        userMsg.put("parts", userParts);
-        // If the conversation is new, prepend the system prompt.
-        if (chatHistory.isEmpty()) {
-            userParts.put(new JSONObject().put("text", systemPrompt + " " + message));
-        } else {
-            userParts.put(new JSONObject().put("text", message));
+    public void onRegisterAction(Object instance, Method method,String[] paramDesc, String desc) {
+        if (!supportedTypes.contains(method.getReturnType())) {
+            System.out.println(method.getReturnType() + " as return type is not supported");
+            return;
         }
-
-        return doPrompt(userMsg);
-    }
-
-    private String doPrompt(JSONObject userMsg){
-        chatHistory.add(userMsg);
-        JSONArray messages = new JSONArray();
-        for (JSONObject msg : chatHistory) {
-            messages.put(msg);
-        }
-        JSONObject payload = new JSONObject();
-        payload.put("contents", messages);
-        if (functionDeclarations.length() > 0) {
-            payload.put("tools", toolsArray);
-        }
-        //System.out.println(payload.toString());
-        String response = sendPostRequest(postUrl, payload.toString());
-        return handleResponse(response);
-    }
-
-    private String sendPostRequest(String urlString, String payload) {
-        HttpURLConnection connection = null;
-        StringBuilder response = new StringBuilder();
-        try {
-            URL url = new URI(urlString).toURL();
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setDoOutput(true);
-
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
+        Class<?>[] params = method.getParameterTypes();
+        for (Class<?> paramType : params) {
+            if (!supportedTypes.contains(paramType)) {
+                System.out.println(paramType + " as parameter type is not supported");
+                return;
             }
         }
-        return response.toString();
+        String signature = instance.getClass().getSimpleName() + "." + method.getName();
+        actionsMap.put(signature, new FunctionInfo(instance, method,params));
+        JSONObject methodObj = GeminiUtils.methodToGeminiJSON(signature, desc, params, paramDesc);
+        functionDeclarations.put(methodObj);
     }
 
-    
-    private String handleResponse(String rawJson) {
-        try {
-            JSONObject json = new JSONObject(rawJson);
-            JSONArray candidates = json.getJSONArray("candidates");
-            if (candidates.length() > 0) {
-                JSONObject candidate = candidates.getJSONObject(0);
-                if (candidate.has("content")) {
-                    JSONObject content = candidate.getJSONObject("content");
-                    if (content.has("parts")) {
-                        JSONArray parts = content.getJSONArray("parts");
-                        if (parts.length() > 0) {
-                            JSONObject firstPart = parts.getJSONObject(0);
-                            // Check for a function call.
-                            if (firstPart.has("functionCall")) {
-                                JSONObject functionCall = firstPart.getJSONObject("functionCall");
-                                return handleFunctionCall(functionCall);
-                            } else if (firstPart.has("text")) {
-                                String text = firstPart.getString("text");
-                                addAssistantMessage(text,"text");
-                                return text;
-                            }
+    private GeminiUtils.FunctionResponse<?> handleFunction(JSONObject functionCall){
+        contents.put(GeminiUtils.constructModelContent(new JSONObject().put("functionCall", functionCall)));
+        System.out.println(functionCall);
+        String name = functionCall.getString("name");
+        FunctionInfo function = actionsMap.get(name);
+        JSONObject args = functionCall.getJSONObject("args");
+        Object[] argValues = new Object[function.getParamType().length];
+        for(int i = 0; i < function.getParamType().length; i++){
+            String paramName = "param" + (i + 1);
+            if (function.getParamType().length == 1 && args.has("param1")) {
+                paramName = "param1";
+            } else {
+                try {
+                    JSONObject parameters = functionDeclarations.toList().stream()
+                            .filter(o -> ((JSONObject) o).getString("name").equals(name))
+                            .findFirst()
+                            .map(o -> ((JSONObject) o).getJSONObject("parameters"))
+                            .orElse(new JSONObject());
+                    JSONObject properties = parameters.optJSONObject("properties");
+                    if (properties != null && properties.length() > 0) {
+                        paramName = properties.keys().next();
+                        if (args.has("param" + (i + 1))) {
+                            paramName = "param" + (i + 1);
+                        } else if (properties.length() == 1) {
+                            paramName = properties.keys().next();
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error processing response: " + e.getMessage();
+
+            Class<?> paramType = function.getParamType()[i];
+            if(paramType.equals(String.class)){
+                argValues[i] = args.getString(paramName);
+            } else if (paramType.equals(int.class)) {
+                argValues[i] = args.getInt(paramName);
+            } else if (paramType.equals(boolean.class)) {
+                argValues[i] = args.getBoolean(paramName);
+            } else if (paramType.equals(float.class)) {
+                argValues[i] = (float) args.getDouble(paramName);
+            }
         }
-        return "No valid reply received.";
-    }
-    private String handleFunctionCall(JSONObject functionCall) {
+
+        Object result = null;
         try {
-            JSONObject callMsg = new JSONObject();
-            callMsg.put("role", "model");
-            callMsg.put("parts", new JSONArray().put(new JSONObject().put("functionCall", functionCall)));
-            chatHistory.add(callMsg);
-            String name = functionCall.getString("name");
-            JSONObject args = functionCall.getJSONObject("args");
-            ChatBotCallable callable = registeredFunctions.get(name);
-            if (callable == null) {
-                return "Error: Unregistered function " + name;
-            }
-
-            List<ChatBotInputParameter> inputList = new ArrayList<>();
-            for (ChatBotParameter param : callable.getInfo().getParameters()) {
-                Object rawValue = args.has(param.getName()) ? args.get(param.getName()) : null;
-                Object value = castToType(rawValue, param.getType());
-                ChatBotInputParameter inputParam = new ChatBotInputParameter() {
-                    @Override
-                    public String getName() {
-                        return param.getName();
-                    }
-
-                    @Override
-                    public Class<?> getType() {
-                        return param.getType();
-                    }
-
-                    @Override
-                    public Object getValue() {
-                        return value;
-                    }
-                };
-                inputList.add(inputParam);
-            }
-
-            ChatBotReturn result = callable.call(inputList.toArray(new ChatBotInputParameter[0]));
-
-            // Record the function result in the conversation history.
-            JSONObject functionMsg = new JSONObject();
-            functionMsg.put("role", "user");
-            JSONObject functionResPart = new JSONObject();
-            functionResPart.put("name", name);
-            functionResPart.put("response", result.toJSON());
-            JSONArray parts = new JSONArray();
-            parts.put(new JSONObject().put("functionResponse", functionResPart));
-            functionMsg.put("parts", parts);
-            return doPrompt(functionMsg);
-        } catch (Exception e) {
+            function.getMethod().setAccessible(true);
+            result = function.getMethod().invoke(function.getInstance(), argValues);
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
-            return "Error in function call: " + e.getMessage();
+            return new FunctionResponse<>(name, "Error: Illegal Access");
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return new FunctionResponse<>(name, "Error: Invocation Target Exception - " + e.getTargetException().getMessage());
         }
+
+        return new FunctionResponse<>(name, result);
     }
 
-    /**
-     * Casts a raw JSON value to the specified Java type.
-     */
-    private Object castToType(Object value, Class<?> type) {
-        if (value == null) return null;
-        try {
-            if (type.equals(String.class)) {
-                return value.toString();
-            } else if (type.equals(Integer.class) || type.equals(int.class)) {
-                return Integer.parseInt(value.toString());
-            } else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
-                return Boolean.parseBoolean(value.toString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return value;
-    }
 
-    /**
-     * Adds an assistant message to the conversation history.
-     */
-    private void addAssistantMessage(String text,String type) {
-        JSONObject msg = new JSONObject();
-        msg.put("role", "assistant");
-        JSONArray parts = new JSONArray();
-        parts.put(new JSONObject().put(type, text));
-        msg.put("parts", parts);
-        chatHistory.add(msg);
+    @Override
+    public String onPrompt(String message) {
+        String retText = null;
+        List<FunctionResponse<?>> functionResponses = new LinkedList<>();
+        JSONObject userMsg = GeminiUtils.constructUSerContent(message, functionResponses.toArray(new FunctionResponse[0]));
+        contents.put(userMsg);
+        JSONObject payload = GeminiUtils.constructPayload(tools, contents);
+        System.out.println(payload);
+        JSONObject response = new JSONObject(sendPostRequest(postUrl,payload.toString()));
+        System.out.println(response);
+        JSONArray candidates = response.getJSONArray("candidates");
+        boolean containFunction = false;
+        List<FunctionResponse<?>> currentResponses = new LinkedList<>();
+        for(int i = 0; i< candidates.length(); i++){
+            JSONObject candidate = candidates.getJSONObject(i);
+            JSONObject content = candidate.optJSONObject("content");
+            if (content != null) {
+                JSONArray parts = content.getJSONArray("parts");
+                for (int k = 0; k < parts.length(); k++) {
+                    JSONObject part = parts.getJSONObject(k);
+                    if (part.has("functionCall")) {
+                        JSONObject funcCall = part.getJSONObject("functionCall");
+                        currentResponses.add(handleFunction(funcCall));
+                        containFunction = true;
+                    }
+                    if (part.has("text")) {
+                        retText = part.getString("text");
+                    }
+                }
+            }
+        }
+
+        if(containFunction){
+            //Construct return
+            // For now, we'll just return the text if available, or a message about function execution.
+            if (retText == null && !currentResponses.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Function(s) executed:");
+                for (FunctionResponse<?> res : currentResponses) {
+                    sb.append("\n").append(res.toJSON().toString(2));
+                }
+                return sb.toString();
+            }
+        }
+        return retText;
     }
 }

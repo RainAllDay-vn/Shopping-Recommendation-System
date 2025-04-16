@@ -1,10 +1,6 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
-import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
-import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotControllable;
-import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotFunction;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,7 +16,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FilterBarController extends ChatBotControllable implements Initializable {
+public class FilterBarController implements Initializable {
     @FXML
     private VBox vendorOptions;
     @FXML
@@ -33,7 +29,6 @@ public class FilterBarController extends ChatBotControllable implements Initiali
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize vendor checkboxes.
         for (Node node : vendorOptions.getChildren()) {
             if (!(node instanceof CheckBox checkBox)) {
                 continue;
@@ -46,19 +41,7 @@ public class FilterBarController extends ChatBotControllable implements Initiali
                 }
             });
         }
-
         initializePriceRadioButtons();
-        ChatBot.registerComponent(this);
-    }
-
-    @ChatBotFunction(desc = "filter stuffs", paramDesc = {"brand"})
-    private String filterStuffs(String brand){
-        return "Hello";
-    }
-
-    @ChatBotFunction(desc = "filter stuffs 2", paramDesc = {"brand"})
-    private String filterStuffs2(String brand){
-        return "Hello";
     }
 
     private void initializePriceRadioButtons() {
@@ -103,22 +86,21 @@ public class FilterBarController extends ChatBotControllable implements Initiali
     private void addBrandToQuery(String brandName) {
         for (int i = 0; i < query.size(); i++) {
             String[] field = query.get(i);
-            if (field[0].equals("brand")) {
-                String[] newField = Arrays.copyOf(field, field.length + 1);
-                newField[newField.length - 1] = brandName;
+            if (field[0].equals("brand")){
+                String[] newField = Arrays.copyOf(field, field.length+1);
+                newField[newField.length-1] = brandName;
                 query.set(i, newField);
                 return;
             }
         }
-        query.add(new String[]{"brand", "in", brandName});
+        query.add(new String[] {"brand", "in", brandName});
     }
 
     private void removeBrandFromQuery(String brandName) {
         for (int i = 0; i < query.size(); i++) {
             String[] field = query.get(i);
-            if (field[0].equals("brand")) {
-                String[] newField = Arrays.stream(field)
-                        .filter(brand -> !brand.equals(brandName))
+            if (field[0].equals("brand")){
+                String[] newField = Arrays.stream(field).filter(brand -> !brand.equals(brandName))
                         .toArray(String[]::new);
                 if (newField.length < 3) {
                     query.remove(i);

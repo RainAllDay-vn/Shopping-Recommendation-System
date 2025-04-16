@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-<VBox alignment="BOTTOM_RIGHT" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml" spacing="10">
 
-    <VBox fx:id="chatContainer" prefHeight="720" prefWidth="302" style="-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;" visible="false">
+    <!-- Chat Container -->
+    <VBox fx:id="chatContainer" prefWidth="302" prefHeight="720"
+          style="-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;"
+          visible="false">
 
-        <ListView fx:id="chatListView" prefHeight="555" prefWidth="302" />
+        <!-- Chat List -->
+        <ListView fx:id="chatListView" prefWidth="302" prefHeight="555" />
 
-        <HBox prefHeight="100" prefWidth="200">
-            <TextField fx:id="chatInput" prefHeight="91" prefWidth="236" />
-            <Button fx:id="sendButton" prefHeight="53" prefWidth="66" text="Send" />
+        <!-- Input Area -->
+        <HBox prefWidth="200" prefHeight="100">
+            <TextField fx:id="chatInput" prefWidth="236" prefHeight="91" />
+            <Button fx:id="sendButton" text="Send" prefWidth="66" prefHeight="53"/>
         </HBox>
     </VBox>
-<<<<<<< HEAD
-
-    <ImageView fx:id="chatBotLogo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
-
-=======
->>>>>>> 3fb4f8371ec22213294e88dd2c87cd5ea4e8b321
 </VBox>
-</AnchorPane>

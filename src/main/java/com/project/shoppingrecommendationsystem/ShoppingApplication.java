@@ -1,11 +1,7 @@
 package com.project.shoppingrecommendationsystem;
 
-<<<<<<< HEAD
-import com.project.shoppingrecommendationsystem.models.ProductDatabase;
 import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
 import com.project.shoppingrecommendationsystem.models.chatbots.Gemini;
-=======
->>>>>>> 3fb4f8371ec22213294e88dd2c87cd5ea4e8b321
 import com.project.shoppingrecommendationsystem.views.MainPage;
 import com.project.shoppingrecommendationsystem.views.Overlay;
 import javafx.application.Application;
@@ -18,6 +14,7 @@ import java.io.IOException;
 public class ShoppingApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        ChatBot.Init(new Gemini());
         StackPane root = new StackPane();
         root.setPrefSize(1500, 800);
         root.getChildren().add(new MainPage().getRoot());
@@ -29,7 +26,6 @@ public class ShoppingApplication extends Application {
     }
 
     public static void main(String[] args) {
-        ChatBot.Init(new Gemini());
         launch(args);
     }
 }

@@ -1,6 +1,7 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
+import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.views.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

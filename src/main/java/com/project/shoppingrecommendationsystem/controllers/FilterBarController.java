@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FilterBarController implements Initializable {
+public class FilterBarController extends ChatBotControllable implements Initializable {
     @FXML
     private VBox vendorOptions;
     @FXML

@@ -1,6 +1,10 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
+import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
+import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotControllable;
+import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotFunction;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -16,7 +20,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FilterBarController implements Initializable {
+public class FilterBarController extends ChatBotControllable implements Initializable {
     @FXML
     private VBox vendorOptions;
     @FXML
@@ -42,6 +46,17 @@ public class FilterBarController implements Initializable {
             });
         }
         initializePriceRadioButtons();
+        ChatBot.registerComponent(this);
+    }
+
+    @ChatBotFunction(desc = "filter stuffs", paramDesc = {"brand"})
+    private String filterStuffs(String brand){
+        return "Hello";
+    }
+
+    @ChatBotFunction(desc = "filter stuffs 2", paramDesc = {"brand"})
+    private String filterStuffs2(String brand){
+        return "Hello";
     }
 
     private void initializePriceRadioButtons() {

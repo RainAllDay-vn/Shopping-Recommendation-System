@@ -4,31 +4,7 @@
             "role": "user",
             "parts": [
                 {
-                    "text": "You are a chatbot for a laptop recommendation website. Help users choose laptops and use registered tools when needed. Hello"
-                }
-            ]
-        },
-        {
-            "role": "assistant",
-            "parts": [
-                {
-                    "text":"Hello! I'm here to help you find the perfect laptop. To get started, tell me a bit about what you're looking for. What will you primarily use the laptop for (e.g., work, gaming, school, general use)? What's your budget? Are there any specific features you need (e.g., a long battery life, a specific operating system, a particular screen size)? The more information you give me, the better I can assist you.\n"
-                }
-            ]
-        },
-        {
-            "role":"user",
-            "parts":[
-                {
-                    "text":"Call all declared functions"
-                }
-                ]
-        },
-        {
-            "role":"assistant",
-            "parts": [
-                {
-                    "text": "I am sorry, I cannot call all declared functions as I need a specific command to execute the `filter` function. What command would you like to use with the `filter` function? For example, would you like to 'select_all' or 'clear_filters'?\n"
+                    "text": "You are a chatbot for a laptop recommendation website. You have a number of tools that you can use to change the UI, use it to enhance user experience. Help users choose laptops and use registered tools when needed."
                 }
             ]
         },
@@ -36,53 +12,152 @@
             "role": "user",
             "parts": [
                 {
-                    "text": "select all"
-                }
-            ]
-        },
-        {
-            "role": "model",
-            "parts": [
-                {
-                    "args": {
-                        "command": "select_all"
-                    },
-                    "name": "filter"
-                }
-            ]
-        },
-        {
-            "role": "user",
-            "parts": [
-                {
-                    "functionResponse": {
-                        "response": "Hi from gemini",
-                        "name": "filter"
-                    }
+                    "text": "tell me all declared functions"
                 }
             ]
         }
     ],
     "tools": [
         {
-            "function_declarations": [
+            "functionDeclarations": [
                 {
-                    "name": "filter",
-                    "description": "Controls filter panel buttons based on provided command.",
+                    "name": "FilterBarController.filterStuffs2",
+                    "description": "filter stuffs 2",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "command": {
-                                "description": "Command to control filter panel buttons (e.g., 'select_all', 'clear_filters').",
+                            "param1": {
+                                "description": "brand",
                                 "type": "string"
                             }
                         },
                         "required": [
-                            "command"
+                            "param1"
+                        ]
+                    }
+                },
+                {
+                    "name": "FilterBarController.filterStuffs",
+                    "description": "filter stuffs",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
                         ]
                     }
                 }
             ]
         }
     ]
+}        
+{
+    "contents": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "You are a chatbot for a laptop recommendation website. You have a number of tools that you can use to change the UI, use it to enhance user experience. Help users choose laptops and use registered tools when needed."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "tell me all declared functions"
+                }
+            ]
+        }
+    ],
+    "tools": [
+        {
+            "functionDeclarations": [
+                {
+                    "name": "FilterBarController.filterStuffs2",
+                    "description": "filter stuffs 2",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                },
+                {
+                    "name": "FilterBarController.filterStuffs",
+                    "description": "filter stuffs",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}        
+{
+    "candidates": [
+        {
+            "avgLogprobs": -0.015215948933646792,
+            "finishReason": "STOP",
+            "content": {
+                "role": "model",
+                "parts": [
+                    {
+                        "functionCall": {
+                            "args": {
+                                "param1": "brand"
+                            },
+                            "name": "FilterBarController.filterStuffs2"
+                        }
+                    },
+                    {
+                        "functionCall": {
+                            "args": {
+                                "param1": "brand"
+                            },
+                            "name": "FilterBarController.filterStuffs"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "modelVersion": "gemini-2.0-flash",
+    "usageMetadata": {
+        "candidatesTokenCount": 21,
+        "promptTokensDetails": [
+            {
+                "modality": "TEXT",
+                "tokenCount": 79
+            }
+        ],
+        "totalTokenCount": 100,
+        "promptTokenCount": 79,
+        "candidatesTokensDetails": [
+            {
+                "modality": "TEXT",
+                "tokenCount": 21
+            }
+        ]
+    }
 }

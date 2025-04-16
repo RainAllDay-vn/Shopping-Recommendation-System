@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<<<<<<< HEAD
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -8,9 +9,22 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+=======
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.MainPageController">
+    <center>
+
+    </center>
+    <right>
+
+    </right>
+>>>>>>> 3fb4f8371ec22213294e88dd2c87cd5ea4e8b321
     <top>
         <Label text="Top Section" BorderPane.alignment="CENTER" prefHeight="50.0" />
     </top>
+<<<<<<< HEAD
 
     <right>
         <VBox prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -37,4 +51,15 @@
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0"/>
         </ScrollPane>
     </center>
+=======
+   <left>
+      <ScrollPane prefHeight="786.0" prefWidth="344.0" BorderPane.alignment="CENTER" />
+   </left>
+   <bottom>
+      <Label alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" text="####Footer " BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+
+   </center>
+>>>>>>> 3fb4f8371ec22213294e88dd2c87cd5ea4e8b321
 </BorderPane>

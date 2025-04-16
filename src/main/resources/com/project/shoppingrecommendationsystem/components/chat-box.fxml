@@ -16,8 +16,11 @@
             <Button fx:id="sendButton" prefHeight="53" prefWidth="66" text="Send" />
         </HBox>
     </VBox>
+<<<<<<< HEAD
 
     <ImageView fx:id="chatBotLogo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
 
+=======
+>>>>>>> 3fb4f8371ec22213294e88dd2c87cd5ea4e8b321
 </VBox>
 </AnchorPane>

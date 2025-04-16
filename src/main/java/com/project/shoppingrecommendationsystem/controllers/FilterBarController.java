@@ -1,9 +1,9 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
-import com.project.shoppingrecommendationsystem.models.chatbots.ChatBot;
 import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotControllable;
 import com.project.shoppingrecommendationsystem.models.chatbots.ChatBotFunction;
+
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +31,21 @@ public class FilterBarController extends ChatBotControllable implements Initiali
         query.clear();
     }
 
+    void setCheckBox(int index, boolean val){
+        ((CheckBox)vendorOptions.getChildren().get(index)).setSelected(val);
+    }
+
+    @ChatBotFunction(desc = "set brand on brand panel by inputing boolean", paramDesc = {"asus", "apple", "lenovo", "msi", "hp", "acer", "dell", "samsung"})
+    void setBrandPanel(boolean asus, boolean apple, boolean lenovo, boolean msi, boolean hp, boolean acer, boolean dell, boolean samsung){
+        setCheckBox(0, asus);
+        setCheckBox(1, apple);
+        setCheckBox(2, lenovo);
+        setCheckBox(3, msi);
+        setCheckBox(4, hp);
+        setCheckBox(5, dell);
+        setCheckBox(6, samsung);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         for (Node node : vendorOptions.getChildren()) {
@@ -46,17 +61,6 @@ public class FilterBarController extends ChatBotControllable implements Initiali
             });
         }
         initializePriceRadioButtons();
-        ChatBot.registerComponent(this);
-    }
-
-    @ChatBotFunction(desc = "filter stuffs", paramDesc = {"brand"})
-    private String filterStuffs(String brand){
-        return "Hello";
-    }
-
-    @ChatBotFunction(desc = "filter stuffs 2", paramDesc = {"brand"})
-    private String filterStuffs2(String brand){
-        return "Hello";
     }
 
     private void initializePriceRadioButtons() {

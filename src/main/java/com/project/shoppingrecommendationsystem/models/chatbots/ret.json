@@ -1,0 +1,163 @@
+{
+    "contents": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "You are a chatbot for a laptop recommendation website. You have a number of tools that you can use to change the UI, use it to enhance user experience. Help users choose laptops and use registered tools when needed."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "tell me all declared functions"
+                }
+            ]
+        }
+    ],
+    "tools": [
+        {
+            "functionDeclarations": [
+                {
+                    "name": "FilterBarController.filterStuffs2",
+                    "description": "filter stuffs 2",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                },
+                {
+                    "name": "FilterBarController.filterStuffs",
+                    "description": "filter stuffs",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}        
+{
+    "contents": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "You are a chatbot for a laptop recommendation website. You have a number of tools that you can use to change the UI, use it to enhance user experience. Help users choose laptops and use registered tools when needed."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "tell me all declared functions"
+                }
+            ]
+        }
+    ],
+    "tools": [
+        {
+            "functionDeclarations": [
+                {
+                    "name": "FilterBarController.filterStuffs2",
+                    "description": "filter stuffs 2",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                },
+                {
+                    "name": "FilterBarController.filterStuffs",
+                    "description": "filter stuffs",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "param1": {
+                                "description": "brand",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "param1"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}        
+{
+    "candidates": [
+        {
+            "avgLogprobs": -0.015215948933646792,
+            "finishReason": "STOP",
+            "content": {
+                "role": "model",
+                "parts": [
+                    {
+                        "functionCall": {
+                            "args": {
+                                "param1": "brand"
+                            },
+                            "name": "FilterBarController.filterStuffs2"
+                        }
+                    },
+                    {
+                        "functionCall": {
+                            "args": {
+                                "param1": "brand"
+                            },
+                            "name": "FilterBarController.filterStuffs"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "modelVersion": "gemini-2.0-flash",
+    "usageMetadata": {
+        "candidatesTokenCount": 21,
+        "promptTokensDetails": [
+            {
+                "modality": "TEXT",
+                "tokenCount": 79
+            }
+        ],
+        "totalTokenCount": 100,
+        "promptTokenCount": 79,
+        "candidatesTokensDetails": [
+            {
+                "modality": "TEXT",
+                "tokenCount": 21
+            }
+        ]
+    }
+}

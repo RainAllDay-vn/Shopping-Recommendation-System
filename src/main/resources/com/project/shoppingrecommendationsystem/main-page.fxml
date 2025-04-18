@@ -1,40 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="864.0" prefWidth="1536.0"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-    <top>
-        <Label text="Top Section" BorderPane.alignment="CENTER" prefHeight="50.0" />
-    </top>
-
-    <right>
-        <VBox prefWidth="200.0" BorderPane.alignment="CENTER">
-            <Label text="Right Section" />
-            <Label text="Additional content" />
-        </VBox>
-    </right>
-
-    <left>
-        <ScrollPane fx:id="scrollPaneLeft" prefHeight="786.0" prefWidth="344.0" BorderPane.alignment="CENTER">
-            <VBox>
-                <Label text="Left Section Content" />
-                <Label text="Additional content" />
-            </VBox>
-        </ScrollPane>
-    </left>
-
-    <bottom>
-        <Label text="#### Footer" BorderPane.alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" />
-    </bottom>
-
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.MainPageController">
     <center>
-        <ScrollPane fx:id="productGrid" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0"/>
-        </ScrollPane>
+
     </center>
+    <right>
+
+    </right>
+    <top>
+
+    </top>
+   <left>
+      <ScrollPane prefHeight="786.0" prefWidth="344.0" BorderPane.alignment="CENTER" />
+   </left>
+   <bottom>
+      <Label alignment="CENTER" prefHeight="46.0" prefWidth="1274.0" text="####Footer " BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+
+   </center>
 </BorderPane>

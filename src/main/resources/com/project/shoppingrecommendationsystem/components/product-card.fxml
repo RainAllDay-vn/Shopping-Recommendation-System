@@ -12,11 +12,11 @@
     <Label fx:id="productName" style="-fx-font-weight: bold;" />
     <Label fx:id="productPrice" />
     <Label fx:id="productDiscount" style="-fx-text-fill: green;" />
-    <HBox fx:id="buttonsBox">
+    <HBox>
       <HBox layoutX="210.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
         <Button fx:id="showMoreButton" text="Show more" />
       <HBox HBox.hgrow="ALWAYS" />
-        <Button fx:id="toggleFavouriteStatusButton" />
+        <Button text="Add to List" />
       <HBox layoutX="86.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
     </HBox>
 

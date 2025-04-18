@@ -3,12 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<HBox xmlns="http://javafx.com/javafx/21"
       alignment="CENTER"
       style="-fx-background-color: black;">
 
-    <Button fx:id="footerLabel"
-            text="About Us"
+    <Label text="About Us"
            underline="true"
            textAlignment="CENTER"
            alignment="CENTER"

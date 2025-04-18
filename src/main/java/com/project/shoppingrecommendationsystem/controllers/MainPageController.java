@@ -1,48 +1,37 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
+import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.views.*;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 
-public class MainPageController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class MainPageController implements Initializable {
     @FXML
     private BorderPane root;
-    @FXML private Node productGrid;
-    private Node filterBar;
-    private Node accessBar;
-    private static MainPageController instance;
+    private final ChatBox chatBox;
 
-    @FXML
-    public void initialize() {
-        instance = this;
-        productGrid = new ProductGrid().getRoot();
-        filterBar = new FilterBar().getRoot();
-        accessBar = new AccessBar().getRoot();
+    public MainPageController() {
+        chatBox = new ChatBox();
+        Messenger.getInstance().setMainPageController(this);
+    }
 
-        root.setLeft(filterBar);
-        root.setCenter(productGrid);
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         root.setTop(new TopBar().getRoot());
-        root.setRight(new ChatBox().getRoot());
+        root.setLeft(new FilterBar().getRoot());
         root.setBottom(new FooterBar().getRoot());
+        root.setCenter(new ProductGrid().getRoot());
     }
 
-    public static MainPageController getInstance(){
-        return instance;
-    }
-
-    public void displayDetails(Node content){
-        root.setCenter(content);
-        root.setLeft(accessBar);
-    }
-
-    public void displayMain(){
-        root.setLeft(filterBar);
-        root.setCenter(productGrid);
-    }
-
-    public void displayMyList(){
-        root.setCenter(new FavouriteGrid().getRoot());
-        root.setLeft(accessBar);
+    public void toggleChatBox () {
+        if (root.getRight() != null) {
+            root.setRight(null);
+        } else {
+            root.setRight(chatBox.getRoot());
+        }
     }
 }

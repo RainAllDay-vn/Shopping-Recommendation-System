@@ -9,8 +9,6 @@ import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +21,6 @@ public class ProductDatabase {
     private final String resourceURL;
     private final List<Crawler> crawlers;
     private final List<Laptop> laptops;
-    private final ObservableList<Laptop> favouriteProducts = FXCollections.observableArrayList();
 
     private ProductDatabase() {
         resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
@@ -103,24 +100,4 @@ public class ProductDatabase {
                 .limit(limit)
                 .toList();
     }
-
-    public ObservableList<Laptop> getFavouriteProducts() {
-        return favouriteProducts;
-    }
-
-    public boolean isFavourite(Laptop product){
-        if (!favouriteProducts.contains(product)) return false;
-        return true;
-    }
-
-    public void addToFavourites(Laptop product) {
-        if (!favouriteProducts.contains(product)) {
-            favouriteProducts.add(product);
-        }
-    }
-
-    public void removeFromFavourites(Laptop product) {
-        favouriteProducts.remove(product);
-    }
-
 }

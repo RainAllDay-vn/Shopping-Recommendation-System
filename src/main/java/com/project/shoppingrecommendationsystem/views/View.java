@@ -11,9 +11,12 @@ import java.util.Objects;
 
 public abstract class View {
     Node root;
+    FXMLLoader fxmlLoader;
+
     Node load (String path) {
         try {
-            return FXMLLoader.load(Objects.requireNonNull(ShoppingApplication.class.getResource(path)));
+            fxmlLoader = new FXMLLoader(Objects.requireNonNull(ShoppingApplication.class.getResource(path)));
+            return fxmlLoader.load();
         } catch (IOException e) {
             System.err.println("[ERROR] Could not load " + path);
             System.out.println(e.getMessage());
@@ -31,5 +34,10 @@ public abstract class View {
 
     public Scene getScene () {
         return root.getScene();
+    }
+
+    public FXMLLoader getFxmlLoader() {
+        if(fxmlLoader == null) System.out.println("[ERROR] FXMLLoader is null");
+        return fxmlLoader;
     }
 }

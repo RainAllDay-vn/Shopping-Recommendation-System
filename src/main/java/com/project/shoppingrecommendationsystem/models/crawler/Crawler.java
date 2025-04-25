@@ -2,7 +2,7 @@ package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
-import com.project.shoppingrecommendationsystem.HelloApplication;
+import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 
 import java.io.File;
@@ -24,10 +24,10 @@ public abstract class Crawler {
 
     Crawler(String folder) {
         this.mapper = new ObjectMapper();
-        this.resourceURL = Objects.requireNonNull(HelloApplication.class.getResource(""))
+        this.resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
                 .replace("%20", " ") + folder;
-        File resourceDir = new File(this.resourceURL);
+        File resourceDir = new File(this.resourceURL + "images/");
         if (!resourceDir.exists()) {
             if (!resourceDir.mkdirs()) {
                 throw new RuntimeException("Unable to create directory " + this.resourceURL);

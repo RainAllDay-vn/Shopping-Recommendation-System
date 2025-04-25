@@ -6,6 +6,7 @@ import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,7 +14,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * CellphoneSCrawler class is responsible for crawling laptop data from CellphoneS website
@@ -22,7 +31,9 @@ import java.util.*;
  * and properties.
  */
 public class TGDDCrawler extends Crawler {
+    private static final int MAX_THREADS = 10;
     private WebDriver driver;
+    private final String pageURL = "https://www.thegioididong.com";
     private final HashMap<String, Integer> propertiesMap = new HashMap<>();
 
     /**
@@ -78,7 +89,7 @@ public class TGDDCrawler extends Crawler {
      * descriptions, and properties. Saves the extracted data to CSV files.
      */
     private void crawlAllLaptops(int limit) {
-        String pageURL = "https://www.thegioididong.com";
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         driver = new ChromeDriver(new ChromeOptions().addArguments("--headless"));
         driver.get(pageURL + "/laptop");
         int processed = 0;
@@ -93,22 +104,91 @@ public class TGDDCrawler extends Crawler {
             total = jsonNode.get("total").asInt();
             Element products = Jsoup.parse(jsonNode.path("listproducts").textValue()).body();
             for (Element product : products.children()) {
-                try {
-                    String[] laptopRow = extractLaptop(product);
-                    Element body = Jsoup.connect(pageURL + laptopRow[11]).get().body();
-                    saveLaptopRow(laptopRow);
-                    saveDescriptionRow(extractDescription(laptopRow[1], body));
-                    savePropertiesRow(extractProperties(laptopRow[1], body));
-                } catch (Exception e) {
-                    System.err.println("[ERROR] : An error occurred while extracting laptop's information");
-                    System.out.println(e.getMessage());
-                }
+                executor.submit(() -> this.extractAndSaveLaptop(product));
                 if (++processed == limit) {
-                    break;
+                    waitForFinish(executor);
+                    return;
                 }
             }
         }
+        waitForFinish(executor);
+    }
+
+    private void waitForFinish (ExecutorService executor) {
+        executor.shutdown();
+        try {
+            while (!executor.isTerminated()) {
+                System.out.println("[INFO] : Waiting...");
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
+            driver.quit();
+        }
         driver.quit();
+    }
+
+    private void extractAndSaveLaptop (Element product) {
+        try {
+            String[] laptopRow = extractLaptop(product);
+            System.out.println("[INFO] : Extracting #" + laptopRow[1]);
+            Element body = Jsoup.connect(pageURL + laptopRow[11]).get().body();
+            String[] descriptionRow = extractDescription(laptopRow[1], body);
+            String[] propertiesRow = extractProperties(laptopRow[1], body);
+            downloadImage(laptopRow);
+            save(laptopRow, descriptionRow, propertiesRow);
+        } catch (Exception e) {
+            System.err.println("[ERROR] : An error occurred while extracting laptop's information");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+        saveLaptopRow(laptopRow);
+        saveDescriptionRow(descriptionRow);
+        savePropertiesRow(propertiesRow);
+    }
+
+    private void downloadImage (String[] laptopRow) {
+        String imageUrl = laptopRow[28];
+        imageUrl = imageUrl.replace(" ", "%20");
+        String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
+        String outputPath = resourceURL + "images/" + laptopRow[1] + "." + extension;
+        String script = """
+                return (async function getImageBytes() {
+                    let imageUrl = '%s';
+                    try {
+                        const response = await fetch(imageUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const blob = await response.blob();
+                    const arrayBuffer = await blob.arrayBuffer();
+                    return Array.from(new Uint8Array(arrayBuffer));
+                    } catch (error) {
+                        console.error("Error fetching or converting image:", error);
+                        return null;
+                    }
+                })();
+                """.formatted(imageUrl);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        try {
+            List<Number> byteList = (List<Number>)js.executeScript(script);
+            if (byteList != null) {
+                byte[] byteArray = new byte[byteList.size()];
+                for (int i = 0; i < byteList.size(); i++) {
+                    byteArray[i] = byteList.get(i).byteValue();
+                }
+                try (FileOutputStream out = new FileOutputStream(outputPath)) {
+                    out.write(byteArray);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] : Can not download Image");
+            laptopRow[28] = "";
+        }
+        laptopRow[28] = outputPath;
     }
 
     /**

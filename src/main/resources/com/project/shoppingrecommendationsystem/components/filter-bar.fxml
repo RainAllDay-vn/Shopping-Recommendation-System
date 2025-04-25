@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+    <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
+
+        <!-- Title -->
+        <Label fx:id="greenText" alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
+            <font>
+                <Font size="22.0" />
+            </font>
+        </Label>
+
+        <!-- Manufacturer Filter -->
+        <Label styleClass="content_manufacturer" stylesheets="@../styling.css" text="Hãng sản xuất">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <VBox fx:id="vendorOptions" spacing="5">
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Asus" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Apple" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Lenovo" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="MSI" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="HP" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Acer" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dell" />
+            <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung" />
+        </VBox>
+
+        <!-- Price Filter -->
+        <Label styleClass="content_price" stylesheets="@../styling.css" text="Mức giá">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <VBox fx:id="priceOptions" spacing="5">
+            <RadioButton selected="true" styleClass="custom_checkbox" stylesheets="@../styling.css" text="Tất cả"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Dưới 10 triệu" userData="10-"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 10 - 15 triệu" userData="10-15"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 15 - 20 triệu" userData="15-20"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 20 - 25 triệu" userData="20-25"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Từ 25 - 30 triệu" userData="25-30"/>
+            <RadioButton styleClass="custom_checkbox" stylesheets="@../styling.css" text="Trên 30 triệu" userData="30+"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

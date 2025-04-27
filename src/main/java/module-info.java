@@ -9,4 +9,6 @@ module com.project.shoppingrecommendationsystem {
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
     exports com.project.shoppingrecommendationsystem;
+    exports com.project.shoppingrecommendationsystem.llmagent;
+    opens com.project.shoppingrecommendationsystem.llmagent to javafx.fxml;
 }

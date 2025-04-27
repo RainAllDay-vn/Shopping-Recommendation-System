@@ -8,7 +8,6 @@ module com.project.shoppingrecommendationsystem {
 
     requires com.fasterxml.jackson.databind;
     requires com.opencsv;
-    requires java.sql;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
@@ -19,7 +18,6 @@ module com.project.shoppingrecommendationsystem {
     requires org.seleniumhq.selenium.firefox_driver;
 
     // Spring AI dependencies
-    requires com.fasterxml.jackson.databind;
     requires spring.ai.vertex.ai.gemini;
     requires spring.core;
     requires spring.ai.client.chat;
@@ -46,7 +44,7 @@ module com.project.shoppingrecommendationsystem {
 
     //qdrant client
     requires client;
-  
+
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
     opens com.project.shoppingrecommendationsystem.controllers to javafx.fxml;
     opens com.project.shoppingrecommendationsystem.llmagent to javafx.fxml;

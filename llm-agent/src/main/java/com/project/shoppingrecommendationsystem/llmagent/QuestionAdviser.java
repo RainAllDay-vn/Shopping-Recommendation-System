@@ -29,7 +29,7 @@ public class QuestionAdviser {
         QuestionAnswerAdvisor qaAdvisor = new QuestionAnswerAdvisor(this.vectorStore,
                 SearchRequest.builder().
                         similarityThreshold(0.8d).
-                        topK(6).
+                        topK(15).
                         build());
         this.qaAdvisor = qaAdvisor;
     }

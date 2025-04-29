@@ -23,7 +23,7 @@ public class VectorDatabase {
     private QdrantClient qdrantClient;
     private EmbedModel embeddingModel;
     private final int BATCH_SIZE = 5;
-    private final int THREAD_SLEEP = 5000;
+    private final int THREAD_SLEEP = 20000;
 
     public QdrantClient createQdrantClient(String StoreName) throws ExecutionException, InterruptedException {
         String hostname = "localhost";

@@ -17,7 +17,7 @@ public class ChatModel {
             .temperature(0.7)
             .topP(0.8)
             .topK(40)
-            .maxOutputTokens(2048)
+            .maxOutputTokens(1000)
             .stopSequences(List.of())
             .candidateCount(1)
             .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)

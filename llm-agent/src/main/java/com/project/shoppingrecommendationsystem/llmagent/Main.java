@@ -2,13 +2,15 @@ package com.project.shoppingrecommendationsystem.llmagent;
 
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingResponse;
+import org.springframework.ai.chat.model.ChatResponse;
 
 import java.io.IOException;
 import java.util.*;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
 
         /* Processing Document Test
         DocProcess enntity = new DocProcess();
@@ -21,6 +23,13 @@ public class Main {
             e.printStackTrace();
         }
         */
+        
+        String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
+        System.out.println(storeName);
+        QuestionAdviser shoppingRec = new QuestionAdviser(storeName);
+        String userText = "Bạn hãy gợi ý cho tôi top 5 laptop dành cho học sinh sinh viên giá cả phải chăng";
+        ChatResponse response = shoppingRec.advise(userText);
+        System.out.println(response.getResults());
 
     }
 }

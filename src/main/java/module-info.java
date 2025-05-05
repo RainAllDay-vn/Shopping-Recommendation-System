@@ -16,6 +16,7 @@ module com.project.shoppingrecommendationsystem {
     requires org.seleniumhq.selenium.chromium_driver;
     requires org.jsoup;
     requires org.seleniumhq.selenium.firefox_driver;
+    requires java.desktop;
 
     opens com.project.shoppingrecommendationsystem to javafx.fxml;
     opens com.project.shoppingrecommendationsystem.controllers to javafx.fxml;

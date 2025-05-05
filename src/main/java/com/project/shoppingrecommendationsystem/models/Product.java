@@ -56,6 +56,7 @@ public abstract class Product {
     }
 
     public int getDiscountPrice() {
+        if(discountPrice == 0) return price;
         return discountPrice;
     }
 

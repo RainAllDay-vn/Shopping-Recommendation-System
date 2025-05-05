@@ -21,6 +21,7 @@ public class ProductDatabase {
     private final String resourceURL;
     private final List<Crawler> crawlers;
     private final List<Laptop> laptops;
+    private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
         resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
@@ -100,4 +101,23 @@ public class ProductDatabase {
                 .limit(limit)
                 .toList();
     }
+
+    public List<Product> getFavouriteProducts() {
+        return favouriteProducts;
+    }
+
+    public boolean isFavourite(Product product){
+        return favouriteProducts.contains(product);
+    }
+
+    public void addToFavourites(Product product) {
+        if (!favouriteProducts.contains(product)) {
+            favouriteProducts.add(product);
+        }
+    }
+
+    public void removeFromFavourites(Product product) {
+        favouriteProducts.remove(product);
+    }
+
 }

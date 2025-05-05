@@ -8,13 +8,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.FlowPane;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class FavouriteGridController implements Initializable {
 
     @FXML private FlowPane flowPane;
-    private final ArrayList<Product> products;
+    private final List<Product> products;
 
     public FavouriteGridController() {
         this.products = ProductDatabase.getInstance().getFavouriteProducts();

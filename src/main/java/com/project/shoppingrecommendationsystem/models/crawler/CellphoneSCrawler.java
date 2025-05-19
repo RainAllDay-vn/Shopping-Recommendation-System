@@ -2,19 +2,24 @@ package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.json.Json;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CellphoneSCrawler class is responsible for crawling laptop data from CellphoneS website.
@@ -22,10 +27,9 @@ import java.util.concurrent.Executors;
  * such as product ID, name, description, and properties. The extracted data is then
  * saved into CSV files.
  */
-public class CellphoneSCrawler extends Crawler {
+public class CellphoneSCrawler extends LaptopCrawler {
     private static final int MAX_THREADS = 10;
     private final Map<String, Integer> propertiesMap = new HashMap<>();
-
 
     /**
      * Constructs a CellphoneSCrawler object.
@@ -112,12 +116,21 @@ public class CellphoneSCrawler extends Crawler {
             for (JsonNode product : products) {
                 executor.submit(() -> this.extractAndSaveLaptop(product));
                 if (++count >= limit) {
-                    executor.shutdown();
-                    return;
+                    pageIndex=Integer.MAX_VALUE;
+                    break;
                 }
             }
         }
         executor.shutdown();
+        try {
+            if(executor.awaitTermination(10, TimeUnit.MINUTES)) {
+                System.out.println("[INFO] : CellphoneS have crawled all laptops");
+            } else {
+                System.out.println("[INFO] : CellphoneS have time-outed when crawling for laptops");
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[ERROR] : CellphoneS has stopped abnormally");
+        }
     }
 
     /**
@@ -160,23 +173,26 @@ public class CellphoneSCrawler extends Crawler {
         String[] laptopRow;
         String[] descriptionRow;
         String[] propertiesRow;
+        List<String[]> reviews;
         try {
             laptopRow = extractLaptop(product);
             descriptionRow = extractDescription(product);
             propertiesRow = extractProperties(product);
+            reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
         } catch (Exception e) {
             System.err.println("[ERROR] : An error occurred while extracting laptop's information");
             System.out.println(e.getMessage());
             return;
         }
-        save(laptopRow, descriptionRow, propertiesRow);
+        save(laptopRow, descriptionRow, propertiesRow, reviews);
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
         saveDescriptionRow(descriptionRow);
         savePropertiesRow(propertiesRow);
+        saveReviews(reviews);
     }
 
     private void downloadImage (String[] laptopRow) {
@@ -267,6 +283,43 @@ public class CellphoneSCrawler extends Crawler {
             propertiesRow[propertiesMap.get(entry.getKey())] = entry.getValue().toString();
         }
         return propertiesRow;
+    }
+
+
+    private List<String[]> extractReviews (String localId) throws IOException {
+        String requestBody = """
+                {
+                  "variables": {},
+                  "query": "query {\\n  reviews(filter: { product_id: %s }, page: %d) {\\n    matches {\\n      id\\n      content\\n      status\\n      customer {\\n        id\\n        fullname\\n      }\\n      product_id\\n      created_at\\n      rating_id\\n      sent_from\\n      is_pinned\\n      children\\n      photos\\n      is_admin\\n      is_purchased\\n      attributes {\\n        attribute_name\\n        label\\n      }\\n    }\\n    total\\n  }\\n}"
+                }
+                """;
+        List<String[]> reviews = new ArrayList<>();
+        for (int i=1; i<=100; i++) {
+            Document response = Jsoup.connect("https://api.cellphones.com.vn/graphql-customer/graphql/query")
+                    .header("Content-Type", "application/json")
+                    .requestBody(requestBody.formatted(localId,i))
+                    .ignoreContentType(true)
+                    .post();
+            JsonNode nodes = mapper.readTree(response.body().text()).get("data").get("reviews").get("matches");
+            if(nodes.isEmpty()) break;
+            for(JsonNode reviewNode : nodes) {
+                String[] review = new String[5];
+                review[0] = localId;
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Set timezone to UTC
+                try {
+                    review[1] = Long.toString(sdf.parse(reviewNode.get("created_at").asText()).getTime());
+                } catch (ParseException e) {
+                    review[1] = "";
+                }
+                review[2] = reviewNode.get("content").asText();
+                review[3] = reviewNode.get("rating_id").asText();
+                if (review[3].equals("null")) review[3] = null;
+                review[4] = reviewNode.get("customer").get("fullname").asText();
+                reviews.add(review);
+            }
+        }
+        return reviews;
     }
 
     /**
@@ -373,8 +426,8 @@ public class CellphoneSCrawler extends Crawler {
      * @return A Laptop object.
      */
 
-    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
-        return new Laptop.LaptopBuilder()
+    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
                 .setName(laptopRow[1].replace("\"", ""))  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
                 .setSource("CellphoneS")
@@ -390,7 +443,14 @@ public class CellphoneSCrawler extends Crawler {
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))
-                .setLaptopCase(parseLaptopCase(propertiesRow))
-                .build();
+                .setLaptopCase(parseLaptopCase(propertiesRow));
+        for (String[] row: reviews) {
+            Date created = null;
+            if (row[1]!=null && !row[1].isBlank()) {
+                created = new Date(Long.parseLong(row[1]));
+            }
+            builder.addReview(new Review(created, row[2], row[3], row[4]));
+        }
+        return builder.build();
     }
 }

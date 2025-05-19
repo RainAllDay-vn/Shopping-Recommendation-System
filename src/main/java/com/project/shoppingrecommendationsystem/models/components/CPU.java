@@ -4,17 +4,11 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
 
 public class CPU {
-    @CsvBindByName(column = "CPU-NAME")
     private final String name;
-    @CsvBindByName(column = "CPU-BASE-FREQUENCY")
     private final String baseFrequency;
-    @CsvBindByName(column = "CPU-TURBO-FREQUENCY")
     private final String turboFrequency;
-    @CsvBindByName(column = "CPU-CORES")
     private final String cores;
-    @CsvBindByName(column = "CPU-THREADS")
     private final String threads;
-    @CsvBindByName(column = "CPU-CACHE")
     private final String cache;
 
     private CPU(CPUBuilder builder) {

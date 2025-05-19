@@ -3,15 +3,10 @@ package com.project.shoppingrecommendationsystem.models.components;
 import com.opencsv.bean.CsvBindByName;
 
 public class Connectivity {
-    @CsvBindByName(column = "CONNECTIVITY-PORTS")
     private final String ports;
-    @CsvBindByName(column = "CONNECTIVITY-WIFI")
     private final String wifi;
-    @CsvBindByName(column = "CONNECTIVITY-BLUETOOTH")
     private final String bluetooth;
-    @CsvBindByName(column = "CONNECTIVITY-FINGERPRINT")
     private final String fingerprint;
-    @CsvBindByName(column = "CONNECTIVITY-WEBCAM")
     private final String webCam;
 
     private Connectivity(ConnectivityBuilder builder) {

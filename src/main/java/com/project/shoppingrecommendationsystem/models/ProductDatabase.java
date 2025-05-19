@@ -6,7 +6,7 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
-import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
+import com.project.shoppingrecommendationsystem.models.crawler.LaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
 
@@ -19,7 +19,7 @@ import java.util.*;
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
     private final String resourceURL;
-    private final List<Crawler> crawlers;
+    private final List<LaptopCrawler> crawlers;
     private final List<Laptop> laptops;
 
     private ProductDatabase() {
@@ -38,7 +38,7 @@ public class ProductDatabase {
         crawlers.add(new TGDDCrawler());
         laptops = new ArrayList<>();
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(LaptopCrawler::getLaptops)
                 .flatMap(Collection::stream)
                 .forEach(laptops::add);
     }
@@ -55,12 +55,12 @@ public class ProductDatabase {
         laptops.clear();
         crawlers.forEach(crawler -> crawler.crawlLaptops(limit));
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(LaptopCrawler::getLaptops)
                 .flatMap(Collection::stream)
                 .forEach(laptops::add);
     }
 
-    public void crawl (Crawler crawler) {
+    public void crawl (LaptopCrawler crawler) {
         laptops.clear();
         crawler.crawlLaptops();
         laptops.addAll(crawler.getLaptops());

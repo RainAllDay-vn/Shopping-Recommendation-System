@@ -1,8 +1,8 @@
 package com.project.shoppingrecommendationsystem.models.crawler;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.opencsv.exceptions.CsvValidationException;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,9 +15,12 @@ import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
  * such as product ID, name, description, and properties. The extracted data is then
  * saved into CSV files.
  */
-public class FPTShopCrawler extends Crawler{
+public class FPTShopCrawler extends LaptopCrawler {
     private final Pattern compiledPattern = Pattern.compile("attributeItem");
     private static final int MAX_THREADS = 10;
 
@@ -85,12 +88,21 @@ public class FPTShopCrawler extends Crawler{
             for (JsonNode item : jsonNode.get("items")) {
                 executor.submit(() -> this.extractAndSaveLaptop(item));
                 if (++processed == limit) {
-                    executor.shutdown();
-                    return;
+                    count=max;
+                    break;
                 }
             }
         }
         executor.shutdown();
+        try {
+            if(executor.awaitTermination(10, TimeUnit.MINUTES)) {
+                System.out.println("[INFO] : FPTShop have crawled all laptops");
+            } else {
+                System.out.println("[INFO] : FPTShop have time-outed when crawling for laptops");
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[ERROR] : FPTShop has stopped abnormally");
+        }
     }
 
     /**
@@ -126,18 +138,20 @@ public class FPTShopCrawler extends Crawler{
             String[] laptopRow = extractLaptopRow(item);
             String[] descriptionRow = extractDescriptionRow(code, productPage);
             String[] propertiesRow = extractPropertiesRow(code, productPage);
+            List<String[]> reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
-            save(laptopRow, descriptionRow, propertiesRow);
+            save(laptopRow, descriptionRow, propertiesRow, reviews);
         } catch (Exception e) {
             System.err.println("[ERROR] : An error occurred while extracting laptop's information");
             System.out.println(e.getMessage());
         }
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
         saveDescriptionRow(descriptionRow);
         savePropertiesRow(propertiesRow);
+        saveReviews(reviews);
     }
 
     private void downloadImage (String[] laptopRow) {
@@ -247,10 +261,9 @@ public class FPTShopCrawler extends Crawler{
      * @param code The product code.
      * @param productPage The product page Document.
      * @return An array of Strings containing the product properties.
-     * @throws CsvValidationException If a CSV validation error occurs.
      * @throws IOException If an I/O error occurs.
      */
-    private String[] extractPropertiesRow (String code, Document productPage) throws CsvValidationException, IOException {
+    private String[] extractPropertiesRow (String code, Document productPage) throws IOException {
         String[] propertiesRow = new String[propertiesColumn.length];
         propertiesRow[0] = code;
         JsonNode properties = extractScript(productPage);
@@ -258,6 +271,48 @@ public class FPTShopCrawler extends Crawler{
             propertiesRow[i] = String.valueOf(properties.get(i-1).get("attributes"));
         }
         return propertiesRow;
+    }
+
+    private List<String[]> extractReviews(String id) throws IOException {
+        String requestBody =  """
+                {
+                  "content": {
+                    "id": "%s",
+                    "type": "PRODUCT"
+                  },
+                  "state": [
+                    "ACTIVE"
+                  ],
+                  "skipCount": 0,
+                  "maxResultCount": 100,
+                  "sortMethod": 1
+                }
+                """.formatted(id);
+        Document response = Jsoup.connect("https://papi.fptshop.com.vn/gw/v1/public/bff-before-order/comment/list")
+                .header("Content-Type", "application/json")
+                .header("order-channel", "1")
+                .requestBody(requestBody)
+                .ignoreContentType(true)
+                .post();
+        JsonNode nodes = mapper.readTree(response.body().text()).get("data").get("items");
+        List<String[]> reviews = new ArrayList<>();
+        for(JsonNode reviewNode : nodes) {
+            String[] review = new String[5];
+            review[0] = id;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Set timezone to UTC
+            try {
+                review[1] = Long.toString(sdf.parse(reviewNode.get("creationTime").asText()).getTime());
+            } catch (ParseException e) {
+                review[1] = "";
+            }
+            review[2] = reviewNode.get("content").asText();
+            review[3] = reviewNode.get("score").asText();
+            if (review[3].equals("null")) review[3] = null;
+            review[4] = reviewNode.get("fullName").asText();
+            reviews.add(review);
+        }
+        return reviews;
     }
 
     /**
@@ -436,8 +491,8 @@ public class FPTShopCrawler extends Crawler{
      * @param propertiesRow  An array of Strings containing product properties.
      * @return A Laptop object.
      */
-    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
-        return new Laptop.LaptopBuilder()
+    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
                 .setName(laptopRow[3])  // Column 'displayName'
                 .setProductImage(laptopRow[14])  // Column 'image'
                 .setPrice(Integer.parseInt(laptopRow[15]))  // Column 'originalPrice'
@@ -453,8 +508,15 @@ public class FPTShopCrawler extends Crawler{
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))
-                .setLaptopCase(parseLaptopCase(propertiesRow))
-                .build();
+                .setLaptopCase(parseLaptopCase(propertiesRow));
+        for (String[] row : reviews) {
+            Date created = null;
+            if (row[1]!=null && !row[1].isBlank()) {
+                created = new Date(Long.parseLong(row[1]));
+            }
+            builder.addReview(new Review(created, row[2], row[3], row[4]));
+        }
+        return builder.build();
     }
 }
 

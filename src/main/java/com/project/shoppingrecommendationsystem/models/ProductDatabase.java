@@ -5,9 +5,8 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
 import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
-import com.project.shoppingrecommendationsystem.models.crawler.LaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
 
@@ -16,19 +15,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-
-import org.springframework.ai.document.Document;
-import java.util.stream.Collectors; // Add this import
-
-import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
     private final String resourceURL;
-    private final List<LaptopCrawler> crawlers;
+    private final List<Crawler> crawlers;
     private final List<Laptop> laptops;
+    private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
         resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
@@ -46,7 +39,7 @@ public class ProductDatabase {
         crawlers.add(new TGDDCrawler());
         laptops = new ArrayList<>();
         crawlers.stream()
-                .map(LaptopCrawler::getLaptops)
+                .map(Crawler::getLaptops)
                 .flatMap(Collection::stream)
                 .forEach(laptops::add);
     }
@@ -63,12 +56,12 @@ public class ProductDatabase {
         laptops.clear();
         crawlers.forEach(crawler -> crawler.crawlLaptops(limit));
         crawlers.stream()
-                .map(LaptopCrawler::getLaptops)
+                .map(Crawler::getLaptops)
                 .flatMap(Collection::stream)
                 .forEach(laptops::add);
     }
 
-    public void crawl (LaptopCrawler crawler) {
+    public void crawl (Crawler crawler) {
         laptops.clear();
         crawler.crawlLaptops();
         laptops.addAll(crawler.getLaptops());
@@ -109,32 +102,22 @@ public class ProductDatabase {
                 .toList();
     }
 
-
-    public static void main (String[] args) throws IOException, ExecutionException, InterruptedException {
-        ProductDatabase rawDatabase = ProductDatabase.getInstance();
-
-        String storeName = "Shopping Recommendation System";
-        VectorDatabase vectorStore = new VectorDatabase(storeName);
-
-        List<Laptop> laptopList = rawDatabase.findAllLaptops();
-        List<Document> documents = laptopList.stream()
-                .map(laptop -> {
-                    Map<String, Object> metadata = new HashMap<>();
-                    metadata.put("id", laptop.getId());
-                    metadata.put("name", laptop.getName());
-                    metadata.put("price", laptop.getPrice());
-                    return new Document(laptop.getDescription() != null ? laptop.getDescription() : "", metadata); // Use description as content
-                })
-                .collect(Collectors.toList());
-
-        TokenTextSplitter splitter =
-                TokenTextSplitter.builder()
-                        .withChunkSize(700)
-                        .withKeepSeparator(true)
-                        .build();
-
-        vectorStore.addToQdrant(splitter.apply(documents));
-        System.out.println("Laptops crawled, saved, and added to vector store.");
+    public List<Product> getFavouriteProducts() {
+        return favouriteProducts;
     }
-}
 
+    public boolean isFavourite(Product product){
+        return favouriteProducts.contains(product);
+    }
+
+    public void addToFavourites(Product product) {
+        if (!favouriteProducts.contains(product)) {
+            favouriteProducts.add(product);
+        }
+    }
+
+    public void removeFromFavourites(Product product) {
+        favouriteProducts.remove(product);
+    }
+
+}

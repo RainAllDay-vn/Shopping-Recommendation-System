@@ -3,6 +3,7 @@ package com.project.shoppingrecommendationsystem.models.crawler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
@@ -14,13 +15,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -30,7 +26,7 @@ import java.util.concurrent.*;
  * website's API and extracts relevant details such as product ID, name, description,
  * and properties.
  */
-public class TGDDCrawler extends Crawler {
+public class TGDDCrawler extends LaptopCrawler {
     private static final int MAX_THREADS = 10;
     private WebDriver driver;
     private final String pageURL = "https://www.thegioididong.com";
@@ -49,7 +45,7 @@ public class TGDDCrawler extends Crawler {
      */
     public TGDDCrawler() {
         super("data/TGDD/");
-        this.laptopColumn = new String[]{"data-index", "data-id", "data-issetup", "data-maingroup", "data-subgroup",
+        this.laptopColumn = new String[]{"data-id", "data-issetup", "data-maingroup", "data-subgroup",
                 "data-type", "data-vehicle", "data-productcode", "data-price-root", "data-ordertypeid", "data-pos", "sourceURL",
                 "data-s", "data-site", "data-pro", "data-cache", "data-sv", "data-name", "data-id", "data-price",
                 "data-brand", "data-cate", "data-box", "data-pos", "data-color", "data-productstatus", "data-premium",
@@ -70,15 +66,15 @@ public class TGDDCrawler extends Crawler {
      *
      */
     @Override
-    public void crawlLaptops() {
-        crawlLaptops(Integer.MAX_VALUE);
+    public void crawl () {
+        crawl(Integer.MAX_VALUE);
     }
 
     /**
      * @param limit The maximum number of laptops to crawl.
      */
     @Override
-    public void crawlLaptops(int limit) {
+    public void crawl (int limit) {
         resetSave();
         crawlAllLaptops(limit);
     }
@@ -106,53 +102,50 @@ public class TGDDCrawler extends Crawler {
             for (Element product : products.children()) {
                 executor.submit(() -> this.extractAndSaveLaptop(product));
                 if (++processed == limit) {
-                    waitForFinish(executor);
-                    return;
+                    break;
                 }
             }
         }
-        waitForFinish(executor);
-    }
-
-    private void waitForFinish (ExecutorService executor) {
         executor.shutdown();
         try {
-            while (!executor.isTerminated()) {
-                System.out.println("[INFO] : Waiting...");
-                Thread.sleep(1000);
+            if(executor.awaitTermination(10, TimeUnit.MINUTES)) {
+                System.out.println("[INFO] : TGDD have crawled all laptops");
+            } else {
+                System.out.println("[INFO] : TGDD have time-outed when crawling for laptops");
             }
         } catch (InterruptedException e) {
-            driver.quit();
+            System.out.println("[ERROR] : TGDD has stopped abnormally");
         }
-        driver.quit();
     }
 
     private void extractAndSaveLaptop (Element product) {
         try {
             String[] laptopRow = extractLaptop(product);
-            System.out.println("[INFO] : Extracting #" + laptopRow[1]);
-            Element body = Jsoup.connect(pageURL + laptopRow[11]).get().body();
-            String[] descriptionRow = extractDescription(laptopRow[1], body);
-            String[] propertiesRow = extractProperties(laptopRow[1], body);
+            System.out.println("[INFO] : Extracting #" + laptopRow[0]);
+            Element body = Jsoup.connect(pageURL + laptopRow[10]).get().body();
+            String[] descriptionRow = extractDescription(laptopRow[0], body);
+            String[] propertiesRow = extractProperties(laptopRow[0], body);
+            List<String[]> reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
-            save(laptopRow, descriptionRow, propertiesRow);
+            save(laptopRow, descriptionRow, propertiesRow, reviews);
         } catch (Exception e) {
             System.err.println("[ERROR] : An error occurred while extracting laptop's information");
             System.out.println(e.getMessage());
         }
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
+    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
         saveDescriptionRow(descriptionRow);
         savePropertiesRow(propertiesRow);
+        saveReviews(reviews);
     }
 
     private void downloadImage (String[] laptopRow) {
-        String imageUrl = laptopRow[28];
+        String imageUrl = laptopRow[27];
         imageUrl = imageUrl.replace(" ", "%20");
         String extension = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
-        String outputPath = resourceURL + "images/" + laptopRow[1] + "." + extension;
+        String outputPath = resourceURL + "images/" + laptopRow[0] + "." + extension;
         String script = """
                 return (async function getImageBytes() {
                     let imageUrl = '%s';
@@ -186,9 +179,9 @@ public class TGDDCrawler extends Crawler {
             }
         } catch (Exception e) {
             System.err.println("[ERROR] : Can not download Image");
-            laptopRow[28] = "";
+            laptopRow[27] = "";
         }
-        laptopRow[28] = outputPath;
+        laptopRow[27] = outputPath;
     }
 
     /**
@@ -253,6 +246,32 @@ public class TGDDCrawler extends Crawler {
         return propertiesRow;
     }
 
+    private List<String[]> extractReviews (String localId) throws IOException {
+        String requestBody = "objectId=%s&objectType=2&pageIndex=%d";
+        List<String[]> reviews = new ArrayList<>();
+        for (int i=0; i<100; i++) {
+            Document response = Jsoup.connect("https://www.thegioididong.com/comment/allrating")
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .requestBody(requestBody.formatted(localId,i))
+                    .ignoreContentType(true)
+                    .post();
+            Elements reviewList = response.getElementsByClass("comment-list");
+            if (reviewList.isEmpty()) break;
+            for(Element reviewElement : reviewList.getFirst().children()) {
+                String[] review = new String[5];
+                review[0] = localId;
+                review[1] = "";
+                Element reviewContent = reviewElement.getElementsByClass("cmt-content").first();
+                if (reviewContent != null) review[2] = reviewContent.text();
+                review[3] = Integer.toString(reviewElement.getElementsByClass("iconcmt-starbuy").size());
+                Element reviewUsername = reviewElement.getElementsByClass("cmt-top-name").first();
+                if (reviewUsername != null) review[4] = reviewUsername.text();
+                reviews.add(review);
+            }
+        }
+        return reviews;
+    }
+
     /**
      * Fetches the homepage API for product data.
      *
@@ -308,7 +327,7 @@ public class TGDDCrawler extends Crawler {
      */
     private void extractDataFromAttribute (Element product, List<String> row) {
         for (Attribute attribute : product.attributes()) {
-            if (attribute.getKey().equals("class")) {
+            if (attribute.getKey().equals("data-index") || attribute.getKey().equals("class")) {
                 continue;
             }
             row.add(attribute.getValue());
@@ -545,16 +564,16 @@ public class TGDDCrawler extends Crawler {
      * @return A Laptop object.
      */
     @Override
-    Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow) {
-        return new Laptop.LaptopBuilder()
-                .setName(laptopRow[17])  // Column 'data-name'
-                .setProductImage(laptopRow[28])  // Column 'imageURL'
-                .setPrice((int)Double.parseDouble(laptopRow[8]))  // Column 'data-price-root'
-                .setDiscountPrice((int)Double.parseDouble(laptopRow[19]))  // Column 'data-price'
+    Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
+                .setName(laptopRow[16])  // Column 'data-name'
+                .setProductImage(laptopRow[27])  // Column 'imageURL'
+                .setPrice((int)Double.parseDouble(laptopRow[7]))  // Column 'data-price-root'
+                .setDiscountPrice((int)Double.parseDouble(laptopRow[18]))  // Column 'data-price'
                 .setSource("TGDD")
-                .setSourceURL("https://www.thegioididong.com/" + laptopRow[11])  // Column 'sourceURL'
-                .setBrand(laptopRow[20])  // Column 'data-brand'
-                .setColor(laptopRow[24])
+                .setSourceURL("https://www.thegioididong.com/" + laptopRow[10])  // Column 'sourceURL'
+                .setBrand(laptopRow[19])  // Column 'data-brand'
+                .setColor(laptopRow[23])
                 .setDescription(descriptionRow[1])
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
@@ -562,7 +581,14 @@ public class TGDDCrawler extends Crawler {
                 .setStorage(parseStorage(propertiesRow))
                 .setConnectivity(parseConnectivity(propertiesRow))
                 .setBattery(parseBattery(propertiesRow))
-                .setLaptopCase(parseLaptopCase(propertiesRow))
-                .build();
+                .setLaptopCase(parseLaptopCase(propertiesRow));
+        for (String[] row : reviews) {
+            Date created = null;
+            if (row[1]!=null && !row[1].isBlank()) {
+                created = new Date(Long.parseLong(row[1]));
+            }
+            builder.addReview(new Review(created, row[2], row[3], row[4]));
+        }
+        return builder.build();
     }
 }

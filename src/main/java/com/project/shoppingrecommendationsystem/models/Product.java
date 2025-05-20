@@ -1,37 +1,29 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import com.opencsv.bean.CsvBindByName;
+import java.util.List;
 
 public abstract class Product {
     private static int counter = 0;
-    @CsvBindByName
     final int id;
-    @CsvBindByName
     final String name;
-    @CsvBindByName
     final String productImage;
-    @CsvBindByName
     final int price;
-    @CsvBindByName
     final int discountPrice;
-    @CsvBindByName
+    final List<Review> reviews;
     final String source;
-    @CsvBindByName
     final String sourceURL;
 
-    @CsvBindByName
     final String brand;
-    @CsvBindByName
     final String color;
-    @CsvBindByName
     final String description;
 
-    Product(String name, String productImage, int price, int discountPrice, String source, String sourceURL, String brand, String color, String description) {
+    Product(String name, String productImage, int price, int discountPrice, List<Review> reviews, String source, String sourceURL, String brand, String color, String description) {
         this.id = ++counter;
         this.name = name;
         this.productImage = productImage;
         this.price = price;
         this.discountPrice = discountPrice;
+        this.reviews = reviews;
         this.source = source;
         this.sourceURL = sourceURL;
         this.brand = brand;
@@ -68,6 +60,8 @@ public abstract class Product {
         return sourceURL;
     }
 
+    public List<Review> getReviews() {return reviews;}
+
     public String getBrand() {
         return brand;
     }
@@ -79,4 +73,6 @@ public abstract class Product {
     public String getDescription() {
         return description;
     }
+
+    public abstract boolean match (List<String[]> query);
 }

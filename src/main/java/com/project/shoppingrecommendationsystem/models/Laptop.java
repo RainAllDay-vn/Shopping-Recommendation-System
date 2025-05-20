@@ -1,29 +1,22 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import com.opencsv.bean.CsvRecurse;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Laptop extends Product {
-    @CsvRecurse
     private final CPU cpu;
-    @CsvRecurse
     private final RAM ram;
-    @CsvRecurse
     private final Storage storage;
-    @CsvRecurse
     private final Connectivity connectivity;
-    @CsvRecurse
     private final Battery battery;
-    @CsvRecurse
     private final LaptopCase laptopCase;
-    @CsvRecurse
     private final Display display;
 
     private Laptop(LaptopBuilder builder) {
-        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.source, builder.sourceURL,
+        super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.reviews, builder.source, builder.sourceURL,
                 builder.brand, builder.color, builder.description);
         this.cpu = builder.cpu;
         this.ram = builder.ram;
@@ -77,6 +70,7 @@ public class Laptop extends Product {
                 "    productImage='" + productImage + '\'' + "\n" +
                 "    price=" + price + "\n" +
                 "    discountPrice=" + discountPrice + "\n" +
+                "    reviews=" + reviews + "\n" +
                 "    sourceURL='" + sourceURL + '\'' + "\n" +
                 "    brand='" + brand + '\'' + "\n" +
                 "    color='" + color + '\'' + "\n" +
@@ -84,6 +78,7 @@ public class Laptop extends Product {
                 '}';
     }
 
+    @Override
     public boolean match(List<String[]> query) {
         try {
             for (String[] field : query) {
@@ -137,6 +132,7 @@ public class Laptop extends Product {
         private String productImage;
         private int price;
         private int discountPrice;
+        private final List<Review> reviews = new ArrayList<>();
         private String source;
         private String sourceURL;
 
@@ -169,6 +165,11 @@ public class Laptop extends Product {
 
         public LaptopBuilder setDiscountPrice(int discountPrice) {
             this.discountPrice = discountPrice;
+            return this;
+        }
+
+        public LaptopBuilder addReview(Review review) {
+            this.reviews.add(review);
             return this;
         }
 

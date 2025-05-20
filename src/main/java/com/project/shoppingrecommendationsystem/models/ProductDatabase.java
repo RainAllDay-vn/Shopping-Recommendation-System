@@ -1,26 +1,20 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
     private final String resourceURL;
     private final List<Crawler> crawlers;
-    private final List<Laptop> laptops;
+    private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
@@ -34,14 +28,14 @@ public class ProductDatabase {
             }
         }
         crawlers = new ArrayList<>();
-        crawlers.add(new CellphoneSCrawler());
+        crawlers.add(new CellphoneSLaptopCrawler());
         crawlers.add(new FPTShopCrawler());
         crawlers.add(new TGDDCrawler());
-        laptops = new ArrayList<>();
+        storeProducts = new ArrayList<>();
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(Crawler::getAll)
                 .flatMap(Collection::stream)
-                .forEach(laptops::add);
+                .forEach(storeProducts::add);
     }
 
     public static ProductDatabase getInstance() {
@@ -53,40 +47,29 @@ public class ProductDatabase {
     }
 
     public void crawl (int limit) {
-        laptops.clear();
-        crawlers.forEach(crawler -> crawler.crawlLaptops(limit));
+        storeProducts.clear();
+        crawlers.forEach(crawler -> crawler.crawl(limit));
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(Crawler::getAll)
                 .flatMap(Collection::stream)
-                .forEach(laptops::add);
+                .forEach(storeProducts::add);
     }
 
     public void crawl (Crawler crawler) {
-        laptops.clear();
-        crawler.crawlLaptops();
-        laptops.addAll(crawler.getLaptops());
-    }
-
-    public void saveLaptops () {
-        try (Writer writer = new FileWriter(resourceURL + "laptops.csv")){
-            StatefulBeanToCsv<Laptop> beanToCsv = new StatefulBeanToCsvBuilder<Laptop>(writer).build();
-            for (Laptop laptop : laptops) {
-                beanToCsv.write(laptop);
-            }
-        } catch (IOException e) {
-            System.err.println("[ERROR] : Unable to save file " + resourceURL);
-        } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-            System.err.println("[ERROR] : An error occurred when parsing fields ");
-            System.out.println(e.getMessage());
-        }
+        storeProducts.clear();
+        crawler.crawl();
+        storeProducts.addAll(crawler.getAll());
     }
 
     public List<Laptop> findAllLaptops() {
-        return laptops;
+        return storeProducts.stream()
+                .filter(product -> product instanceof Laptop)
+                .map(product -> (Laptop) product)
+                .collect(Collectors.toList());
     }
 
     public Optional<Laptop> findLaptopById(int id) {
-        for (Laptop laptop : laptops) {
+        for (Laptop laptop : findAllLaptops()) {
             if (laptop.getId() == id) {
                 return Optional.of(laptop);
             }
@@ -95,8 +78,8 @@ public class ProductDatabase {
     }
 
     public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
-        return laptops.stream()
-                .filter(laptop -> laptop.match(query))
+        return findAllLaptops().stream()
+                .filter(product -> product.match(query))
                 .skip(offset)
                 .limit(limit)
                 .toList();

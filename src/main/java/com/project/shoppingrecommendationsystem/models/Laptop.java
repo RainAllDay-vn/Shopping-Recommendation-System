@@ -78,6 +78,7 @@ public class Laptop extends Product {
                 '}';
     }
 
+    @Override
     public boolean match(List<String[]> query) {
         try {
             for (String[] field : query) {
@@ -131,7 +132,7 @@ public class Laptop extends Product {
         private String productImage;
         private int price;
         private int discountPrice;
-        private List<Review> reviews = new ArrayList<>();
+        private final List<Review> reviews = new ArrayList<>();
         private String source;
         private String sourceURL;
 

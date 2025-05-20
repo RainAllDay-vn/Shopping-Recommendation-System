@@ -73,4 +73,6 @@ public abstract class Product {
     public String getDescription() {
         return description;
     }
+
+    public abstract boolean match (List<String[]> query);
 }

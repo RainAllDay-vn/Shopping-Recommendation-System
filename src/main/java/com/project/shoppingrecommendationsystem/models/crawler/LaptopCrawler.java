@@ -5,14 +5,16 @@ import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Product;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public abstract class LaptopCrawler {
+public abstract class LaptopCrawler implements Crawler{
     final ObjectMapper mapper;
     final String resourceURL;
     private final CSVParser parser;
@@ -43,14 +45,25 @@ public abstract class LaptopCrawler {
     /**
      * Crawls laptop information, removing existing save files (if exists) and fetching fresh data.
      */
-    public abstract void crawlLaptops();
+    @Override
+    public void crawl() {
+        crawl(Integer.MAX_VALUE);
+    }
 
     /**
      * Crawls a limited number of laptop entries, removing existing save files (if exists) and fetching fresh data.
      *
      * @param limit The maximum number of laptops to crawl.
      */
-    public abstract void crawlLaptops(int limit);
+    @Override
+    public abstract void crawl(int limit);
+
+    @Override
+    public List<Product> getAll() {
+        return getLaptops().stream()
+                .map(laptop -> (Product) laptop)
+                .collect(Collectors.toList());
+    }
 
     abstract Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews);
 

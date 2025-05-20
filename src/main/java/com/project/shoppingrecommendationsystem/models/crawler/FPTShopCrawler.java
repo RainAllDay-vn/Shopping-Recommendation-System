@@ -51,15 +51,15 @@ public class FPTShopCrawler extends LaptopCrawler {
     }
 
     @Override
-    public void crawlLaptops() {
-        crawlLaptops(Integer.MAX_VALUE);
+    public void crawl () {
+        crawl(Integer.MAX_VALUE);
     }
 
     /**
      * @param limit The maximum number of laptops to crawl.
      */
     @Override
-    public void crawlLaptops(int limit) {
+    public void crawl (int limit) {
         resetSave();
         crawlAllLaptops(limit);
     }

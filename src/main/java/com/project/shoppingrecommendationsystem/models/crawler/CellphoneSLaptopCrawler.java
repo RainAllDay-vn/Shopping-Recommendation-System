@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * such as product ID, name, description, and properties. The extracted data is then
  * saved into CSV files.
  */
-public class CellphoneSCrawler extends LaptopCrawler {
+public class CellphoneSLaptopCrawler extends LaptopCrawler {
     private static final int MAX_THREADS = 10;
     private final Map<String, Integer> propertiesMap = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class CellphoneSCrawler extends LaptopCrawler {
      *
      * @throws RuntimeException if the resource directory cannot be created.
      */
-    public CellphoneSCrawler() {
+    public CellphoneSLaptopCrawler() {
         super("data/CellphoneS/");
         this.laptopColumn = new String[]{"product_id", "name", "sku", "doc_quyen", "manufacturer",
                 "url_key", "url_path", "categories", "review", "is_installment", "stock_available_id", "company_stock_id",
@@ -79,15 +79,15 @@ public class CellphoneSCrawler extends LaptopCrawler {
     }
 
     @Override
-    public void crawlLaptops() {
-        crawlLaptops(Integer.MAX_VALUE);
+    public void crawl() {
+        crawl(Integer.MAX_VALUE);
     }
 
     /**
      * @param limit The maximum number of laptops to crawl.
      */
     @Override
-    public void crawlLaptops(int limit) {
+    public void crawl(int limit) {
         resetSave();
         crawlAllLaptops(limit);
     }

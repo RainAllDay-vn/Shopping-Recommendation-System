@@ -35,7 +35,7 @@ public class QuestionAdviser {
     }
 
 
-    public ChatResponse advise(String userText) {
+    public String advise(String userText) {
         ChatResponse response = ChatClient.builder(this.chatModel)
                 .build().prompt()
                 .advisors(new QuestionAnswerAdvisor(this.vectorStore))
@@ -43,14 +43,30 @@ public class QuestionAdviser {
                 .call()
                 .chatResponse();
 
-        return response;
+        return extractTextContent(response.getResults().toString());
     }
+    public static String extractTextContent(String responseString) {
+        // Find the start of text content
+        int startIndex = responseString.indexOf("textContent=");
+        if (startIndex == -1) {
+            return "Text content not found";
+        }
+        startIndex += "textContent=".length();
 
+        // Find the end of text content (before metadata section)
+        int endIndex = responseString.lastIndexOf(", metadata={");
+        if (endIndex == -1) {
+            return "Metadata marker not found";
+        }
+
+        // Extract the content between these positions
+        return responseString.substring(startIndex, endIndex);
+    }
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        String storeName = "laptop";
+        String storeName = "Shopping Recommendation System";
         QuestionAdviser adviser = new QuestionAdviser(storeName);
         String userText = "hello ";
-        ChatResponse response = adviser.advise(userText);
+        String response = adviser.advise(userText);
 
         System.out.println(response);
     }

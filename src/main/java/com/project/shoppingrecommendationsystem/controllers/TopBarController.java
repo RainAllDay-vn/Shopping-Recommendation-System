@@ -26,17 +26,20 @@ public class TopBarController implements Initializable {
 
     @Override
     public void initialize (URL url, ResourceBundle resourceBundle) {
-        searchButton.setOnAction(event -> {
-            if (searchTextField.getText().isBlank()) {
-                removeSearchFromQuery();
-            } else {
-                addSearchToQuery(searchTextField.getText());
-            }
-        });
+        searchButton.setOnAction(event -> search());
+        searchTextField.setOnAction(event -> search());
         goToList.setOnAction(e -> Messenger.getInstance().getMainPageController().displayMyList());
         logo.setImage(appLogo);
         logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
         titleLabel.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
+    }
+
+    private void search(){
+        if (searchTextField.getText().isBlank()) {
+            removeSearchFromQuery();
+        } else {
+            addSearchToQuery(searchTextField.getText());
+        }
     }
 
     private void addSearchToQuery (String searchText) {

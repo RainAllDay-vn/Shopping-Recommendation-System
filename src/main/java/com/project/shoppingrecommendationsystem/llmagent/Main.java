@@ -1,12 +1,6 @@
 package com.project.shoppingrecommendationsystem.llmagent;
 
-import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.chat.model.ChatResponse;
-
 import java.io.IOException;
-import java.util.*;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 public class Main {

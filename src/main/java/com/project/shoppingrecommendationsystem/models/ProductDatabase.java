@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.ai.document.Document;
 import java.util.stream.Collectors; // Add this import
 
-import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {

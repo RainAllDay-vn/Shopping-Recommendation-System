@@ -1,7 +1,0 @@
-
-langchain
-langchain-google-vertexai
-langchain-qdrant
-qdrant-client
-google-cloud-aiplatform
-google.cloud 

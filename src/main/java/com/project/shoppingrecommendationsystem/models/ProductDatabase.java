@@ -5,6 +5,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
+import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
 import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.LaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
@@ -15,6 +16,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+
+import org.springframework.ai.document.Document;
+import java.util.stream.Collectors; // Add this import
+
+import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
@@ -100,4 +108,33 @@ public class ProductDatabase {
                 .limit(limit)
                 .toList();
     }
+
+
+    public static void main (String[] args) throws IOException, ExecutionException, InterruptedException {
+        ProductDatabase rawDatabase = ProductDatabase.getInstance();
+
+        String storeName = "Shopping Recommendation System";
+        VectorDatabase vectorStore = new VectorDatabase(storeName);
+
+        List<Laptop> laptopList = rawDatabase.findAllLaptops();
+        List<Document> documents = laptopList.stream()
+                .map(laptop -> {
+                    Map<String, Object> metadata = new HashMap<>();
+                    metadata.put("id", laptop.getId());
+                    metadata.put("name", laptop.getName());
+                    metadata.put("price", laptop.getPrice());
+                    return new Document(laptop.getDescription() != null ? laptop.getDescription() : "", metadata); // Use description as content
+                })
+                .collect(Collectors.toList());
+
+        TokenTextSplitter splitter =
+                TokenTextSplitter.builder()
+                        .withChunkSize(700)
+                        .withKeepSeparator(true)
+                        .build();
+
+        vectorStore.addToQdrant(splitter.apply(documents));
+        System.out.println("Laptops crawled, saved, and added to vector store.");
+    }
 }
+

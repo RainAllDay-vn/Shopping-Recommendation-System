@@ -26,7 +26,7 @@ public class Main {
 
         String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
         System.out.println(storeName);
-        QuestionAdviser shoppingRec = new QuestionAdviser("Shopping Recommendation System");
+        QuestionAdviser shoppingRec = new QuestionAdviser(storeName);
         String userText = "Bạn hãy gợi ý cho tôi top 3 laptop dành cho học sinh sinh viên giá cả phải chăng";
         String response = shoppingRec.advise(userText);
 

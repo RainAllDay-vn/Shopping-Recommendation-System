@@ -18,6 +18,8 @@
         <HBox HBox.hgrow="ALWAYS" />
         <Button fx:id="favouriteButton" />
         <HBox layoutX="86.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+        <Button fx:id="compareButton" text="Compare"/>
+        <HBox layoutX="86.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
     </HBox>
 
 </VBox>

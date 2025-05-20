@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 
 import java.awt.*;
 import java.io.File;
@@ -26,13 +25,20 @@ public class ProductCardController implements Initializable {
     private Product product;
     private Node root;
 
-    @FXML private VBox card;
-    @FXML private ImageView productImage;
-    @FXML private Label productName;
-    @FXML private Label productPrice;
-    @FXML private Label productDiscount;
-    @FXML private Button showMoreButton;
-    @FXML private Button favouriteButton;
+    @FXML
+    private ImageView productImage;
+    @FXML
+    private Label productName;
+    @FXML
+    private Label productPrice;
+    @FXML
+    private Label productDiscount;
+    @FXML
+    private Button showMoreButton;
+    @FXML
+    private Button favouriteButton;
+    @FXML
+    private Button compareButton;
 
     public void setProduct(Product product) {
         this.product = product;
@@ -81,6 +87,7 @@ public class ProductCardController implements Initializable {
             goToProductDetails(product);
             showMoreButton.setOnAction(e -> goToWebPage(product));
         });
+        compareButton.setOnAction(event-> addToCompareList());
     }
 
     private void toggleFavouriteStatus() {
@@ -104,6 +111,12 @@ public class ProductCardController implements Initializable {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void addToCompareList() {
+        if(!ProductDatabase.getInstance().getCompareList().contains(product)) {
+            ProductDatabase.getInstance().addToCompareList(product);
         }
     }
 }

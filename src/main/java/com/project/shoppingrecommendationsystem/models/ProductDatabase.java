@@ -12,19 +12,18 @@ import java.util.stream.Collectors;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
-    private final String resourceURL;
     private final List<Crawler> crawlers;
     private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
-        resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
+        String resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
                 .replace("%20", " ") + "data/database/";
-        File resourceDir = new File(this.resourceURL);
+        File resourceDir = new File(resourceURL);
         if (!resourceDir.exists()) {
             if (!resourceDir.mkdirs()) {
-                throw new RuntimeException("Unable to create directory " + this.resourceURL);
+                throw new RuntimeException("Unable to create directory " + resourceURL);
             }
         }
         crawlers = new ArrayList<>();
@@ -61,6 +60,27 @@ public class ProductDatabase {
         storeProducts.addAll(crawler.getAll());
     }
 
+    public List<Product> findAllProducts () {
+        return storeProducts;
+    }
+
+    public Optional<Product> findProductById (int id) {
+        for (Product product : findAllProducts()) {
+            if (product.getId() == id) {
+                return Optional.of(product);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public List<Product> findProducts (List<String[]> query, int limit, int offset) {
+        return storeProducts.stream()
+                .filter(product -> product.match(query))
+                .skip(offset)
+                .limit(limit)
+                .toList();
+    }
+
     public List<Laptop> findAllLaptops() {
         return storeProducts.stream()
                 .filter(product -> product instanceof Laptop)
@@ -68,18 +88,11 @@ public class ProductDatabase {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Laptop> findLaptopById(int id) {
-        for (Laptop laptop : findAllLaptops()) {
-            if (laptop.getId() == id) {
-                return Optional.of(laptop);
-            }
-        }
-        return Optional.empty();
-    }
-
     public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
-        return findAllLaptops().stream()
+        return storeProducts.stream()
+                .filter(product -> product instanceof Laptop)
                 .filter(product -> product.match(query))
+                .map(product -> (Laptop) product)
                 .skip(offset)
                 .limit(limit)
                 .toList();

@@ -39,6 +39,7 @@ public abstract class LaptopCrawler implements Crawler{
                 .withEscapeChar('\\')
                 .withQuoteChar('\'')
                 .build();
+        this.descriptionColumn = new String[]{"local_id", "type", "description"};
         reviewColumn = new String[]{"local_id", "created", "content", "score", "username"};
     }
 
@@ -65,7 +66,7 @@ public abstract class LaptopCrawler implements Crawler{
                 .collect(Collectors.toList());
     }
 
-    abstract Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews);
+    abstract Laptop parseLaptop(String[] laptopRow, List<String[]> descriptionRow, String[] propertiesRow, List<String[]> reviews);
 
     /**
      * Retrieves a list of Laptop objects from the saved data files.
@@ -83,20 +84,27 @@ public abstract class LaptopCrawler implements Crawler{
              CSVReader reviewsReader = getCSVReader("reviews.csv")) {
             String[] laptopRow;
             while ((laptopRow = laptopReader.readNext()) != null) {
-                String[] descriptionRow = descriptionReader.readNext();
+                List<String[]> descriptions = new LinkedList<>();
+                while (true) {
+                    String[] descriptionRow = descriptionReader.peek();
+                    if (descriptionRow == null) break;
+                    if (!descriptionRow[0].equals(laptopRow[0])) break;
+                    descriptions.add(new String[]{descriptionRow[1], descriptionRow[2]});
+                    descriptionReader.readNext();
+                }
                 String[] propertiesRow = propertiesReader.readNext();
                 List<String[]> reviews = new LinkedList<>();
                 while (true) {
                     String[] reviewRow = reviewsReader.peek();
                     if (reviewRow == null) break;
                     if (!reviewRow[0].equals(laptopRow[0])) break;
-                    reviews.add(reviewRow);
+                    reviews.add(new String[]{reviewRow[1], reviewRow[2], reviewRow[3], reviewRow[4]});
                     reviewsReader.readNext();
                 }
                 try {
-                    laptops.add(parseLaptop(laptopRow, descriptionRow, propertiesRow, reviews));
+                    laptops.add(parseLaptop(laptopRow, descriptions, propertiesRow, reviews));
                 } catch (Exception e){
-                    System.err.println("[ERROR] : An error occurred while trying to parse laptop #" + descriptionRow[1]);
+                    System.err.println("[ERROR] : An error occurred while trying to parse laptop #" + laptopRow[0]);
                     System.out.println(e.getMessage());
                 }
             }
@@ -182,11 +190,13 @@ public abstract class LaptopCrawler implements Crawler{
     /**
      * Saves a single description row to the description CSV file.
      *
-     * @param descriptionRow A String array containing product description.
+     * @param descriptions A String array containing product description.
      */
-    void saveDescriptionRow(String[] descriptionRow) {
+    void saveDescriptions(List<String[]> descriptions) {
         try (ICSVWriter csvWriter = getCSVWriter("description.csv", true)) {
-            csvWriter.writeNext(descriptionRow);
+            for (String[] descriptionRow : descriptions) {
+                csvWriter.writeNext(descriptionRow);
+            }
         } catch (Exception e) {
             System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());

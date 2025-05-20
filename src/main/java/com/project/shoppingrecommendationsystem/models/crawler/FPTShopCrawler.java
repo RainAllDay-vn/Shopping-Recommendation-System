@@ -41,10 +41,9 @@ public class FPTShopCrawler extends LaptopCrawler {
      */
     public FPTShopCrawler() {
         super("data/FPTShop/");
-        this.laptopColumn = new String[]{"product_id", "score", "name", "displayName", "typePim", "type", "slug", "price", "industry",
+        this.laptopColumn = new String[]{"local_id", "score", "name", "displayName", "typePim", "type", "slug", "price", "industry",
                 "brand", "productType", "group", "keySellingPoints", "units", "image", "originalPrice", "currentPrice",
                 "discountPercentage", "endTimeDiscount", "promotions", "totalInventory", "skus"};
-        this.descriptionColumn = new String[]{"product_id", "description"};
         this.propertiesColumn = new String[]{"product_id", "Bộ xử lý", "Đồ họa", "RAM", "Lưu trữ", "Màn hình", "Giao tiếp và kết nối",
                 "Âm Thanh", "Ổ đĩa quang", "Hệ điều hành", "Bảo mật", "Bàn phím & TouchPad", "Thông tin pin & sạc",
                 "Phụ kiện trong hộp", "Thông số cơ bản", "Thiết kế & Trọng lượng", "Thông tin hàng hóa"};
@@ -136,20 +135,20 @@ public class FPTShopCrawler extends LaptopCrawler {
             Document productPage = Jsoup.connect("https://fptshop.com.vn/" + item.get("slug").asText()).get();
             String code = item.get("code").asText();
             String[] laptopRow = extractLaptopRow(item);
-            String[] descriptionRow = extractDescriptionRow(code, productPage);
+            List<String[]> descriptions = extractDescriptions(code, productPage);
             String[] propertiesRow = extractPropertiesRow(code, productPage);
             List<String[]> reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
-            save(laptopRow, descriptionRow, propertiesRow, reviews);
+            save(laptopRow, descriptions, propertiesRow, reviews);
         } catch (Exception e) {
             System.err.println("[ERROR] : An error occurred while extracting laptop's information");
             System.out.println(e.getMessage());
         }
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    private synchronized void save(String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
-        saveDescriptionRow(descriptionRow);
+        saveDescriptions(descriptions);
         savePropertiesRow(propertiesRow);
         saveReviews(reviews);
     }
@@ -236,23 +235,25 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @param productPage The product page Document.
      * @return An array of Strings containing the product ID and description.
      */
-    private String[] extractDescriptionRow (String code, Document productPage) {
-        String[] descriptionRow = new String[descriptionColumn.length];
-        descriptionRow[0] = code;
+    private List<String[]> extractDescriptions (String code, Document productPage) {
+        List<String[]> descriptions = new LinkedList<>();
         Element descriptionContainer;
         try {
-            descriptionContainer = productPage.getElementsByClass("description-container").getFirst();
+            descriptionContainer = productPage.getElementsByAttributeValueStarting("class", "ProductContent_description-container").getFirst();
         } catch (NoSuchElementException e) {
-            descriptionRow[1] = "";
-            return descriptionRow;
+            return descriptions;
         }
-        StringBuilder stringBuilder = new StringBuilder();
+        descriptions.add(new String[]{code, "header", "Product Description"});
         for(Element child : descriptionContainer.children()) {
-            stringBuilder.append(child.text());
+            String text = child.text();
+            if (text.isBlank()) continue;
+            if (child.getElementsByTag("strong").isEmpty()) {
+                descriptions.add(new String[]{code, "normal", text});
+            } else {
+                descriptions.add(new String[]{code, "bold", text});
+            }
         }
-        String description = stringBuilder.toString();
-        descriptionRow[1] = description;
-        return descriptionRow;
+        return descriptions;
     }
 
     /**
@@ -487,11 +488,11 @@ public class FPTShopCrawler extends LaptopCrawler {
      * Parses laptop information from laptop, description, and properties rows.
      *
      * @param laptopRow      An array of Strings containing laptop information.
-     * @param descriptionRow An array of Strings containing product description.
+     * @param descriptions An array of Strings containing product description.
      * @param propertiesRow  An array of Strings containing product properties.
      * @return A Laptop object.
      */
-    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    Laptop parseLaptop (String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
         Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
                 .setName(laptopRow[3])  // Column 'displayName'
                 .setProductImage(laptopRow[14])  // Column 'image'
@@ -501,7 +502,7 @@ public class FPTShopCrawler extends LaptopCrawler {
                 .setSourceURL("https://fptshop.com.vn/" + laptopRow[6])  // Column 'slug'
                 .setBrand(parseJson(laptopRow[9], new String[]{"name"}))  // Column 'brand'
                 .setColor(parseJson(propertiesRow[16], new String[]{"6", "value", "0"}))
-                .setDescription(descriptionRow[1])
+                .setDescription(descriptions)
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
                 .setDisplay(parseDisplay(propertiesRow))
@@ -511,10 +512,10 @@ public class FPTShopCrawler extends LaptopCrawler {
                 .setLaptopCase(parseLaptopCase(propertiesRow));
         for (String[] row : reviews) {
             Date created = null;
-            if (row[1]!=null && !row[1].isBlank()) {
-                created = new Date(Long.parseLong(row[1]));
+            if (row[0]!=null && !row[0].isBlank()) {
+                created = new Date(Long.parseLong(row[0]));
             }
-            builder.addReview(new Review(created, row[2], row[3], row[4]));
+            builder.addReview(new Review(created, row[1], row[2], row[3]));
         }
         return builder.build();
     }

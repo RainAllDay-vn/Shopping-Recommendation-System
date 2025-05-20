@@ -87,7 +87,14 @@ public class Laptop extends Product {
                     case "name" -> name;
                     case "brand" -> brand;
                     case "price" -> String.valueOf(discountPrice);
-                    case "description" -> description;
+                    case "description" -> {
+                        StringBuilder compactedDescription = new StringBuilder();
+                        for (String[] paragraph: description) {
+                            compactedDescription.append(paragraph[0]);
+                            compactedDescription.append(" ");
+                        }
+                        yield compactedDescription.toString();
+                    }
                     default -> "false";
                 };
                 if (copy[0].equals("false") || !matchField(copy)) {
@@ -138,7 +145,7 @@ public class Laptop extends Product {
 
         private String brand;
         private String color;
-        private String description;
+        private List<String[]> description;
 
         private CPU cpu;
         private RAM ram;
@@ -193,7 +200,7 @@ public class Laptop extends Product {
             return this;
         }
 
-        public LaptopBuilder setDescription(String description) {
+        public LaptopBuilder setDescription(List<String[]> description) {
             this.description = description;
             return this;
         }

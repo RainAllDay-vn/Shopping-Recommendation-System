@@ -74,5 +74,13 @@ public abstract class Product {
         return description;
     }
 
+    public String getDescriptionAsString() {
+        StringBuilder result = new StringBuilder();
+        for (String[] description : description) {
+            result.append(description[1]);
+        }
+        return result.toString();
+    }
+
     public abstract boolean match (List<String[]> query);
 }

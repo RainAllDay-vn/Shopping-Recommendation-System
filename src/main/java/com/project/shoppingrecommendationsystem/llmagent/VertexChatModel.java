@@ -5,12 +5,13 @@ import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.model.ChatModel;
 
 import java.util.*;
 
 // need to set GOOGLE_APPLICATION_CREDENTIALS = "path/to/your/credentials.json"
 
-public class ChatModel {
+public class VertexChatModel implements ConversationModel {
     private VertexAI vertexApi;
     private VertexAiGeminiChatModel chatModel;
     private final VertexAiGeminiChatOptions OPTION = VertexAiGeminiChatOptions.builder()
@@ -43,7 +44,10 @@ public class ChatModel {
                 .build();
         */
 
-    public ChatModel(String projectId, String location) {
+    public VertexChatModel() {
+        String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
+        String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
+
         this.vertexApi = new VertexAI(projectId, location);
         this.chatModel = VertexAiGeminiChatModel.builder()
                 .vertexAI(vertexApi)
@@ -51,10 +55,12 @@ public class ChatModel {
                 .build();
     }
 
-    public VertexAiGeminiChatModel getChatModel() {
+    @Override
+    public ChatModel getChatModel() {
         return this.chatModel;
     }
 
+    @Override
     public ChatResponse generate(String userPrompt) {
         Prompt chatPrompt = new Prompt(userPrompt);
         return this.chatModel.call(chatPrompt);
@@ -67,9 +73,8 @@ public class ChatModel {
 
         System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + projectId);
         System.out.println("VERTEX_AI_GEMINI_LOCATION: " + location);
-
-        ChatModel chatModel = new ChatModel(projectId, location);
-        ChatResponse response = chatModel.generate("Can you explain Polynorpishm in OOP in detail");
+        ConversationModel conversationModel = new VertexChatModel();
+        ChatResponse response = conversationModel.generate("Can you explain Polynorpishm in OOP in detail");
         System.out.println(response);
     }
 

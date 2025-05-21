@@ -5,28 +5,22 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class QuestionAdviser {
-    private VertexAiGeminiChatModel chatModel;
-    private VectorStore vectorStore;
+    private ConversationModel conversationModel;
+    private VectorDatabase vectorDatabase;
     private QuestionAnswerAdvisor qaAdvisor;
 
-    public QuestionAdviser(String storeName) throws IOException, ExecutionException, InterruptedException {
-        String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
-        String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
-        VertexAiGeminiChatModel chatModel = new ChatModel(projectId, location).getChatModel();
-        this.chatModel = chatModel;
+    public QuestionAdviser(VectorDatabase CurVectorDatabase, ConversationModel CurConversationModel) throws IOException, ExecutionException, InterruptedException {
 
-        QdrantVectorStore vectorStore = new VectorDatabase(storeName).getVectorStore();
-        this.vectorStore = vectorStore;
+        this.conversationModel = CurConversationModel;
+        this.vectorDatabase = CurVectorDatabase;
 
-        QuestionAnswerAdvisor qaAdvisor = new QuestionAnswerAdvisor(this.vectorStore,
+        QuestionAnswerAdvisor qaAdvisor = new QuestionAnswerAdvisor(this.vectorDatabase.getVectorStore(),
                 SearchRequest.builder().
                         similarityThreshold(0.8d).
                         topK(15).
@@ -36,9 +30,9 @@ public class QuestionAdviser {
 
 
     public String advise(String userText) {
-        ChatResponse response = ChatClient.builder(this.chatModel)
+        ChatResponse response = ChatClient.builder(this.conversationModel.getChatModel())
                 .build().prompt()
-                .advisors(new QuestionAnswerAdvisor(this.vectorStore))
+                .advisors(new QuestionAnswerAdvisor(this.vectorDatabase.getVectorStore()))
                 .user(userText)
                 .call()
                 .chatResponse();
@@ -63,8 +57,10 @@ public class QuestionAdviser {
         return responseString.substring(startIndex, endIndex);
     }
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        String storeName = "Shopping Recommendation System";
-        QuestionAdviser adviser = new QuestionAdviser(storeName);
+        String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
+        VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, new VertexEmbedModel());
+        ConversationModel curConversationModel = new VertexChatModel();
+        QuestionAdviser adviser = new QuestionAdviser(vectorDatabase, curConversationModel);
         String userText = "hello ";
         String response = adviser.advise(userText);
 

@@ -1,16 +1,16 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.vectordatabase;
 
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.EmbedModel;
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.VertexEmbedModel;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections.Distance;
 import io.qdrant.client.grpc.Collections.VectorParams;
 
-import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.vertexai.embedding.text.VertexAiTextEmbeddingModel;
 
 import java.io.IOException;
 import java.util.*;

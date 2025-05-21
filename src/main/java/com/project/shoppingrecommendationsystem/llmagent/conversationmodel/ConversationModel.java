@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.conversationmodel;
 
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.ChatModel;

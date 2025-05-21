@@ -1,9 +1,8 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.conversationmodel;
 
 import com.google.cloud.vertexai.VertexAI;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.model.ChatModel;
 
@@ -11,7 +10,7 @@ import java.util.*;
 
 // need to set GOOGLE_APPLICATION_CREDENTIALS = "path/to/your/credentials.json"
 
-public class VertexChatModel implements ConversationModel {
+public class VertexConversationModel implements ConversationModel {
     private VertexAI vertexApi;
     private VertexAiGeminiChatModel chatModel;
     private final VertexAiGeminiChatOptions OPTION = VertexAiGeminiChatOptions.builder()
@@ -44,7 +43,7 @@ public class VertexChatModel implements ConversationModel {
                 .build();
         */
 
-    public VertexChatModel() {
+    public VertexConversationModel() {
         String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
         String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
 
@@ -73,7 +72,7 @@ public class VertexChatModel implements ConversationModel {
 
         System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + projectId);
         System.out.println("VERTEX_AI_GEMINI_LOCATION: " + location);
-        ConversationModel conversationModel = new VertexChatModel();
+        ConversationModel conversationModel = new VertexConversationModel();
         String response = conversationModel.generate("Can you explain Polynorpishm in OOP in detail");
         System.out.println(response);
     }

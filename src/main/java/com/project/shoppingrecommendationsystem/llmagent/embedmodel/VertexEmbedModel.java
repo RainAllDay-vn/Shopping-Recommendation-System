@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.embedmodel;
 
 import java.io.FileInputStream;
 import com.google.api.gax.core.FixedCredentialsProvider;

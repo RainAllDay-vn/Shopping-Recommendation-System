@@ -1,5 +1,11 @@
 package com.project.shoppingrecommendationsystem.llmagent;
 
+import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.ConversationModel;
+import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.VertexConversationModel;
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.VertexEmbedModel;
+import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.QdrantVectorDatabase;
+import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.VectorDatabase;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -9,7 +15,7 @@ public class Main {
         String userText = "Bạn hãy gợi ý cho tôi top 3 laptop dành cho học sinh sinh viên giá cả phải chăng";
         String response;
 
-        ConversationModel chatModel = new VertexChatModel();
+        ConversationModel chatModel = new VertexConversationModel();
 
         try {
             if (storeName == null || storeName.trim().isEmpty()) {

@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.embedmodel;
 
 import org.springframework.ai.embedding.EmbeddingResponse;
 import java.util.List;

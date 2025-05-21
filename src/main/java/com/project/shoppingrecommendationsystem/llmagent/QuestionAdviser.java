@@ -1,11 +1,15 @@
 package com.project.shoppingrecommendationsystem.llmagent;
 
+import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.ConversationModel;
+import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.VertexConversationModel;
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.VertexEmbedModel;
+import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.QdrantVectorDatabase;
+import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.VectorDatabase;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -60,7 +64,7 @@ public class QuestionAdviser {
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
         VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, new VertexEmbedModel());
-        ConversationModel curConversationModel = new VertexChatModel();
+        ConversationModel curConversationModel = new VertexConversationModel();
         QuestionAdviser adviser = new QuestionAdviser(vectorDatabase, curConversationModel);
         String userText = "hello ";
         String response = adviser.advise(userText);

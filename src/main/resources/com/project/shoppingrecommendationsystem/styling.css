@@ -143,7 +143,6 @@
     -fx-background-radius: 15px; /* Bo góc nền, phải giống với border-radius */
     -fx-border-radius: 15px; /* Bo góc viền */
     -fx-cursor: hand; /* Biến con trỏ thành bàn tay */
-    -fx-clip: rect(0, 100%, 100%, 0); /* Đảm bảo phần nền không bị lộ viền */
 
 }
 .custom_product:hover{

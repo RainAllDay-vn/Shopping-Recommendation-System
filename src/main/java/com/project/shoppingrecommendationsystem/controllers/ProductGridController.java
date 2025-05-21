@@ -7,7 +7,6 @@ import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -22,10 +21,8 @@ public class ProductGridController implements Initializable {
     private final ObservableList<Laptop> laptops;
     private final ObservableList<String[]> query = Messenger.getInstance().getQuery();
 
-    @FXML
-    private FlowPane flowPane;
-    @FXML
-    private Button expandButton;
+    @FXML private FlowPane flowPane;
+    @FXML private Button expandButton;
 
     public ProductGridController() {
         this.productDatabase = ProductDatabase.getInstance();
@@ -34,9 +31,11 @@ public class ProductGridController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        for (Laptop laptop : laptops) {
-            flowPane.getChildren().add(new ProductCard(laptop).getRoot());
-        }
+        laptops.forEach(laptop -> {
+                    ProductCard card = new ProductCard(laptop);
+                    flowPane.getChildren().add(card.getRoot());
+                }
+        );
         laptops.addListener((InvalidationListener) observable -> {
             flowPane.getChildren().clear();
             for (Laptop laptop : laptops) {
@@ -47,6 +46,16 @@ public class ProductGridController implements Initializable {
             laptops.clear();
             laptops.addAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
         });
+        expandButton.setOnAction(event -> expand());
+    }
+
+    protected void updateProductCards() {
+        flowPane.getChildren().clear();
+        laptops.forEach(laptop -> {
+                    ProductCard card = new ProductCard(laptop);
+                    flowPane.getChildren().add(card.getRoot());
+                }
+        );
     }
 
     public void expand() {

@@ -3,19 +3,12 @@ package com.project.shoppingrecommendationsystem.models.components;
 import com.opencsv.bean.CsvBindByName;
 
 public class Display {
-    @CsvBindByName(column = "DISPLAY-GPU-NAME")
     private final String gpuName;
-    @CsvBindByName(column = "DISPLAY-GPU-TYPE")
     private final String gpuType;
-    @CsvBindByName(column = "DISPLAY-GPU-BASE-CLOCK")
     private final String gpuBaseClock;
-    @CsvBindByName(column = "DISPLAY-GPU-BOOST-CLOCK")
     private final String gpuBoostClock;
-    @CsvBindByName(column = "DISPLAY-SCREEN-SIZE")
     private final String screenSize;
-    @CsvBindByName(column = "DISPLAY-SCREEN-RESOLUTION")
     private final String screenResolution;
-    @CsvBindByName(column = "DISPLAY-REFRESH-RATE")
     private final String refreshRate;
 
     private Display(DisplayBuilder builder) {

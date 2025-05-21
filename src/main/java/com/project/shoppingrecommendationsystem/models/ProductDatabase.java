@@ -1,20 +1,12 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.llmagent.VectorDatabase;
-import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
-import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
-import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.FPTShopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.TGDDCrawler;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -25,29 +17,29 @@ import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
-    private final String resourceURL;
     private final List<Crawler> crawlers;
-    private final List<Laptop> laptops;
+    private final List<Product> storeProducts;
+    private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
-        resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
+        String resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
                 .replace("%20", " ") + "data/database/";
-        File resourceDir = new File(this.resourceURL);
+        File resourceDir = new File(resourceURL);
         if (!resourceDir.exists()) {
             if (!resourceDir.mkdirs()) {
-                throw new RuntimeException("Unable to create directory " + this.resourceURL);
+                throw new RuntimeException("Unable to create directory " + resourceURL);
             }
         }
         crawlers = new ArrayList<>();
-        crawlers.add(new CellphoneSCrawler());
+        crawlers.add(new CellphoneSLaptopCrawler());
         crawlers.add(new FPTShopCrawler());
         crawlers.add(new TGDDCrawler());
-        laptops = new ArrayList<>();
+        storeProducts = new ArrayList<>();
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(Crawler::getAll)
                 .flatMap(Collection::stream)
-                .forEach(laptops::add);
+                .forEach(storeProducts::add);
     }
 
     public static ProductDatabase getInstance() {
@@ -59,81 +51,74 @@ public class ProductDatabase {
     }
 
     public void crawl (int limit) {
-        laptops.clear();
-        crawlers.forEach(crawler -> crawler.crawlLaptops(limit));
+        storeProducts.clear();
+        crawlers.forEach(crawler -> crawler.crawl(limit));
         crawlers.stream()
-                .map(Crawler::getLaptops)
+                .map(Crawler::getAll)
                 .flatMap(Collection::stream)
-                .forEach(laptops::add);
+                .forEach(storeProducts::add);
     }
 
     public void crawl (Crawler crawler) {
-        laptops.clear();
-        crawler.crawlLaptops();
-        laptops.addAll(crawler.getLaptops());
+        storeProducts.clear();
+        crawler.crawl();
+        storeProducts.addAll(crawler.getAll());
     }
 
-    public void saveLaptops () {
-        try (Writer writer = new FileWriter(resourceURL + "laptops.csv")){
-            StatefulBeanToCsv<Laptop> beanToCsv = new StatefulBeanToCsvBuilder<Laptop>(writer).build();
-            for (Laptop laptop : laptops) {
-                beanToCsv.write(laptop);
-            }
-        } catch (IOException e) {
-            System.err.println("[ERROR] : Unable to save file " + resourceURL);
-        } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-            System.err.println("[ERROR] : An error occurred when parsing fields ");
-            System.out.println(e.getMessage());
-        }
+    public List<Product> findAllProducts () {
+        return storeProducts;
     }
 
-    public List<Laptop> findAllLaptops() {
-        return laptops;
-    }
-
-    public Optional<Laptop> findLaptopById(int id) {
-        for (Laptop laptop : laptops) {
-            if (laptop.getId() == id) {
-                return Optional.of(laptop);
+    public Optional<Product> findProductById (int id) {
+        for (Product product : findAllProducts()) {
+            if (product.getId() == id) {
+                return Optional.of(product);
             }
         }
         return Optional.empty();
     }
 
-    public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
-        return laptops.stream()
-                .filter(laptop -> laptop.match(query))
+    public List<Product> findProducts (List<String[]> query, int limit, int offset) {
+        return storeProducts.stream()
+                .filter(product -> product.match(query))
                 .skip(offset)
                 .limit(limit)
                 .toList();
     }
 
-
-    public static void main (String[] args) throws IOException, ExecutionException, InterruptedException {
-        ProductDatabase rawDatabase = ProductDatabase.getInstance();
-
-        String storeName = "Shopping Recommendation System";
-        VectorDatabase vectorStore = new VectorDatabase(storeName);
-
-        List<Laptop> laptopList = rawDatabase.findAllLaptops();
-        List<Document> documents = laptopList.stream()
-                .map(laptop -> {
-                    Map<String, Object> metadata = new HashMap<>();
-                    metadata.put("id", laptop.getId());
-                    metadata.put("name", laptop.getName());
-                    metadata.put("price", laptop.getPrice());
-                    return new Document(laptop.getDescription() != null ? laptop.getDescription() : "", metadata); // Use description as content
-                })
+    public List<Laptop> findAllLaptops() {
+        return storeProducts.stream()
+                .filter(product -> product instanceof Laptop)
+                .map(product -> (Laptop) product)
                 .collect(Collectors.toList());
-
-        TokenTextSplitter splitter =
-                TokenTextSplitter.builder()
-                        .withChunkSize(700)
-                        .withKeepSeparator(true)
-                        .build();
-
-        vectorStore.addToQdrant(splitter.apply(documents));
-        System.out.println("Laptops crawled, saved, and added to vector store.");
     }
-}
 
+    public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
+        return storeProducts.stream()
+                .filter(product -> product instanceof Laptop)
+                .filter(product -> product.match(query))
+                .map(product -> (Laptop) product)
+                .skip(offset)
+                .limit(limit)
+                .toList();
+    }
+
+    public List<Product> getFavouriteProducts() {
+        return favouriteProducts;
+    }
+
+    public boolean isFavourite(Product product){
+        return favouriteProducts.contains(product);
+    }
+
+    public void addToFavourites(Product product) {
+        if (!favouriteProducts.contains(product)) {
+            favouriteProducts.add(product);
+        }
+    }
+
+    public void removeFromFavourites(Product product) {
+        favouriteProducts.remove(product);
+    }
+
+}

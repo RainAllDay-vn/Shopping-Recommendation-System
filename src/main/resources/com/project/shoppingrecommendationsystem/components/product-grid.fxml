@@ -7,6 +7,6 @@
     <VBox alignment="TOP_CENTER" spacing="10">
         <FlowPane fx:id="flowPane" alignment="CENTER" columnHalignment="CENTER" hgap="10" vgap="10">
         </FlowPane>
-        <Button fx:id="expandButton" onAction="#expand" text="Expand" />
+        <Button fx:id="expandButton" text="Expand" />
     </VBox>
 </ScrollPane>

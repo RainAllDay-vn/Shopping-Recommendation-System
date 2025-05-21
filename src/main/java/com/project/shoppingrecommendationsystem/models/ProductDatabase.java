@@ -1,10 +1,10 @@
 package com.project.shoppingrecommendationsystem.models;
 
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.models.crawler.CellphoneSLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
-import com.project.shoppingrecommendationsystem.models.crawler.FPTShopCrawler;
-import com.project.shoppingrecommendationsystem.models.crawler.TGDDCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.FPTShopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.TGDDCrawler;
 
 import java.io.File;
 import java.util.*;

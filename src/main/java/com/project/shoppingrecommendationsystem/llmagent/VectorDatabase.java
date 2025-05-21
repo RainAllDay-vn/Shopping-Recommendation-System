@@ -5,12 +5,9 @@ import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections.Distance;
 import io.qdrant.client.grpc.Collections.VectorParams;
 
-import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
 import org.springframework.ai.document.Document;
-import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
 import java.util.*;

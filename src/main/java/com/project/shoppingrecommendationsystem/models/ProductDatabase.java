@@ -8,7 +8,12 @@ import com.project.shoppingrecommendationsystem.models.crawler.laptop.TGDDCrawle
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
+
+import org.springframework.ai.document.Document;
+import java.util.stream.Collectors; // Add this import
+
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();

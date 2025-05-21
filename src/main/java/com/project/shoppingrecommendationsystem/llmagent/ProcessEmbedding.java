@@ -25,7 +25,7 @@ public class ProcessEmbedding {
                     metadata.put("name", laptop.getName());
                     metadata.put("price", laptop.getPrice());
 
-                    String content = laptop.getDescription() != null ? laptop.getDescription() : "";
+                    String content = laptop.getDescription() != null ? laptop.getDescriptionAsString() : "";
                     return new Document(content, metadata);
                 })
                 .collect(Collectors.toList());

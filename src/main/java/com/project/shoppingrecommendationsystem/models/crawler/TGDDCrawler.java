@@ -45,12 +45,11 @@ public class TGDDCrawler extends LaptopCrawler {
      */
     public TGDDCrawler() {
         super("data/TGDD/");
-        this.laptopColumn = new String[]{"data-id", "data-issetup", "data-maingroup", "data-subgroup",
+        this.laptopColumn = new String[]{"local_id", "data-issetup", "data-maingroup", "data-subgroup",
                 "data-type", "data-vehicle", "data-productcode", "data-price-root", "data-ordertypeid", "data-pos", "sourceURL",
                 "data-s", "data-site", "data-pro", "data-cache", "data-sv", "data-name", "data-id", "data-price",
                 "data-brand", "data-cate", "data-box", "data-pos", "data-color", "data-productstatus", "data-premium",
                 "data-promotiontype", "imageURL", "percent", "gift", "rating", "unit-sold"};
-        this.descriptionColumn = new String[]{"data-id", "description"};
         this.propertiesColumn = new String[]{"data-id", "Công nghệ CPU", "Số nhân", "Số luồng", "Tốc độ CPU",
                 "Tốc độ tối đa", "RAM", "Loại RAM", "Tốc độ Bus RAM", "Hỗ trợ RAM tối đa", "Ổ cứng", "Màn hình",
                 "Độ phân giải", "Tần số quét", "Độ phủ màu", "Công nghệ màn hình", "Card màn hình", "Công nghệ âm thanh",
@@ -123,20 +122,20 @@ public class TGDDCrawler extends LaptopCrawler {
             String[] laptopRow = extractLaptop(product);
             System.out.println("[INFO] : Extracting #" + laptopRow[0]);
             Element body = Jsoup.connect(pageURL + laptopRow[10]).get().body();
-            String[] descriptionRow = extractDescription(laptopRow[0], body);
+            List<String[]> descriptions = extractDescriptions(laptopRow[0], body);
             String[] propertiesRow = extractProperties(laptopRow[0], body);
             List<String[]> reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
-            save(laptopRow, descriptionRow, propertiesRow, reviews);
+            save(laptopRow, descriptions, propertiesRow, reviews);
         } catch (Exception e) {
             System.err.println("[ERROR] : An error occurred while extracting laptop's information");
             System.out.println(e.getMessage());
         }
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    private synchronized void save(String[] laptopRow, List<String[]> descriptionRow, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
-        saveDescriptionRow(descriptionRow);
+        saveDescriptions(descriptionRow);
         savePropertiesRow(propertiesRow);
         saveReviews(reviews);
     }
@@ -212,14 +211,22 @@ public class TGDDCrawler extends LaptopCrawler {
      * @param body The HTML body of the product page.
      * @return A string array containing the product ID and description.
      */
-    private String[] extractDescription(String id, Element body) {
-        String[] descriptionRow = new String[descriptionColumn.length];
-        descriptionRow[0] = id;
-        Element description = body.selectFirst("div.description");
-        if (description != null) {
-            descriptionRow[1] = description.text();
-        }
-        return descriptionRow;
+    private List<String[]> extractDescriptions (String id, Element body) {
+        List<String[]> descriptions = new LinkedList<>();
+        try {
+            Element description = body.selectFirst("div.description");
+            assert description != null;
+            for (Element child : description.child(0).children()) {
+                if (child.tagName().equals("h3")) {
+                    descriptions.add(new String[]{id, "header", child.text()});
+                    continue;
+                }
+                if (child.tagName().equals("p")) {
+                    descriptions.add(new String[]{id, "normal", child.text()});
+                }
+            }
+        } catch (Exception ignored) {}
+        return descriptions;
     }
 
     /**
@@ -559,12 +566,12 @@ public class TGDDCrawler extends LaptopCrawler {
      * Parses laptop information from laptop, description, and properties rows.
      *
      * @param laptopRow      An array of Strings containing laptop information.
-     * @param descriptionRow An array of Strings containing product description.
+     * @param descriptions An array of Strings containing product description.
      * @param propertiesRow  An array of Strings containing product properties.
      * @return A Laptop object.
      */
     @Override
-    Laptop parseLaptop(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    Laptop parseLaptop(String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
         Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
                 .setName(laptopRow[16])  // Column 'data-name'
                 .setProductImage(laptopRow[27])  // Column 'imageURL'
@@ -574,7 +581,7 @@ public class TGDDCrawler extends LaptopCrawler {
                 .setSourceURL("https://www.thegioididong.com/" + laptopRow[10])  // Column 'sourceURL'
                 .setBrand(laptopRow[19])  // Column 'data-brand'
                 .setColor(laptopRow[23])
-                .setDescription(descriptionRow[1])
+                .setDescription(descriptions)
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
                 .setDisplay(parseDisplay(propertiesRow))
@@ -584,10 +591,10 @@ public class TGDDCrawler extends LaptopCrawler {
                 .setLaptopCase(parseLaptopCase(propertiesRow));
         for (String[] row : reviews) {
             Date created = null;
-            if (row[1]!=null && !row[1].isBlank()) {
-                created = new Date(Long.parseLong(row[1]));
+            if (row[0]!=null && !row[0].isBlank()) {
+                created = new Date(Long.parseLong(row[0]));
             }
-            builder.addReview(new Review(created, row[2], row[3], row[4]));
+            builder.addReview(new Review(created, row[1], row[2], row[3]));
         }
         return builder.build();
     }

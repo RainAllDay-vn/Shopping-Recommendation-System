@@ -15,9 +15,9 @@ public abstract class Product {
 
     final String brand;
     final String color;
-    final String description;
+    final List<String[]> description;
 
-    Product(String name, String productImage, int price, int discountPrice, List<Review> reviews, String source, String sourceURL, String brand, String color, String description) {
+    Product(String name, String productImage, int price, int discountPrice, List<Review> reviews, String source, String sourceURL, String brand, String color, List<String[]> description) {
         this.id = ++counter;
         this.name = name;
         this.productImage = productImage;
@@ -70,7 +70,7 @@ public abstract class Product {
         return color;
     }
 
-    public String getDescription() {
+    public List<String[]> getDescription() {
         return description;
     }
 

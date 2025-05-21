@@ -54,7 +54,7 @@ public class LaptopDetailsController {
     public void setProductDetails(Laptop product, Node productCard) {
         productCardDetailsBox.getChildren().add(productCard);
 
-        setLabelText(descriptionText, product.getDescription(), null);
+        //setLabelText(descriptionText, product.getDescription(), null);
 
         setCPUDetails(product.getCpu());
         setRAMDetails(product.getRam());

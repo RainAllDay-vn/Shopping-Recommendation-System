@@ -44,11 +44,10 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      */
     public CellphoneSLaptopCrawler() {
         super("data/CellphoneS/");
-        this.laptopColumn = new String[]{"product_id", "name", "sku", "doc_quyen", "manufacturer",
+        this.laptopColumn = new String[]{"local_id", "name", "sku", "doc_quyen", "manufacturer",
                 "url_key", "url_path", "categories", "review", "is_installment", "stock_available_id", "company_stock_id",
                 "filter", "is_parent", "price", "prices", "special_price", "promotion_information",
                 "thumbnail", "promotion_pack", "sticker", "flash_sale_types"};
-        this.descriptionColumn = new String[]{"product_id", "description"};
         this.propertiesColumn = new String[]{"additional_information", "ads_base_image", "bao_hanh_1_doi_1", "basic",
                 "battery", "best_discount_price", "bluetooth", "change_layout_preorder", "coupon_value", "cpu", "dimensions",
                 "discount_price", "display_resolution", "display_size", "display_type", "fe_minimum_down_payment",
@@ -116,7 +115,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
             for (JsonNode product : products) {
                 executor.submit(() -> this.extractAndSaveLaptop(product));
                 if (++count >= limit) {
-                    pageIndex=Integer.MAX_VALUE;
+                    pageIndex=100;
                     break;
                 }
             }
@@ -171,12 +170,12 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
         String productId = product.path("general").get("product_id").asText();
         System.out.println("[INFO] : Extracting information for laptop #" + productId);
         String[] laptopRow;
-        String[] descriptionRow;
+        List<String[]> descriptions;
         String[] propertiesRow;
         List<String[]> reviews;
         try {
             laptopRow = extractLaptop(product);
-            descriptionRow = extractDescription(product);
+            descriptions = extractDescriptions(product);
             propertiesRow = extractProperties(product);
             reviews = extractReviews(laptopRow[0]);
             downloadImage(laptopRow);
@@ -185,12 +184,12 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
             System.out.println(e.getMessage());
             return;
         }
-        save(laptopRow, descriptionRow, propertiesRow, reviews);
+        save(laptopRow, descriptions, propertiesRow, reviews);
     }
 
-    private synchronized void save(String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    private synchronized void save(String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
         saveLaptopRow(laptopRow);
-        saveDescriptionRow(descriptionRow);
+        saveDescriptions(descriptions);
         savePropertiesRow(propertiesRow);
         saveReviews(reviews);
     }
@@ -248,26 +247,30 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @param product The product JSON node.
      * @return An array of Strings containing the product ID and description.
      */
-    private String[] extractDescription (JsonNode product) {
+    private List<String[]> extractDescriptions (JsonNode product) {
+        List<String[]> descriptions = new LinkedList<>();
         String productId = product.path("general").get("product_id").asText();
-        String[] descriptionRow = new String[2];
-        descriptionRow[0] = productId;
         String productURL = product.path("general").get("url_path").asText();
         try {
             String pageURL = "https://cellphones.com.vn/";
             Element body = Jsoup.connect(pageURL + productURL).get().body();
             Element description = body.selectFirst("#cpsContentSEO");
             assert description != null;
-            StringBuilder str = new StringBuilder();
+            descriptions.add(new String[]{productId, "header", "Product Description"});
             for (Element child : description.children()) {
                 if (child.className().equals("table-content")) {
                     continue;
                 }
-                str.append(child.text());
+                if (child.tag().getName().equals("p")) {
+                    descriptions.add(new String[]{productId, "normal", child.text()});
+                    continue;
+                }
+                if (child.tag().getName().equals("h2") || child.tag().getName().equals("h3")) {
+                    descriptions.add(new String[]{productId, "bold", child.text()});
+                }
             }
-            descriptionRow[1] = str.toString();
         } catch (Exception ignored) {}
-        return descriptionRow;
+        return descriptions;
     }
 
     /**
@@ -421,12 +424,12 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * Parses laptop information from laptop, description, and properties rows.
      *
      * @param laptopRow      An array of Strings containing laptop information.
-     * @param descriptionRow An array of Strings containing product description.
+     * @param descriptions An array of Strings containing product description.
      * @param propertiesRow  An array of Strings containing product properties.
      * @return A Laptop object.
      */
 
-    Laptop parseLaptop (String[] laptopRow, String[] descriptionRow, String[] propertiesRow, List<String[]> reviews) {
+    Laptop parseLaptop (String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
         Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
                 .setName(laptopRow[1].replace("\"", ""))  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
@@ -436,7 +439,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
                 .setDiscountPrice(Integer.parseInt(laptopRow[16]))  // Column "special_price"
                 .setProductImage(laptopRow[18])  // Column "thumbnail"
                 .setColor(propertiesRow[131])  // Column "color"
-                .setDescription(descriptionRow[1])
+                .setDescription(descriptions)
                 .setCpu(parseCPU(propertiesRow))
                 .setRam(parseRAM(propertiesRow))
                 .setDisplay(parseDisplay(propertiesRow))
@@ -446,10 +449,10 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
                 .setLaptopCase(parseLaptopCase(propertiesRow));
         for (String[] row: reviews) {
             Date created = null;
-            if (row[1]!=null && !row[1].isBlank()) {
-                created = new Date(Long.parseLong(row[1]));
+            if (row[0]!=null && !row[0].isBlank()) {
+                created = new Date(Long.parseLong(row[0]));
             }
-            builder.addReview(new Review(created, row[2], row[3], row[4]));
+            builder.addReview(new Review(created, row[1], row[2], row[3]));
         }
         return builder.build();
     }

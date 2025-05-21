@@ -61,9 +61,9 @@ public class VertexChatModel implements ConversationModel {
     }
 
     @Override
-    public ChatResponse generate(String userPrompt) {
+    public String generate(String userPrompt) {
         Prompt chatPrompt = new Prompt(userPrompt);
-        return this.chatModel.call(chatPrompt);
+        return extractTextContent(this.chatModel.call(chatPrompt));
     }
 
     //test the chat model
@@ -74,7 +74,7 @@ public class VertexChatModel implements ConversationModel {
         System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + projectId);
         System.out.println("VERTEX_AI_GEMINI_LOCATION: " + location);
         ConversationModel conversationModel = new VertexChatModel();
-        ChatResponse response = conversationModel.generate("Can you explain Polynorpishm in OOP in detail");
+        String response = conversationModel.generate("Can you explain Polynorpishm in OOP in detail");
         System.out.println(response);
     }
 

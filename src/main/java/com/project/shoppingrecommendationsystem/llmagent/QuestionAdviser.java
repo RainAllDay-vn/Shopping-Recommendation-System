@@ -37,24 +37,25 @@ public class QuestionAdviser {
                 .call()
                 .chatResponse();
 
-        return extractTextContent(response.getResults().toString());
+        return extractTextContent(response);
     }
-    public static String extractTextContent(String responseString) {
+    public static String extractTextContent(ChatResponse response) {
         // Find the start of text content
-        int startIndex = responseString.indexOf("textContent=");
+        String x = response.getResults().toString();
+        int startIndex = x.indexOf("textContent=");
         if (startIndex == -1) {
             return "Text content not found";
         }
         startIndex += "textContent=".length();
 
         // Find the end of text content (before metadata section)
-        int endIndex = responseString.lastIndexOf(", metadata={");
+        int endIndex = x.lastIndexOf(", metadata={");
         if (endIndex == -1) {
             return "Metadata marker not found";
         }
 
         // Extract the content between these positions
-        return responseString.substring(startIndex, endIndex);
+        return x.substring(startIndex, endIndex);
     }
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
@@ -66,7 +67,5 @@ public class QuestionAdviser {
 
         System.out.println(response);
     }
-
-
 
 }

@@ -22,8 +22,6 @@ public class QdrantVectorDatabase implements VectorDatabase {
     private QdrantVectorStore vectorStore;
     private QdrantClient qdrantClient;
     private EmbedModel embeddingModel;
-    private final int BATCH_SIZE = 5;
-    private final int THREAD_SLEEP = 20000;
 
     public QdrantClient createQdrantClient(String StoreName) throws ExecutionException, InterruptedException {
         String hostname = "localhost";
@@ -62,29 +60,6 @@ public class QdrantVectorDatabase implements VectorDatabase {
                 .build();
     }
 
-    @Override
-    public void addDocuments(List<Document> documents) {
-
-        for (int i = 0; i < documents.size(); i += BATCH_SIZE) {
-            int endIndex = Math.min(i + BATCH_SIZE, documents.size());
-            List<Document> batch = documents.subList(i, endIndex);
-
-            try {
-                vectorStore.add(batch);
-                System.out.println("Embedded " + i + " data points");
-
-                Thread.sleep(THREAD_SLEEP);
-
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Sleep interrupted: " + e.getMessage());
-                break;
-            } catch (Exception e) {
-                System.out.println("Failed to embed batch " + i + "-" + endIndex + ": " + e.getMessage());
-                continue;
-            }
-        }
-    }
 
     @Override
     public VectorStore getVectorStore() {

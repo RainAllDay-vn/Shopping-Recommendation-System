@@ -17,31 +17,11 @@ public class VertexConversationModel implements ConversationModel {
             .temperature(0.7)
             .topP(0.8)
             .topK(40)
-            .maxOutputTokens(1000)
+            .maxOutputTokens(1500)
             .stopSequences(List.of())
             .candidateCount(1)
-            .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+            .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_5_PRO)
             .build();
-            /* 1st tuning option
-        VertexAiGeminiChatOptions options = VertexAiGeminiChatOptions.builder()
-                .temperature(0.2)
-                .topP(0.2)
-                .topK(3)
-                .maxOutputTokens(1000)
-                .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-                .build();
-        */
-        /* 2nd tuning option
-        VertexAiGeminiChatOptions options = VertexAiGeminiChatOptions.builder()
-                .temperature((double)0.7F)
-                .topP((double)1.0F)
-                .topK(40)
-                .maxOutputTokens(500)
-                .stopSequences(List.of())
-                .candidateCount(1)
-                .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-                .build();
-        */
 
     public VertexConversationModel() {
         String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");

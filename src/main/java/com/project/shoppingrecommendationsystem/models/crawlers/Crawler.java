@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models.crawler;
+package com.project.shoppingrecommendationsystem.models.crawlers;
 
 import com.project.shoppingrecommendationsystem.models.Product;
 

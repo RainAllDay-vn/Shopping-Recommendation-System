@@ -75,4 +75,30 @@ public abstract class Product {
     }
 
     public abstract boolean match (List<String[]> query);
+
+    boolean matchField(String[] field) {
+        try {
+            return switch (field[1].toLowerCase()) {
+                case "contain" -> field[0].toLowerCase().contains(field[2].toLowerCase());
+                case "in" -> {
+                    for (int i = 2; i < field.length; i++) {
+                        if (field[i].equalsIgnoreCase(field[0])) {
+                            yield true;
+                        }
+                    }
+                    yield false;
+                }
+                case "between" -> {
+                    int lower = field[2].isEmpty() ? 0 : Integer.parseInt(field[2]);
+                    int upper = field[3].isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(field[3]);
+                    int value = Integer.parseInt(field[0]);
+                    yield lower <= value && value <= upper;
+                }
+                default -> false;
+            };
+        } catch (Exception e) {
+            System.err.println("Invalid query");
+            return false;
+        }
+    }
 }

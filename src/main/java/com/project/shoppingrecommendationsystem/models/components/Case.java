@@ -1,11 +1,11 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-public class LaptopCase {
+public class Case {
     private final String weight;
     private final String dimensions;
     private final String material;
 
-    private LaptopCase(Builder builder) {
+    private Case(Builder builder) {
         this.weight = builder.weight;
         this.dimensions = builder.dimensions;
         this.material = builder.material;
@@ -52,8 +52,8 @@ public class LaptopCase {
             return this;
         }
 
-        public LaptopCase build() {
-            return new LaptopCase(this);
+        public Case build() {
+            return new Case(this);
         }
     }
 }

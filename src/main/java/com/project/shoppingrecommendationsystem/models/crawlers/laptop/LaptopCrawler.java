@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models.crawler.laptop;
+package com.project.shoppingrecommendationsystem.models.crawlers.laptop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
@@ -6,7 +6,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
 
 import java.io.File;
 import java.io.FileReader;

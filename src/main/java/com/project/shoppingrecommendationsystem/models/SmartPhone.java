@@ -6,24 +6,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Laptop extends Product {
+public class SmartPhone extends Product {
     private final CPU cpu;
     private final RAM ram;
     private final Storage storage;
     private final Connectivity connectivity;
+    private final Camera camera;
     private final Battery battery;
-    private final Case laptopCase;
-    private final LaptopDisplay display;
+    private final Case phoneCase;
+    private final PhoneDisplay display;
 
-    private Laptop(Builder builder) {
+    private SmartPhone(Builder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.reviews, builder.source, builder.sourceURL,
                 builder.brand, builder.color, builder.description);
         this.cpu = builder.cpu;
         this.ram = builder.ram;
         this.storage = builder.storage;
         this.connectivity = builder.connectivity;
+        this.camera = builder.camera;
         this.battery = builder.battery;
-        this.laptopCase = builder.laptopCase;
+        this.phoneCase = builder.phoneCase;
         this.display = builder.display;
     }
 
@@ -43,28 +45,33 @@ public class Laptop extends Product {
         return connectivity;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public Battery getBattery() {
         return battery;
     }
 
-    public Case getLaptopCase() {
-        return laptopCase;
+    public Case getPhoneCase() {
+        return phoneCase;
     }
 
-    public LaptopDisplay getDisplay() {
+    public PhoneDisplay getDisplay() {
         return display;
     }
 
     @Override
     public String toString() {
-        return "Laptop{" + "\n" +
+        return "SmartPhone{" + "\n" +
                 "    id=" + id + "\n" +
                 "    cpu=" + cpu + "\n" +
                 "    ram=" + ram + "\n" +
                 "    storage=" + storage + "\n" +
                 "    connectivity=" + connectivity + "\n" +
+                "    camera=" + camera + "\n" +
                 "    battery=" + battery + "\n" +
-                "    laptopCase=" + laptopCase + "\n" +
+                "    phoneCase=" + phoneCase + "\n" +
                 "    display=" + display + "\n" +
                 "    name='" + name + '\'' + "\n" +
                 "    productImage='" + productImage + '\'' + "\n" +
@@ -89,7 +96,7 @@ public class Laptop extends Product {
                     case "price" -> String.valueOf(discountPrice);
                     case "description" -> {
                         StringBuilder compactedDescription = new StringBuilder();
-                        for (String[] paragraph: description) {
+                        for (String[] paragraph : description) {
                             compactedDescription.append(paragraph[0]);
                             compactedDescription.append(" ");
                         }
@@ -125,9 +132,10 @@ public class Laptop extends Product {
         private RAM ram;
         private Storage storage;
         private Connectivity connectivity;
+        private Camera camera;
         private Battery battery;
-        private Case laptopCase;
-        private LaptopDisplay display;
+        private Case phoneCase;
+        private PhoneDisplay display;
 
         public Builder setName(String name) {
             this.name = name;
@@ -199,23 +207,28 @@ public class Laptop extends Product {
             return this;
         }
 
+        public Builder setCamera(Camera camera) {
+            this.camera = camera;
+            return this;
+        }
+
         public Builder setBattery(Battery battery) {
             this.battery = battery;
             return this;
         }
 
-        public Builder setLaptopCase(Case laptopCase) {
-            this.laptopCase = laptopCase;
+        public Builder setPhoneCase(Case phoneCase) {
+            this.phoneCase = phoneCase;
             return this;
         }
 
-        public Builder setDisplay(LaptopDisplay display) {
+        public Builder setDisplay(PhoneDisplay display) {
             this.display = display;
             return this;
         }
 
-        public Laptop build() {
-            return new Laptop(this);
+        public SmartPhone build() {
+            return new SmartPhone(this);
         }
     }
 }

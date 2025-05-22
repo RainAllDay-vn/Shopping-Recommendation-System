@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models.crawler.laptop;
+package com.project.shoppingrecommendationsystem.models.crawlers.laptop;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.project.shoppingrecommendationsystem.models.Laptop;
@@ -476,8 +476,8 @@ public class FPTShopLaptopCrawler extends LaptopCrawler {
      * @param propertiesRow An array of Strings containing product properties.
      * @return A LaptopCase object.
      */
-    private LaptopCase parseLaptopCase(String[] propertiesRow) {
-        return new LaptopCase.Builder()
+    private Case parseLaptopCase(String[] propertiesRow) {
+        return new Case.Builder()
                 .setWeight(parseJson(propertiesRow[15],new String[]{"1", "value", "slice", "displayValue"}))
                 .setDimensions(parseJson(propertiesRow[15],new String[]{"0", "value"}))
                 .setMaterial(parseJson(propertiesRow[15],new String[]{"4", "value", "slice"}))

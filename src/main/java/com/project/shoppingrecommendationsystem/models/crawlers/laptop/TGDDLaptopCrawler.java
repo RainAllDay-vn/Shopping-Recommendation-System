@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models.crawler.laptop;
+package com.project.shoppingrecommendationsystem.models.crawlers.laptop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -555,8 +555,8 @@ public class TGDDLaptopCrawler extends LaptopCrawler {
      * @param propertiesRow An array of Strings containing product properties.
      * @return A LaptopCase object.
      */
-    private LaptopCase parseLaptopCase(String[] propertiesRow) {
-        return new LaptopCase.Builder()
+    private Case parseLaptopCase(String[] propertiesRow) {
+        return new Case.Builder()
                 .setDimensions(propertiesRow[22])
                 .setMaterial(propertiesRow[23])
                 .build();

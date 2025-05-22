@@ -116,7 +116,7 @@ public class LaptopDetailsController {
         setLabelText(batteryChargePowerText, battery.getChargePower(), batteryChargePowerRow);
     }
 
-    private void setLaptopCaseDetails(LaptopCase laptopCase) {
+    private void setLaptopCaseDetails(Case laptopCase) {
         setLabelText(laptopCaseWeightText, laptopCase.getWeight(), laptopCaseWeightRow);
         setLabelText(laptopCaseDimensionsText, laptopCase.getDimensions(), laptopCaseDimensionsRow);
         setLabelText(laptopCaseMaterialText, laptopCase.getMaterial(), laptopCaseMaterialRow);

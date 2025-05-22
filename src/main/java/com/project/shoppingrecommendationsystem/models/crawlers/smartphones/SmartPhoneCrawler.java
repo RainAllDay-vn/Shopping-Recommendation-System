@@ -1,34 +1,36 @@
-package com.project.shoppingrecommendationsystem.models.crawlers.laptop;
+package com.project.shoppingrecommendationsystem.models.crawlers.smartphones;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
+import com.project.shoppingrecommendationsystem.models.SmartPhone;
 import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class LaptopCrawler implements Crawler {
+public abstract class SmartPhoneCrawler implements Crawler {
     final ObjectMapper mapper;
     final String resourceURL;
     private final CSVParser parser;
-    String[] laptopColumn;
+    String[] phoneColumn;
     String[] descriptionColumn;
     String[] propertiesColumn;
     String[] reviewColumn;
 
-    LaptopCrawler(String folder) {
+    SmartPhoneCrawler(String folder) {
         this.mapper = new ObjectMapper();
         this.resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
                 .getPath()
-                .replace("%20", " ") + "data/laptops/" + folder;
+                .replace("%20", " ") + "data/smartphones/" + folder;
         File resourceDir = new File(this.resourceURL + "images/");
         if (!resourceDir.exists()) {
             if (!resourceDir.mkdirs()) {
@@ -54,34 +56,34 @@ public abstract class LaptopCrawler implements Crawler {
 
     @Override
     public List<Product> getAll() {
-        return getLaptops().stream()
-                .map(laptop -> (Product) laptop)
+        return getSmartPhones().stream()
+                .map(phone -> (Product) phone)
                 .collect(Collectors.toList());
     }
 
-    abstract Laptop parseLaptop(String[] laptopRow, List<String[]> descriptionRow, String[] propertiesRow, List<String[]> reviews);
+    abstract SmartPhone parseSmartPhone(String[] laptopRow, List<String[]> descriptionRow, String[] propertiesRow, List<String[]> reviews);
 
     /**
-     * Retrieves a list of Laptop objects from the saved data files.
+     * Retrieves a list of SmartPhone objects from the saved data files.
      * <p>
-     * This method reads the previously saved laptop data from the respective files (e.g., CSV files containing
-     * description and properties) and constructs a list of Laptop objects.
+     * This method reads the previously saved smartphone data from the respective files (e.g., CSV files containing
+     * description and properties) and constructs a list of smartphone objects.
      *
-     * @return A List of Laptop objects representing the crawled laptop data.
+     * @return A List of SmartPhone objects representing the crawled smartphone data.
      */
-    public List<Laptop> getLaptops() {
-        List<Laptop> laptops = new LinkedList<>();
-        try (CSVReader laptopReader = getCSVReader("laptop.csv");
+    public List<SmartPhone> getSmartPhones() {
+        List<SmartPhone> phones = new LinkedList<>();
+        try (CSVReader phoneReader = getCSVReader("phone.csv");
              CSVReader descriptionReader = getCSVReader("description.csv");
              CSVReader propertiesReader = getCSVReader("properties.csv");
              CSVReader reviewsReader = getCSVReader("reviews.csv")) {
-            String[] laptopRow;
-            while ((laptopRow = laptopReader.readNext()) != null) {
+            String[] phoneRow;
+            while ((phoneRow = phoneReader.readNext()) != null) {
                 List<String[]> descriptions = new LinkedList<>();
                 while (true) {
                     String[] descriptionRow = descriptionReader.peek();
                     if (descriptionRow == null) break;
-                    if (!descriptionRow[0].equals(laptopRow[0])) break;
+                    if (!descriptionRow[0].equals(phoneRow[0])) break;
                     descriptions.add(new String[]{descriptionRow[1], descriptionRow[2]});
                     descriptionReader.readNext();
                 }
@@ -90,14 +92,14 @@ public abstract class LaptopCrawler implements Crawler {
                 while (true) {
                     String[] reviewRow = reviewsReader.peek();
                     if (reviewRow == null) break;
-                    if (!reviewRow[0].equals(laptopRow[0])) break;
+                    if (!reviewRow[0].equals(phoneRow[0])) break;
                     reviews.add(new String[]{reviewRow[1], reviewRow[2], reviewRow[3], reviewRow[4]});
                     reviewsReader.readNext();
                 }
                 try {
-                    laptops.add(parseLaptop(laptopRow, descriptions, propertiesRow, reviews));
+                    phones.add(parseSmartPhone(phoneRow, descriptions, propertiesRow, reviews));
                 } catch (Exception e){
-                    System.err.println("[ERROR] : An error occurred while trying to parse laptop #" + laptopRow[0]);
+                    System.err.println("[ERROR] : An error occurred while trying to parse smartphone #" + phoneRow[0]);
                     System.out.println(e.getMessage());
                 }
             }
@@ -105,7 +107,7 @@ public abstract class LaptopCrawler implements Crawler {
             System.err.println("[ERROR] : There was an error when accessing saving file");
             System.out.println(e.getMessage());
         }
-        return laptops;
+        return phones;
     }
 
     /**
@@ -154,11 +156,11 @@ public abstract class LaptopCrawler implements Crawler {
 
 
     void resetSave () {
-        try (ICSVWriter laptopWriter = getCSVWriter("laptop.csv");
+        try (ICSVWriter laptopWriter = getCSVWriter("phone.csv");
              ICSVWriter descriptionWriter = getCSVWriter("description.csv");
              ICSVWriter propertiesWriter = getCSVWriter("properties.csv");
              ICSVWriter reviewsWriter = getCSVWriter("reviews.csv")) {
-            laptopWriter.writeNext(laptopColumn);
+            laptopWriter.writeNext(phoneColumn);
             descriptionWriter.writeNext(descriptionColumn);
             propertiesWriter.writeNext(propertiesColumn);
             reviewsWriter.writeNext(reviewColumn);
@@ -169,15 +171,15 @@ public abstract class LaptopCrawler implements Crawler {
     }
 
     /**
-     * Saves a single laptop row to the laptop CSV file.
+     * Saves a single smartphone row to the laptop CSV file.
      *
-     * @param laptopRow A String array containing laptop information.
+     * @param phoneRow A String array containing smartphone information.
      */
-    void saveLaptopRow(String[] laptopRow) {
-        try (ICSVWriter csvWriter = getCSVWriter("laptop.csv", true)) {
-            csvWriter.writeNext(laptopRow);
+    void savePhoneRow(String[] phoneRow) {
+        try (ICSVWriter csvWriter = getCSVWriter("phone.csv", true)) {
+            csvWriter.writeNext(phoneRow);
         } catch (Exception e) {
-            System.err.println("[ERROR] : There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when saving to phone file");
             System.out.println(e.getMessage());
         }
     }
@@ -193,7 +195,7 @@ public abstract class LaptopCrawler implements Crawler {
                 csvWriter.writeNext(descriptionRow);
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] : There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when saving to description file");
             System.out.println(e.getMessage());
         }
     }
@@ -207,7 +209,7 @@ public abstract class LaptopCrawler implements Crawler {
         try (ICSVWriter csvWriter = getCSVWriter("properties.csv", true)) {
             csvWriter.writeNext(propertiesRow);
         } catch (Exception e) {
-            System.err.println("[ERROR] : There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when saving to properties file");
             System.out.println(e.getMessage());
         }
     }
@@ -218,7 +220,7 @@ public abstract class LaptopCrawler implements Crawler {
                 csvWriter.writeNext(reviewRow);
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] : There was an error when accessing saving file");
+            System.err.println("[ERROR] : There was an error when saving to reviews file");
             System.out.println(e.getMessage());
         }
     }

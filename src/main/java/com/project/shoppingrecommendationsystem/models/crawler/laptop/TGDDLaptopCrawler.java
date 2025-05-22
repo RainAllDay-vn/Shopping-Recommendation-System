@@ -26,7 +26,7 @@ import java.util.concurrent.*;
  * website's API and extracts relevant details such as product ID, name, description,
  * and properties.
  */
-public class TGDDCrawler extends LaptopCrawler {
+public class TGDDLaptopCrawler extends LaptopCrawler {
     private static final int MAX_THREADS = 10;
     private WebDriver driver;
     private final String pageURL = "https://www.thegioididong.com";
@@ -43,7 +43,7 @@ public class TGDDCrawler extends LaptopCrawler {
      *
      * @throws RuntimeException if the resource directory cannot be created.
      */
-    public TGDDCrawler() {
+    public TGDDLaptopCrawler() {
         super("TGDD/");
         this.laptopColumn = new String[]{"local_id", "data-issetup", "data-maingroup", "data-subgroup",
                 "data-type", "data-vehicle", "data-productcode", "data-price-root", "data-ordertypeid", "data-pos", "sourceURL",
@@ -472,7 +472,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A CPU object.
      */
     private CPU parseCPU(String[] propertiesRow) {
-        return new CPU.CPUBuilder()
+        return new CPU.Builder()
                 .setName(propertiesRow[1])
                 .setBaseFrequency(propertiesRow[4])
                 .setTurboFrequency(propertiesRow[5])
@@ -488,7 +488,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A RAM object.
      */
     private RAM parseRAM(String[] propertiesRow) {
-        return new RAM.RAMBuilder()
+        return new RAM.Builder()
                 .setSize(propertiesRow[6])
                 .setClock(propertiesRow[8])
                 .setType(propertiesRow[7])
@@ -502,8 +502,8 @@ public class TGDDCrawler extends LaptopCrawler {
      * @param propertiesRow An array of Strings containing product properties.
      * @return A Display object.
      */
-    private Display parseDisplay(String[] propertiesRow) {
-        return new Display.DisplayBuilder()
+    private LaptopDisplay parseDisplay(String[] propertiesRow) {
+        return new LaptopDisplay.Builder()
                 .setScreenSize(propertiesRow[11])
                 .setScreenResolution(propertiesRow[12])
                 .setRefreshRate(propertiesRow[13])
@@ -518,7 +518,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A Storage object.
      */
     private Storage parseStorage(String[] propertiesRow) {
-        return new Storage.StorageBuilder()
+        return new Storage.Builder()
                 .setSize(propertiesRow[10])
                 .build();
     }
@@ -530,7 +530,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A Connectivity object.
      */
     private Connectivity parseConnectivity(String[] propertiesRow) {
-        return new Connectivity.ConnectivityBuilder()
+        return new Connectivity.Builder()
                 .setPorts(propertiesRow[18])
                 .setWifi(propertiesRow[19])
                 .setWebCam(propertiesRow[20])
@@ -544,7 +544,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A Battery object.
      */
     private Battery parseBattery(String[] propertiesRow) {
-        return new Battery.BatteryBuilder()
+        return new Battery.Builder()
                 .setCapacity(propertiesRow[24])
                 .build();
     }
@@ -556,7 +556,7 @@ public class TGDDCrawler extends LaptopCrawler {
      * @return A LaptopCase object.
      */
     private LaptopCase parseLaptopCase(String[] propertiesRow) {
-        return new LaptopCase.LaptopCaseBuilder()
+        return new LaptopCase.Builder()
                 .setDimensions(propertiesRow[22])
                 .setMaterial(propertiesRow[23])
                 .build();
@@ -572,7 +572,7 @@ public class TGDDCrawler extends LaptopCrawler {
      */
     @Override
     Laptop parseLaptop(String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
-        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
+        Laptop.Builder builder = new Laptop.Builder()
                 .setName(laptopRow[16])  // Column 'data-name'
                 .setProductImage(laptopRow[27])  // Column 'imageURL'
                 .setPrice((int)Double.parseDouble(laptopRow[7]))  // Column 'data-price-root'

@@ -332,7 +332,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A CPU object.
      */
     private CPU parseCPU(String[] propertiesRow) {
-        return new CPU.CPUBuilder()
+        return new CPU.Builder()
                 .setName(propertiesRow[32])  // Column "laptop_cpu"
                 .build();
     }
@@ -344,7 +344,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A RAM object.
      */
     private RAM parseRAM(String[] propertiesRow) {
-        return new RAM.RAMBuilder()
+        return new RAM.Builder()
                 .setType(propertiesRow[36])  // Column "laptop_loai_ram"
                 .setSize(propertiesRow[38])  // Column "laptop_ram"
                 .setSlots(propertiesRow[41])  // Column "laptop_so_khe_ram"
@@ -357,8 +357,8 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @param propertiesRow An array of Strings containing product properties.
      * @return A Display object.
      */
-    private Display parseDisplay(String[] propertiesRow) {
-        return new Display.DisplayBuilder()
+    private LaptopDisplay parseDisplay(String[] propertiesRow) {
+        return new LaptopDisplay.Builder()
                 .setScreenResolution(propertiesRow[12])
                 .setScreenSize(propertiesRow[13])
                 .setRefreshRate(propertiesRow[44])
@@ -374,7 +374,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A Storage object.
      */
     private Storage parseStorage(String[] propertiesRow) {
-        return new Storage.StorageBuilder()
+        return new Storage.Builder()
                 .setSize(propertiesRow[22])  // Column "hdd_sdd"
                 .build();
     }
@@ -386,7 +386,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A Connectivity object.
      */
     private Connectivity parseConnectivity(String[] propertiesRow) {
-        return new Connectivity.ConnectivityBuilder()
+        return new Connectivity.Builder()
                 .setBluetooth(propertiesRow[6])  // Column "bluetooth"
                 .setWebCam(propertiesRow[31])  // Column "laptop_camera_webcam"
                 .setPorts(propertiesRow[60])  // Column "ports_slots"
@@ -401,7 +401,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A Battery object.
      */
     private Battery parseBattery(String[] propertiesRow) {
-        return new Battery.BatteryBuilder()
+        return new Battery.Builder()
                 .setCapacity(propertiesRow[4])  // Column "battery"
                 .build();
     }
@@ -413,7 +413,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      * @return A LaptopCase object.
      */
     private LaptopCase parseLaptopCase(String[] propertiesRow) {
-        return new LaptopCase.LaptopCaseBuilder()
+        return new LaptopCase.Builder()
                 .setDimensions(propertiesRow[10])  // Column "dimension"
                 .setWeight(propertiesRow[65])  // Column "product_weight"
                 .setMaterial(propertiesRow[89])  // Column "laptop_chat_lieu"
@@ -430,7 +430,7 @@ public class CellphoneSLaptopCrawler extends LaptopCrawler {
      */
 
     Laptop parseLaptop (String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
-        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
+        Laptop.Builder builder = new Laptop.Builder()
                 .setName(laptopRow[1].replace("\"", ""))  // Column "name"
                 .setBrand(laptopRow[4])  // Column "manufacturer"
                 .setSource("CellphoneS")

@@ -13,9 +13,9 @@ public class Laptop extends Product {
     private final Connectivity connectivity;
     private final Battery battery;
     private final LaptopCase laptopCase;
-    private final Display display;
+    private final LaptopDisplay display;
 
-    private Laptop(LaptopBuilder builder) {
+    private Laptop(Builder builder) {
         super(builder.name, builder.productImage, builder.price, builder.discountPrice, builder.reviews, builder.source, builder.sourceURL,
                 builder.brand, builder.color, builder.description);
         this.cpu = builder.cpu;
@@ -51,7 +51,7 @@ public class Laptop extends Product {
         return laptopCase;
     }
 
-    public Display getDisplay() {
+    public LaptopDisplay getDisplay() {
         return display;
     }
 
@@ -134,7 +134,7 @@ public class Laptop extends Product {
         }
     }
 
-    public static class LaptopBuilder {
+    public static class Builder {
         private String name;
         private String productImage;
         private int price;
@@ -153,89 +153,89 @@ public class Laptop extends Product {
         private Connectivity connectivity;
         private Battery battery;
         private LaptopCase laptopCase;
-        private Display display;
+        private LaptopDisplay display;
 
-        public LaptopBuilder setName(String name) {
+        public Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        public LaptopBuilder setProductImage(String productImage) {
+        public Builder setProductImage(String productImage) {
             this.productImage = productImage;
             return this;
         }
 
-        public LaptopBuilder setPrice(int price) {
+        public Builder setPrice(int price) {
             this.price = price;
             return this;
         }
 
-        public LaptopBuilder setDiscountPrice(int discountPrice) {
+        public Builder setDiscountPrice(int discountPrice) {
             this.discountPrice = discountPrice;
             return this;
         }
 
-        public LaptopBuilder addReview(Review review) {
+        public Builder addReview(Review review) {
             this.reviews.add(review);
             return this;
         }
 
-        public LaptopBuilder setSource(String source) {
+        public Builder setSource(String source) {
             this.source = source;
             return this;
         }
 
-        public LaptopBuilder setSourceURL(String sourceURL) {
+        public Builder setSourceURL(String sourceURL) {
             this.sourceURL = sourceURL;
             return this;
         }
 
-        public LaptopBuilder setBrand(String brand) {
+        public Builder setBrand(String brand) {
             this.brand = brand;
             return this;
         }
 
-        public LaptopBuilder setColor(String color) {
+        public Builder setColor(String color) {
             this.color = color;
             return this;
         }
 
-        public LaptopBuilder setDescription(List<String[]> description) {
+        public Builder setDescription(List<String[]> description) {
             this.description = description;
             return this;
         }
 
-        public LaptopBuilder setCpu(CPU cpu) {
+        public Builder setCpu(CPU cpu) {
             this.cpu = cpu;
             return this;
         }
 
-        public LaptopBuilder setRam(RAM ram) {
+        public Builder setRam(RAM ram) {
             this.ram = ram;
             return this;
         }
 
-        public LaptopBuilder setStorage(Storage storage) {
+        public Builder setStorage(Storage storage) {
             this.storage = storage;
             return this;
         }
 
-        public LaptopBuilder setConnectivity(Connectivity connectivity) {
+        public Builder setConnectivity(Connectivity connectivity) {
             this.connectivity = connectivity;
             return this;
         }
 
-        public LaptopBuilder setBattery(Battery battery) {
+        public Builder setBattery(Battery battery) {
             this.battery = battery;
             return this;
         }
 
-        public LaptopBuilder setLaptopCase(LaptopCase laptopCase) {
+        public Builder setLaptopCase(LaptopCase laptopCase) {
             this.laptopCase = laptopCase;
             return this;
         }
 
-        public LaptopBuilder setDisplay(Display display) {
+        public Builder setDisplay(LaptopDisplay display) {
             this.display = display;
             return this;
         }

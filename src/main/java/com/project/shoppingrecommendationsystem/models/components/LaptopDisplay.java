@@ -1,8 +1,6 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
-public class Display {
+public class LaptopDisplay {
     private final String gpuName;
     private final String gpuType;
     private final String gpuBaseClock;
@@ -11,7 +9,7 @@ public class Display {
     private final String screenResolution;
     private final String refreshRate;
 
-    private Display(DisplayBuilder builder) {
+    private LaptopDisplay(Builder builder) {
         this.gpuName = builder.gpuName;
         this.gpuType = builder.gpuType;
         this.gpuBaseClock = builder.gpuBaseClock;
@@ -62,7 +60,7 @@ public class Display {
                 '}';
     }
 
-    public static class DisplayBuilder {
+    public static class Builder {
         private String gpuName;
         private String gpuType;
         private String gpuBaseClock;
@@ -71,43 +69,43 @@ public class Display {
         private String screenResolution;
         private String refreshRate;
 
-        public DisplayBuilder setGpuName(String gpuName) {
+        public Builder setGpuName(String gpuName) {
             this.gpuName = gpuName;
             return this;
         }
 
-        public DisplayBuilder setGpuType(String gpuType) {
+        public Builder setGpuType(String gpuType) {
             this.gpuType = gpuType;
             return this;
         }
 
-        public DisplayBuilder setGpuBaseClock(String gpuBaseClock) {
+        public Builder setGpuBaseClock(String gpuBaseClock) {
             this.gpuBaseClock = gpuBaseClock;
             return this;
         }
 
-        public DisplayBuilder setGpuBoostClock(String gpuBoostClock) {
+        public Builder setGpuBoostClock(String gpuBoostClock) {
             this.gpuBoostClock = gpuBoostClock;
             return this;
         }
 
-        public DisplayBuilder setScreenSize(String screenSize) {
+        public Builder setScreenSize(String screenSize) {
             this.screenSize = screenSize;
             return this;
         }
 
-        public DisplayBuilder setScreenResolution(String screenResolution) {
+        public Builder setScreenResolution(String screenResolution) {
             this.screenResolution = screenResolution;
             return this;
         }
 
-        public DisplayBuilder setRefreshRate(String refreshRate) {
+        public Builder setRefreshRate(String refreshRate) {
             this.refreshRate = refreshRate;
             return this;
         }
 
-        public Display build() {
-            return new Display(this);
+        public LaptopDisplay build() {
+            return new LaptopDisplay(this);
         }
     }
 }

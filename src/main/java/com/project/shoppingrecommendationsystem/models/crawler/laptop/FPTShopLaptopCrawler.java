@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * such as product ID, name, description, and properties. The extracted data is then
  * saved into CSV files.
  */
-public class FPTShopCrawler extends LaptopCrawler {
+public class FPTShopLaptopCrawler extends LaptopCrawler {
     private final Pattern compiledPattern = Pattern.compile("attributeItem");
     private static final int MAX_THREADS = 10;
 
@@ -39,7 +39,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * <p>
      * This constructor initializes the resource directory and sets up the column headers for the CSV files.
      */
-    public FPTShopCrawler() {
+    public FPTShopLaptopCrawler() {
         super("FPTShop/");
         this.laptopColumn = new String[]{"local_id", "score", "name", "displayName", "typePim", "type", "slug", "price", "industry",
                 "brand", "productType", "group", "keySellingPoints", "units", "image", "originalPrice", "currentPrice",
@@ -361,7 +361,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A CPU object.
      */
     private CPU parseCPU(String[] propertiesRow) {
-        return new CPU.CPUBuilder()
+        return new CPU.Builder()
                 .setName("%s %s %s".formatted(
                         parseJson(propertiesRow[1],new String[]{"0", "value"}),
                         parseJson(propertiesRow[1],new String[]{"1", "value"}),
@@ -381,7 +381,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A RAM object.
      */
     private RAM parseRAM(String[] propertiesRow) {
-        return new RAM.RAMBuilder()
+        return new RAM.Builder()
                 .setSize(parseJson(propertiesRow[3],new String[]{"0", "value"}))
                 .setClock(parseJson(propertiesRow[3],new String[]{"2", "value", "displayValue"}))
                 .setType(parseJson(propertiesRow[3],new String[]{"1", "value"}))
@@ -396,9 +396,9 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @param propertiesRow An array of Strings containing product properties.
      * @return A Display object.
      */
-    private Display parseDisplay(String[] propertiesRow) {
+    private LaptopDisplay parseDisplay(String[] propertiesRow) {
         if (parseJson(propertiesRow[2],new String[]{"2", "value"}) != null) {
-            return new Display.DisplayBuilder()
+            return new LaptopDisplay.Builder()
                     .setGpuName(parseJson(propertiesRow[2],new String[]{"2", "value"}))
                     .setGpuBaseClock(parseJson(propertiesRow[2],new String[]{"3", "value"}))
                     .setGpuBoostClock(parseJson(propertiesRow[2],new String[]{"4", "value"}))
@@ -407,7 +407,7 @@ public class FPTShopCrawler extends LaptopCrawler {
                     .setRefreshRate(parseJson(propertiesRow[5],new String[]{"4", "value", "displayValue"}))
                     .build();
         } else {
-            return new Display.DisplayBuilder()
+            return new LaptopDisplay.Builder()
                     .setGpuName(parseJson(propertiesRow[2],new String[]{"8", "value"}))
                     .setGpuBaseClock(parseJson(propertiesRow[2],new String[]{"9", "value"}))
                     .setGpuBoostClock(parseJson(propertiesRow[2],new String[]{"10", "value"}))
@@ -433,7 +433,7 @@ public class FPTShopCrawler extends LaptopCrawler {
         if (bus == null) {
             bus = parseJson(propertiesRow[4],new String[]{"8", "value"});
         }
-        return new Storage.StorageBuilder()
+        return new Storage.Builder()
                 .setSize(size)
                 .setBus(bus)
                 .setStorageType(parseJson(propertiesRow[4],new String[]{"0", "value"}))
@@ -449,7 +449,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A Connectivity object.
      */
     private Connectivity parseConnectivity(String[] propertiesRow) {
-        return new Connectivity.ConnectivityBuilder()
+        return new Connectivity.Builder()
                 .setPorts(parseJson(propertiesRow[6],new String[]{"0", "value", "slice"}))
                 .setWifi(parseJson(propertiesRow[6],new String[]{"1", "value", "slice"}))
                 .setBluetooth(parseJson(propertiesRow[6],new String[]{"2", "value", "slice"}))
@@ -464,7 +464,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A Battery object.
      */
     private Battery parseBattery(String[] propertiesRow) {
-        return new Battery.BatteryBuilder()
+        return new Battery.Builder()
                 .setCapacity(parseJson(propertiesRow[12], new String[]{"1", "value", "slice", "displayValue"}))
                 .setChargePower(parseJson(propertiesRow[12],new String[]{"2", "value", "slice", "displayValue"}))
                 .build();
@@ -477,7 +477,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A LaptopCase object.
      */
     private LaptopCase parseLaptopCase(String[] propertiesRow) {
-        return new LaptopCase.LaptopCaseBuilder()
+        return new LaptopCase.Builder()
                 .setWeight(parseJson(propertiesRow[15],new String[]{"1", "value", "slice", "displayValue"}))
                 .setDimensions(parseJson(propertiesRow[15],new String[]{"0", "value"}))
                 .setMaterial(parseJson(propertiesRow[15],new String[]{"4", "value", "slice"}))
@@ -493,7 +493,7 @@ public class FPTShopCrawler extends LaptopCrawler {
      * @return A Laptop object.
      */
     Laptop parseLaptop (String[] laptopRow, List<String[]> descriptions, String[] propertiesRow, List<String[]> reviews) {
-        Laptop.LaptopBuilder builder = new Laptop.LaptopBuilder()
+        Laptop.Builder builder = new Laptop.Builder()
                 .setName(laptopRow[3])  // Column 'displayName'
                 .setProductImage(laptopRow[14])  // Column 'image'
                 .setPrice(Integer.parseInt(laptopRow[15]))  // Column 'originalPrice'

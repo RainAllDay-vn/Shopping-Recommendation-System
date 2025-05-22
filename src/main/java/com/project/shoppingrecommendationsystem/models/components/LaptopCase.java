@@ -1,13 +1,11 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
 public class LaptopCase {
     private final String weight;
     private final String dimensions;
     private final String material;
 
-    private LaptopCase(LaptopCaseBuilder builder) {
+    private LaptopCase(Builder builder) {
         this.weight = builder.weight;
         this.dimensions = builder.dimensions;
         this.material = builder.material;
@@ -34,22 +32,22 @@ public class LaptopCase {
                 '}';
     }
 
-    public static class LaptopCaseBuilder {
+    public static class Builder {
         private String weight;
         private String dimensions;
         private String material;
 
-        public LaptopCaseBuilder setWeight(String weight) {
+        public Builder setWeight(String weight) {
             this.weight = weight;
             return this;
         }
 
-        public LaptopCaseBuilder setDimensions(String dimensions) {
+        public Builder setDimensions(String dimensions) {
             this.dimensions = dimensions;
             return this;
         }
 
-        public LaptopCaseBuilder setMaterial(String material) {
+        public Builder setMaterial(String material) {
             this.material = material;
             return this;
         }

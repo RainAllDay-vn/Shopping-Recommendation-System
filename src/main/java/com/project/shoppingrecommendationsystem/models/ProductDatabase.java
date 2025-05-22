@@ -3,17 +3,14 @@ package com.project.shoppingrecommendationsystem.models;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.crawler.laptop.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawler.Crawler;
-import com.project.shoppingrecommendationsystem.models.crawler.laptop.FPTShopCrawler;
-import com.project.shoppingrecommendationsystem.models.crawler.laptop.TGDDCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.FPTShopLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawler.laptop.TGDDLaptopCrawler;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
-import org.springframework.ai.document.Document;
 import java.util.stream.Collectors; // Add this import
 
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 public class ProductDatabase {
     private static final ProductDatabase instance = new ProductDatabase();
@@ -33,8 +30,8 @@ public class ProductDatabase {
         }
         crawlers = new ArrayList<>();
         crawlers.add(new CellphoneSLaptopCrawler());
-        crawlers.add(new FPTShopCrawler());
-        crawlers.add(new TGDDCrawler());
+        crawlers.add(new FPTShopLaptopCrawler());
+        crawlers.add(new TGDDLaptopCrawler());
         storeProducts = new ArrayList<>();
         crawlers.stream()
                 .map(Crawler::getAll)

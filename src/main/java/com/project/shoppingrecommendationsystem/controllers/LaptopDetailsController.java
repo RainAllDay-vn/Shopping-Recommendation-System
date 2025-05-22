@@ -2,7 +2,6 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.components.*;
-import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -93,7 +92,7 @@ public class LaptopDetailsController {
         setLabelText(storageSlotsText, storage.getSlots(), storageSlotsRow);
     }
 
-    private void setDisplayDetails(Display display) {
+    private void setDisplayDetails(LaptopDisplay display) {
         setLabelText(displayScreenSizeText, display.getScreenSize(), displayScreenSizeRow);
         setLabelText(displayScreenResolutionText, display.getScreenResolution(), displayScreenResolutionRow);
         setLabelText(displayRefreshRateText, display.getRefreshRate(), displayRefreshRateRow);

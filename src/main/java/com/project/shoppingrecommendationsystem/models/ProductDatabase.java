@@ -20,6 +20,7 @@ public class ProductDatabase {
     private final List<Crawler> crawlers;
     private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
+    private final List<Product> compareList = new ArrayList<>();
 
     private ProductDatabase() {
         String resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
@@ -121,4 +122,29 @@ public class ProductDatabase {
         favouriteProducts.remove(product);
     }
 
+    public List<Product> getCompareList() {
+        return compareList;
+    }
+
+    public void addToCompareList(Product product) {
+        if(!compareList.contains(product)) {
+            compareList.add(product);
+        }
+    }
+
+    public void removeFromCompareList(Product product) {
+        compareList.remove(product);
+    }
+
+    public void sortByName(){
+        laptops.sort(Comparator.comparing(Product::getName));
+    }
+
+    public void sortByPrice(){
+        laptops.sort(Comparator.comparingInt(Product::getPrice));
+    }
+
+    public void sortByDiscountPrice(){
+        laptops.sort(Comparator.comparingInt(Product::getDiscountPrice));
+    }
 }

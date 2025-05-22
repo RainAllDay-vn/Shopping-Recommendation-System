@@ -3,13 +3,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox xmlns="http://javafx.com/javafx/21"
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       style="-fx-background-color: black;">
+
+    <HBox fx:id="compareBox"/>
 
     <Label text="About Us"
            underline="true"
            textAlignment="CENTER"
            alignment="CENTER"
            style="-fx-text-fill: white; -fx-font-size: 14px;"/>
-</HBox>
+</VBox>

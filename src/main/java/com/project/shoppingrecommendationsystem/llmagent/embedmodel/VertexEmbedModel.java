@@ -60,6 +60,7 @@ public class VertexEmbedModel implements EmbedModel {
     public EmbeddingResponse getEmbeddings(List<String> texts) {
         return this.embeddingModel.embedForResponse(texts);
     }
+
     public static void main(String[] args) throws IOException {
         System.out.println("Checking environment variables:");
         System.out.println("GOOGLE_APPLICATION_CREDENTIALS: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));

@@ -3,7 +3,6 @@ package com.project.shoppingrecommendationsystem.models;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SmartPhone extends Product {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.Review;
+import com.project.shoppingrecommendationsystem.models.components.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 import java.io.File;

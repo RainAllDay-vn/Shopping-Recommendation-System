@@ -3,7 +3,6 @@ package com.project.shoppingrecommendationsystem.models.crawlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
-import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
 
 import java.io.*;
@@ -12,7 +11,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class CSVCrawler implements Crawler{
     protected static final CSVParser PARSER = new CSVParserBuilder()

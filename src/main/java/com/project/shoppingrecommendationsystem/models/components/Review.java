@@ -1,4 +1,4 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.components;
 
 import java.util.Date;
 

@@ -1,5 +1,7 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import com.project.shoppingrecommendationsystem.models.components.Review;
+
 import java.util.Arrays;
 import java.util.List;
 

@@ -1,21 +1,18 @@
 package com.project.shoppingrecommendationsystem.models.crawlers.cellphones;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.opencsv.CSVReader;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.Review;
+import com.project.shoppingrecommendationsystem.models.components.Review;
 import com.project.shoppingrecommendationsystem.models.SmartPhone;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class CellphoneSSmartPhoneCrawler extends CellphoneSCrawler {
     private static final int MAX_THREADS = 10;

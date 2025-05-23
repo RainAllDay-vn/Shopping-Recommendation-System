@@ -5,16 +5,13 @@
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" spacing="10"
       fx:controller="com.project.shoppingrecommendationsystem.controllers.ChatBoxController">
 
-    <!-- Chat Container -->
-    <VBox  prefWidth="302" prefHeight="720"
+    <VBox  prefWidth="350" prefHeight="720"
           style="-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;">
 
-        <!-- Chat List -->
         <ListView fx:id="chatListView" prefWidth="302" prefHeight="555" />
 
-        <!-- Input Area -->
         <HBox prefWidth="200" prefHeight="100">
-            <TextField fx:id="chatInput" prefWidth="236" prefHeight="91" />
+            <TextArea fx:id="chatInput" prefWidth="236" prefHeight="91" wrapText="true"/>
             <Button fx:id="sendButton" text="Send" prefWidth="66" prefHeight="53"/>
         </HBox>
     </VBox>

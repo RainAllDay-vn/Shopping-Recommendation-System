@@ -1,15 +1,13 @@
 package com.project.shoppingrecommendationsystem.models;
 
-import com.project.shoppingrecommendationsystem.ShoppingApplication;
-import com.project.shoppingrecommendationsystem.models.crawlers.laptop.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
-import com.project.shoppingrecommendationsystem.models.crawlers.laptop.FPTShopLaptopCrawler;
-import com.project.shoppingrecommendationsystem.models.crawlers.laptop.TGDDLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSSmartPhoneCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.fptshop.FPTShopLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.tgdd.TGDDLaptopCrawler;
 
-import java.io.File;
 import java.util.*;
-
-import java.util.stream.Collectors; // Add this import
+import java.util.stream.Collectors;
 
 
 public class ProductDatabase {
@@ -19,22 +17,14 @@ public class ProductDatabase {
     private final List<Product> favouriteProducts = new ArrayList<>();
 
     private ProductDatabase() {
-        String resourceURL = Objects.requireNonNull(ShoppingApplication.class.getResource(""))
-                .getPath()
-                .replace("%20", " ") + "data/database/";
-        File resourceDir = new File(resourceURL);
-        if (!resourceDir.exists()) {
-            if (!resourceDir.mkdirs()) {
-                throw new RuntimeException("Unable to create directory " + resourceURL);
-            }
-        }
         crawlers = new ArrayList<>();
         crawlers.add(new CellphoneSLaptopCrawler());
+        crawlers.add(new CellphoneSSmartPhoneCrawler());
         crawlers.add(new FPTShopLaptopCrawler());
         crawlers.add(new TGDDLaptopCrawler());
         storeProducts = new ArrayList<>();
         crawlers.stream()
-                .map(Crawler::getAll)
+                .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
                 .forEach(storeProducts::add);
     }
@@ -51,7 +41,7 @@ public class ProductDatabase {
         storeProducts.clear();
         crawlers.forEach(crawler -> crawler.crawl(limit));
         crawlers.stream()
-                .map(Crawler::getAll)
+                .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
                 .forEach(storeProducts::add);
     }
@@ -59,7 +49,7 @@ public class ProductDatabase {
     public void crawl (Crawler crawler) {
         storeProducts.clear();
         crawler.crawl();
-        storeProducts.addAll(crawler.getAll());
+        storeProducts.addAll(crawler.getAllProducts());
     }
 
     public List<Product> findAllProducts () {

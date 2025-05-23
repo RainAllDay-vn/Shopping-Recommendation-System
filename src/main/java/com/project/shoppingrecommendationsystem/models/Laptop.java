@@ -3,7 +3,6 @@ package com.project.shoppingrecommendationsystem.models;
 import com.project.shoppingrecommendationsystem.models.components.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Laptop extends Product {
@@ -78,36 +77,6 @@ public class Laptop extends Product {
                 '}';
     }
 
-    @Override
-    public boolean match(List<String[]> query) {
-        try {
-            for (String[] field : query) {
-                String[] copy = Arrays.copyOf(field, field.length);
-                copy[0] = switch (copy[0]) {
-                    case "name" -> name;
-                    case "brand" -> brand;
-                    case "price" -> String.valueOf(discountPrice);
-                    case "description" -> {
-                        StringBuilder compactedDescription = new StringBuilder();
-                        for (String[] paragraph: description) {
-                            compactedDescription.append(paragraph[0]);
-                            compactedDescription.append(" ");
-                        }
-                        yield compactedDescription.toString();
-                    }
-                    default -> "false";
-                };
-                if (copy[0].equals("false") || !matchField(copy)) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            System.err.println("Invalid query");
-            return false;
-        }
-    }
-
     public static class Builder {
         private String name;
         private String productImage;
@@ -149,9 +118,8 @@ public class Laptop extends Product {
             return this;
         }
 
-        public Builder addReview(Review review) {
+        public void addReview(Review review) {
             this.reviews.add(review);
-            return this;
         }
 
         public Builder setSource(String source) {

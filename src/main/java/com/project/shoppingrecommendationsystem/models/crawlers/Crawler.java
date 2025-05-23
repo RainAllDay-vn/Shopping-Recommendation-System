@@ -5,9 +5,9 @@ import com.project.shoppingrecommendationsystem.models.Product;
 import java.util.List;
 
 public interface Crawler {
-    public List<Product> getAll();
+    List<Product> getAllProducts();
 
-    public void crawl();
+    void crawl();
 
-    public void crawl(int limit);
+    void crawl(int limit);
 }

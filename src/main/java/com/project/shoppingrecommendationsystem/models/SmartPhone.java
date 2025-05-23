@@ -85,36 +85,6 @@ public class SmartPhone extends Product {
                 '}';
     }
 
-    @Override
-    public boolean match(List<String[]> query) {
-        try {
-            for (String[] field : query) {
-                String[] copy = Arrays.copyOf(field, field.length);
-                copy[0] = switch (copy[0]) {
-                    case "name" -> name;
-                    case "brand" -> brand;
-                    case "price" -> String.valueOf(discountPrice);
-                    case "description" -> {
-                        StringBuilder compactedDescription = new StringBuilder();
-                        for (String[] paragraph : description) {
-                            compactedDescription.append(paragraph[0]);
-                            compactedDescription.append(" ");
-                        }
-                        yield compactedDescription.toString();
-                    }
-                    default -> "false";
-                };
-                if (copy[0].equals("false") || !matchField(copy)) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            System.err.println("Invalid query");
-            return false;
-        }
-    }
-
     public static class Builder {
         private String name;
         private String productImage;

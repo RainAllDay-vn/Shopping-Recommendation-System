@@ -137,14 +137,14 @@ public class ProductDatabase {
     }
 
     public void sortByName(){
-        laptops.sort(Comparator.comparing(Product::getName));
+        storeProducts.sort(Comparator.comparing(Product::getName));
     }
 
     public void sortByPrice(){
-        laptops.sort(Comparator.comparingInt(Product::getPrice));
+        storeProducts.sort(Comparator.comparingInt(Product::getPrice));
     }
 
     public void sortByDiscountPrice(){
-        laptops.sort(Comparator.comparingInt(Product::getDiscountPrice));
+        storeProducts.sort(Comparator.comparingInt(Product::getDiscountPrice));
     }
 }

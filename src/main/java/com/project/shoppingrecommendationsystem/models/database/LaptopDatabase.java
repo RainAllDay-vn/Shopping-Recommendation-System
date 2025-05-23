@@ -1,5 +1,7 @@
-package com.project.shoppingrecommendationsystem.models;
+package com.project.shoppingrecommendationsystem.models.database;
 
+import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSSmartPhoneCrawler;
@@ -10,13 +12,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class ProductDatabase {
-    private static final ProductDatabase instance = new ProductDatabase();
+public class LaptopDatabase implements ProductDatabase{
+    private static final LaptopDatabase instance = new LaptopDatabase();
     private final List<Crawler> crawlers;
     private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
 
-    private ProductDatabase() {
+    private LaptopDatabase() {
         crawlers = new ArrayList<>();
         crawlers.add(new CellphoneSLaptopCrawler());
         crawlers.add(new CellphoneSSmartPhoneCrawler());
@@ -29,14 +31,16 @@ public class ProductDatabase {
                 .forEach(storeProducts::add);
     }
 
-    public static ProductDatabase getInstance() {
+    public static LaptopDatabase getInstance() {
         return instance;
     }
 
+    @Override
     public void crawl() {
         crawl(Integer.MAX_VALUE);
     }
 
+    @Override
     public void crawl (int limit) {
         storeProducts.clear();
         crawlers.forEach(crawler -> crawler.crawl(limit));
@@ -44,18 +48,22 @@ public class ProductDatabase {
                 .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
                 .forEach(storeProducts::add);
+        Collections.shuffle(storeProducts);
     }
 
+    @Override
     public void crawl (Crawler crawler) {
         storeProducts.clear();
         crawler.crawl();
         storeProducts.addAll(crawler.getAllProducts());
     }
 
+    @Override
     public List<Product> findAllProducts () {
         return storeProducts;
     }
 
+    @Override
     public Optional<Product> findProductById (int id) {
         for (Product product : findAllProducts()) {
             if (product.getId() == id) {
@@ -65,6 +73,7 @@ public class ProductDatabase {
         return Optional.empty();
     }
 
+    @Override
     public List<Product> findProducts (List<String[]> query, int limit, int offset) {
         return storeProducts.stream()
                 .filter(product -> product.match(query))

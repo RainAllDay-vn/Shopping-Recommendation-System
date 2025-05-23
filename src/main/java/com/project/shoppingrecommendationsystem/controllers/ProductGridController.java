@@ -2,7 +2,7 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.models.Laptop;
-import com.project.shoppingrecommendationsystem.models.ProductDatabase;
+import com.project.shoppingrecommendationsystem.models.database.LaptopDatabase;
 import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class ProductGridController implements Initializable {
     private static final int PRODUCT_PER_PAGE = 12;
-    private final ProductDatabase productDatabase;
+    private final LaptopDatabase productDatabase;
     private final ObservableList<Laptop> laptops;
     private final ObservableList<String[]> query = Messenger.getInstance().getQuery();
 
@@ -25,7 +25,7 @@ public class ProductGridController implements Initializable {
     @FXML private Button expandButton;
 
     public ProductGridController() {
-        this.productDatabase = ProductDatabase.getInstance();
+        this.productDatabase = LaptopDatabase.getInstance();
         this.laptops = FXCollections.observableArrayList(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
     }
 

@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductGridController">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductGridController">
     <VBox alignment="TOP_CENTER" spacing="10">
         <HBox alignment="CENTER" >
             <Button fx:id="sortByNameButton" text="Sort by Name"/>

@@ -4,17 +4,17 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<ScrollPane fx:id="filterBar" hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
+<ScrollPane hbarPolicy="NEVER" prefHeight="786.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.project.shoppingrecommendationsystem.controllers.FilterBarController">
     <VBox prefHeight="1099.0" prefWidth="331.0" spacing="10">
 
-        <!-- Title -->
-        <Label fx:id="greenText" alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
+        <Label alignment="CENTER" prefHeight="58.0" prefWidth="328.0" text="Search filter ">
             <font>
                 <Font size="22.0" />
             </font>
         </Label>
 
-        <!-- Manufacturer Filter -->
         <Label styleClass="content_manufacturer" stylesheets="@../styling.css" text="Hãng sản xuất">
             <font>
                 <Font size="16.0" />
@@ -31,7 +31,6 @@
             <CheckBox styleClass="custom_checkbox" stylesheets="@../styling.css" text="Samsung" />
         </VBox>
 
-        <!-- Price Filter -->
         <Label styleClass="content_price" stylesheets="@../styling.css" text="Mức giá">
             <font>
                 <Font size="16.0" />

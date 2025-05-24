@@ -1,7 +1,5 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
 public class Connectivity {
     private final String ports;
     private final String wifi;
@@ -9,7 +7,7 @@ public class Connectivity {
     private final String fingerprint;
     private final String webCam;
 
-    private Connectivity(ConnectivityBuilder builder) {
+    private Connectivity(Builder builder) {
         this.ports = builder.ports;
         this.wifi = builder.wifi;
         this.bluetooth = builder.bluetooth;
@@ -48,34 +46,34 @@ public class Connectivity {
                 '}';
     }
 
-    public static class ConnectivityBuilder {
+    public static class Builder {
         private String ports;
         private String wifi;
         private String bluetooth;
         private String fingerprint;
         private String webCam;
 
-        public ConnectivityBuilder setPorts(String ports) {
+        public Builder setPorts(String ports) {
             this.ports = ports;
             return this;
         }
 
-        public ConnectivityBuilder setWifi(String wifi) {
+        public Builder setWifi(String wifi) {
             this.wifi = wifi;
             return this;
         }
 
-        public ConnectivityBuilder setBluetooth(String bluetooth) {
+        public Builder setBluetooth(String bluetooth) {
             this.bluetooth = bluetooth;
             return this;
         }
 
-        public ConnectivityBuilder setFingerprint(String fingerprint) {
+        public Builder setFingerprint(String fingerprint) {
             this.fingerprint = fingerprint;
             return this;
         }
 
-        public ConnectivityBuilder setWebCam(String webCam) {
+        public Builder setWebCam(String webCam) {
             this.webCam = webCam;
             return this;
         }

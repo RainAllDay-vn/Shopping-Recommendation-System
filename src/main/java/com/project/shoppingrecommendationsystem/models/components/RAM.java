@@ -1,7 +1,5 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
 public class RAM {
     private final String size;
     private final String channels;
@@ -11,7 +9,7 @@ public class RAM {
     private final String slots;
     private final String maxSize;
 
-    private RAM(RAMBuilder builder) {
+    private RAM(Builder builder) {
         this.size = builder.size;
         this.channels = builder.channels;
         this.clock = builder.clock;
@@ -62,7 +60,7 @@ public class RAM {
                 '}';
     }
 
-    public static class RAMBuilder {
+    public static class Builder {
         private String size;
         private String channels;
         private String clock;
@@ -71,37 +69,37 @@ public class RAM {
         private String slots;
         private String maxSize;
 
-        public RAMBuilder setSize(String size) {
+        public Builder setSize(String size) {
             this.size = size;
             return this;
         }
 
-        public RAMBuilder setChannels(String channels) {
+        public Builder setChannels(String channels) {
             this.channels = channels;
             return this;
         }
 
-        public RAMBuilder setClock(String clock) {
+        public Builder setClock(String clock) {
             this.clock = clock;
             return this;
         }
 
-        public RAMBuilder setType(String type) {
+        public Builder setType(String type) {
             this.type = type;
             return this;
         }
 
-        public RAMBuilder setUpgradable(String upgradable) {
+        public Builder setUpgradable(String upgradable) {
             this.upgradable = upgradable;
             return this;
         }
 
-        public RAMBuilder setSlots(String slots) {
+        public Builder setSlots(String slots) {
             this.slots = slots;
             return this;
         }
 
-        public RAMBuilder setMaxSize(String maxSize) {
+        public Builder setMaxSize(String maxSize) {
             this.maxSize = maxSize;
             return this;
         }

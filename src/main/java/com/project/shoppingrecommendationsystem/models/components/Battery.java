@@ -1,13 +1,11 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
 public class Battery {
     private final String capacity;
     private final String fullyChargingTime;
     private final String chargePower;
 
-    private Battery(BatteryBuilder builder) {
+    private Battery(Builder builder) {
         this.capacity = builder.capacity;
         this.fullyChargingTime = builder.fullyChargingTime;
         this.chargePower = builder.chargePower;
@@ -34,22 +32,22 @@ public class Battery {
                 '}';
     }
 
-    public static class BatteryBuilder {
+    public static class Builder {
         private String capacity;
         private String fullyChargingTime;
         private String chargePower;
 
-        public BatteryBuilder setCapacity(String capacity) {
+        public Builder setCapacity(String capacity) {
             this.capacity = capacity;
             return this;
         }
 
-        public BatteryBuilder setFullyChargingTime(String fullyChargingTime) {
+        public Builder setFullyChargingTime(String fullyChargingTime) {
             this.fullyChargingTime = fullyChargingTime;
             return this;
         }
 
-        public BatteryBuilder setChargePower(String chargePower) {
+        public Builder setChargePower(String chargePower) {
             this.chargePower = chargePower;
             return this;
         }

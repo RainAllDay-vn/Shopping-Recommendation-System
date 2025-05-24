@@ -1,8 +1,5 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvRecurse;
-
 public class CPU {
     private final String name;
     private final String baseFrequency;
@@ -11,7 +8,7 @@ public class CPU {
     private final String threads;
     private final String cache;
 
-    private CPU(CPUBuilder builder) {
+    private CPU(Builder builder) {
         this.name = builder.name;
         this.baseFrequency = builder.baseFrequency;
         this.turboFrequency = builder.turboFrequency;
@@ -56,7 +53,7 @@ public class CPU {
                 '}';
     }
 
-    public static class CPUBuilder {
+    public static class Builder {
         private String name;
         private String baseFrequency;
         private String turboFrequency;
@@ -64,32 +61,32 @@ public class CPU {
         private String threads;
         private String cache;
 
-        public CPUBuilder setName(String name) {
+        public Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        public CPUBuilder setBaseFrequency(String baseFrequency) {
+        public Builder setBaseFrequency(String baseFrequency) {
             this.baseFrequency = baseFrequency;
             return this;
         }
 
-        public CPUBuilder setTurboFrequency(String turboFrequency) {
+        public Builder setTurboFrequency(String turboFrequency) {
             this.turboFrequency = turboFrequency;
             return this;
         }
 
-        public CPUBuilder setCores(String cores) {
+        public Builder setCores(String cores) {
             this.cores = cores;
             return this;
         }
 
-        public CPUBuilder setThreads(String threads) {
+        public Builder setThreads(String threads) {
             this.threads = threads;
             return this;
         }
 
-        public CPUBuilder setCache(String cache) {
+        public Builder setCache(String cache) {
             this.cache = cache;
             return this;
         }

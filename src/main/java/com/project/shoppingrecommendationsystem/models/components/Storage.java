@@ -1,7 +1,5 @@
 package com.project.shoppingrecommendationsystem.models.components;
 
-import com.opencsv.bean.CsvBindByName;
-
 public class Storage {
     private final String size;
     private final String bus;
@@ -10,7 +8,7 @@ public class Storage {
     private final String upgradable;
     private final String slots;
 
-    private Storage (StorageBuilder builder) {
+    private Storage (Builder builder) {
         this.size = builder.size;
         this.bus = builder.bus;
         this.storageType = builder.storageType;
@@ -55,7 +53,7 @@ public class Storage {
                 '}';
     }
 
-    public static class StorageBuilder {
+    public static class Builder {
         private String size;
         private String bus;
         private String storageType;
@@ -63,32 +61,32 @@ public class Storage {
         private String upgradable;
         private String slots;
 
-        public StorageBuilder setSize(String size) {
+        public Builder setSize(String size) {
             this.size = size;
             return this;
         }
 
-        public StorageBuilder setBus(String bus) {
+        public Builder setBus(String bus) {
             this.bus = bus;
             return this;
         }
 
-        public StorageBuilder setStorageType(String storageType) {
+        public Builder setStorageType(String storageType) {
             this.storageType = storageType;
             return this;
         }
 
-        public StorageBuilder setChannels(String channels) {
+        public Builder setChannels(String channels) {
             this.channels = channels;
             return this;
         }
 
-        public StorageBuilder setUpgradable(String upgradable) {
+        public Builder setUpgradable(String upgradable) {
             this.upgradable = upgradable;
             return this;
         }
 
-        public StorageBuilder setSlots(String slots) {
+        public Builder setSlots(String slots) {
             this.slots = slots;
             return this;
         }

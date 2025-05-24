@@ -1,5 +1,8 @@
 package com.project.shoppingrecommendationsystem.models;
 
+import com.project.shoppingrecommendationsystem.models.components.Review;
+
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Product {
@@ -74,13 +77,58 @@ public abstract class Product {
         return description;
     }
 
-    public String getDescriptionAsString() {
-        StringBuilder result = new StringBuilder();
-        for (String[] description : description) {
-            result.append(description[1]);
+    public boolean match (List<String[]> query) {
+        try {
+            for (String[] field : query) {
+                String[] copy = Arrays.copyOf(field, field.length);
+                copy[0] = switch (copy[0]) {
+                    case "name" -> name;
+                    case "brand" -> brand;
+                    case "price" -> String.valueOf(discountPrice);
+                    case "description" -> {
+                        StringBuilder compactedDescription = new StringBuilder();
+                        for (String[] paragraph: description) {
+                            compactedDescription.append(paragraph[0]);
+                            compactedDescription.append(" ");
+                        }
+                        yield compactedDescription.toString();
+                    }
+                    default -> "false";
+                };
+                if (copy[0].equals("false") || !matchField(copy)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            System.err.println("Invalid query");
+            return false;
         }
-        return result.toString();
     }
 
-    public abstract boolean match (List<String[]> query);
+    boolean matchField(String[] field) {
+        try {
+            return switch (field[1].toLowerCase()) {
+                case "contain" -> field[0].toLowerCase().contains(field[2].toLowerCase());
+                case "in" -> {
+                    for (int i = 2; i < field.length; i++) {
+                        if (field[i].equalsIgnoreCase(field[0])) {
+                            yield true;
+                        }
+                    }
+                    yield false;
+                }
+                case "between" -> {
+                    int lower = field[2].isEmpty() ? 0 : Integer.parseInt(field[2]);
+                    int upper = field[3].isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(field[3]);
+                    int value = Integer.parseInt(field[0]);
+                    yield lower <= value && value <= upper;
+                }
+                default -> false;
+            };
+        } catch (Exception e) {
+            System.err.println("Invalid query");
+            return false;
+        }
+    }
 }

@@ -1,4 +1,4 @@
- /***********************  FILTER BAR    *****************************/
+/***********************  FILTER BAR    *****************************/
 
 /*==================Custom checkbox =================*/
 
@@ -131,6 +131,196 @@
 
 .icon-btn:pressed {
     -fx-background-color: #dee2e6;
+}
+
+/* CSS cho 2 nút Search và My List */
+.search-btn {
+    -fx-background-color: linear-gradient(to bottom, #4CAF50, #45a049);
+    -fx-border-color: #3e8e41;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0.3, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.search-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #5CBF60, #4CAF50);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+.search-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #3e8e41, #367c39);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-translate-y: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.2, 0, 1);
+}
+
+.list-btn {
+    -fx-background-color: linear-gradient(to bottom, #9C27B0, #7B1FA2);
+    -fx-border-color: #4A148C;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0.3, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.list-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #BA68C8, #9C27B0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+.list-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #4A148C, #1A237E);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-translate-y: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.2, 0, 1);
+}
+
+
+
+/* CSS cho 3 nút navigation - thêm vào file styling.css */
+
+.nav-btn {
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-pref-width: 45px;
+    -fx-pref-height: 45px;
+    -fx-background-color: linear-gradient(to bottom, #4CAF50, #45a049);
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #3e8e41;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0.3, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.nav-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #5CBF60, #4CAF50);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+.nav-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #3e8e41, #367c39);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-translate-y: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.2, 0, 1);
+}
+
+/* Styles riêng cho từng nút */
+#backButton {
+    -fx-background-color: linear-gradient(to bottom, #2196F3, #1976D2);
+    -fx-border-color: #1565C0;
+}
+
+#backButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #42A5F5, #2196F3);
+}
+
+#backButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #1565C0, #0D47A1);
+}
+
+#homeButton {
+    -fx-background-color: linear-gradient(to bottom, #FF9800, #F57C00);
+    -fx-border-color: #E65100;
+}
+
+#homeButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFB74D, #FF9800);
+}
+
+#homeButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #E65100, #BF360C);
+}
+
+#resetButton {
+    -fx-background-color: linear-gradient(to bottom, #F44336, #D32F2F);
+    -fx-border-color: #B71C1C;
+}
+
+#resetButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #EF5350, #F44336);
+}
+
+#resetButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #B71C1C, #8E0000);
+}
+
+/* Alternative modern flat design */
+.nav-btn-flat {
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-pref-width: 45px;
+    -fx-pref-height: 45px;
+    -fx-background-color: #ECEFF1;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-color: transparent;
+    -fx-text-fill: #37474F;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.2, 0, 1);
+}
+
+.nav-btn-flat:hover {
+    -fx-background-color: #CFD8DC;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.3, 0, 2);
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.nav-btn-flat:pressed {
+    -fx-background-color: #B0BEC5;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* Glass morphism style */
+.nav-btn-glass {
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-pref-width: 45px;
+    -fx-pref-height: 45px;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 1px;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.3, 0, 5);
+}
+
+.nav-btn-glass:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.nav-btn-glass:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 

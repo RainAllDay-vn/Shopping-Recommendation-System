@@ -83,7 +83,7 @@ public class TopBarController implements Initializable {
     
     @FXML private TextField searchTextField;
     @FXML private Button searchButton;
-    @FXML private Button goToList;
+   
     @FXML private Button backButton;
     @FXML private Button homeButton;
     @FXML private Button resetButton;
@@ -95,7 +95,7 @@ public class TopBarController implements Initializable {
         // Existing functionality
         searchButton.setOnAction(event -> search());
         searchTextField.setOnAction(event -> search());
-        goToList.setOnAction(e -> Messenger.getInstance().getMainPageController().displayMyList());
+        
         logo.setImage(appLogo);
         logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
         titleLabel.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());

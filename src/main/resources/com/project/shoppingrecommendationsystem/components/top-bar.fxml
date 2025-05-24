@@ -31,8 +31,7 @@
     <Button fx:id="goToList" text="My list" /> -->
 
 
-    <Button fx:id="searchButton" text="🔍" styleClass="icon-btn" stylesheets="@../styling.css" />
+    <Button fx:id="searchButton" text="🔍" styleClass="search-btn" stylesheets="@../styling.css" />
 
-    <Button fx:id="goToList" text="⊞" styleClass="icon-btn" stylesheets="@../styling.css" />
-
+    
 </HBox>

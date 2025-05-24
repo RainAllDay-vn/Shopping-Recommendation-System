@@ -11,7 +11,7 @@
 
     <ImageView fx:id="logo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" />
 
-    <Label fx:id="titleLabel" prefHeight="78" prefWidth="365" text="Shopping Recommended System">
+    <Label fx:id="titleLabel" prefHeight="78" prefWidth="365" styleClass="title" stylesheets="@../styling.css" text="Shopping Recommended System">
         <font>
             <Font size="22" />
         </font>
@@ -19,7 +19,13 @@
 
     <TextField fx:id="searchTextField" prefHeight="40" prefWidth="525" promptText="What product you have in mind today" styleClass="search-field" stylesheets="@../styling.css" />
 
-    <Button fx:id="searchButton" text="Search" />
+    <!-- <Button fx:id="searchButton" text="Search" />
 
-    <Button fx:id="goToList" text="My list" />
+    <Button fx:id="goToList" text="My list" /> -->
+
+
+    <Button fx:id="searchButton" text="🔍" styleClass="icon-btn" stylesheets="@../styling.css" />
+
+    <Button fx:id="goToList" text="⊞" styleClass="icon-btn" stylesheets="@../styling.css" />
+
 </HBox>

@@ -100,14 +100,35 @@
 
 
 
-.search-field {
+/* .search-field {
     
     -fx-alignment: CENTER;
     -fx-font-size: 15px;
     -fx-prompt-text-fill: #999;
     -fx-background-radius: 30;
 
+} */
+
+
+.search-field {
+    -fx-background-color: linear-gradient(to right, #ffffffcc, #f0f0f0cc); /* nền trắng mờ */
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 15px;
+    -fx-text-fill: #333;
+    -fx-prompt-text-fill: #888;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0.2, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
 }
+
+.search-field:focused {
+    -fx-border-color: #764ba2; /* màu tím đậm hợp với nút tìm kiếm */
+    -fx-effect: dropshadow(gaussian, rgba(118,75,162,0.3), 6, 0.4, 0, 3);
+}
+
+
 
 
 .title{

@@ -7,16 +7,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="77" prefWidth="1536" style="-fx-alignment: center;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.TopBarController">
+<HBox prefHeight="77" prefWidth="1536" style="-fx-alignment: center;" styleClass="top-bar" stylesheets="@../styling.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.TopBarController">
 
      <HBox spacing="10" style="-fx-alignment: center-left; -fx-padding: 0 20 0 15;">
-        <Button fx:id="backButton" text="←" styleClass="nav-btn" stylesheets="@../styling.css" />
-        <Button fx:id="homeButton" text="🏠" styleClass="nav-btn" stylesheets="@../styling.css" />
-        <Button fx:id="resetButton" text="⟲" styleClass="nav-btn" stylesheets="@../styling.css" />
+        <Button fx:id="backButton" styleClass="nav-btn" stylesheets="@../styling.css" text="←" />
+        <Button fx:id="homeButton" styleClass="nav-btn" stylesheets="@../styling.css" text="🏠" />
+        <Button fx:id="resetButton" styleClass="nav-btn" stylesheets="@../styling.css" text="⟲" />
     </HBox>
     
-    
-    <ImageView fx:id="logo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" />
+    <!-- <ImageView fx:id="logo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" styleClass="logo-icon" /> -->
 
     <Label fx:id="titleLabel" prefHeight="78" prefWidth="365" styleClass="title" stylesheets="@../styling.css" text="Shopping Recommended System">
         <font>
@@ -31,7 +30,7 @@
     <Button fx:id="goToList" text="My list" /> -->
 
 
-    <Button fx:id="searchButton" text="🔍" styleClass="search-btn" stylesheets="@../styling.css" />
+    <Button fx:id="searchButton" styleClass="search-btn" stylesheets="@../styling.css" text="🔍" />
 
     
 </HBox>

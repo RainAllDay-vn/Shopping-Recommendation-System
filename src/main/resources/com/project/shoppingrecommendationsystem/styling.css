@@ -130,6 +130,21 @@
 
 
 
+.top-bar {
+    -fx-background-color: linear-gradient(to right, #2196F3, #9C27B0); /* Xanh dương đến tím */
+    -fx-padding: 10px;
+    -fx-background-radius: 0 0 15px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0.4, 0, 2);
+}
+
+.logo-icon, .title {
+    -fx-font-size: 22bpx;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 1, 0.3, 0, 1);
+}
+
+
 
 .title{
     -fx-cursor:hand;

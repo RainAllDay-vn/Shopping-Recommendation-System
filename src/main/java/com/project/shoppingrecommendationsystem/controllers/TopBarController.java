@@ -63,23 +63,23 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
-import com.project.shoppingrecommendationsystem.ShoppingApplication;
+// import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+// import javafx.scene.image.Image;
+// import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
+// import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class TopBarController implements Initializable {
     private final List<String[]> query = Messenger.getInstance().getQuery();
-    private final Image appLogo = new Image(Objects.requireNonNull(ShoppingApplication.class.getResource("images/app-icon.jpg")).toExternalForm());
+    // private final Image appLogo = new Image(Objects.requireNonNull(ShoppingApplication.class.getResource("images/app-icon.jpg")).toExternalForm());
     
     @FXML private TextField searchTextField;
     @FXML private Button searchButton;
@@ -87,7 +87,7 @@ public class TopBarController implements Initializable {
     @FXML private Button backButton;
     @FXML private Button homeButton;
     @FXML private Button resetButton;
-    @FXML private ImageView logo;
+    // @FXML private ImageView logo;
     @FXML private Label titleLabel;
 
     @Override
@@ -96,8 +96,8 @@ public class TopBarController implements Initializable {
         searchButton.setOnAction(event -> search());
         searchTextField.setOnAction(event -> search());
         
-        logo.setImage(appLogo);
-        logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
+        // // logo.setImage(appLogo);
+        // logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
         titleLabel.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
         
         // New functionality for navigation buttons

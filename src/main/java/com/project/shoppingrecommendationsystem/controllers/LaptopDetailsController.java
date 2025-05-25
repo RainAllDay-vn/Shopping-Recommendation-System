@@ -98,7 +98,7 @@ public class LaptopDetailsController {
         setLabelText(storageSlotsText, storage.getSlots(), storageSlotsRow);
     }
 
-    private void setDisplayDetails(Display display) {
+    private void setDisplayDetails(LaptopDisplay display) {
         setLabelText(displayScreenSizeText, display.getScreenSize(), displayScreenSizeRow);
         setLabelText(displayScreenResolutionText, display.getScreenResolution(), displayScreenResolutionRow);
         setLabelText(displayRefreshRateText, display.getRefreshRate(), displayRefreshRateRow);
@@ -122,7 +122,7 @@ public class LaptopDetailsController {
         setLabelText(batteryChargePowerText, battery.getChargePower(), batteryChargePowerRow);
     }
 
-    private void setLaptopCaseDetails(LaptopCase laptopCase) {
+    private void setLaptopCaseDetails(Case laptopCase) {
         setLabelText(laptopCaseWeightText, laptopCase.getWeight(), laptopCaseWeightRow);
         setLabelText(laptopCaseDimensionsText, laptopCase.getDimensions(), laptopCaseDimensionsRow);
         setLabelText(laptopCaseMaterialText, laptopCase.getMaterial(), laptopCaseMaterialRow);

@@ -20,7 +20,7 @@ public class VertexConversationModel implements ConversationModel {
             .maxOutputTokens(1500)
             .stopSequences(List.of())
             .candidateCount(1)
-            .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_5_PRO)
+            .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
             .build();
 
     public VertexConversationModel() {

@@ -1,5 +1,7 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.vectordatabase;
 
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.EmbedModel;
+import com.project.shoppingrecommendationsystem.llmagent.embedmodel.VertexEmbedModel;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections.Distance;
@@ -8,6 +10,7 @@ import io.qdrant.client.grpc.Collections.VectorParams;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,12 +18,10 @@ import java.util.concurrent.ExecutionException;
 
 //(uncheck) add documentation to existing vector database
 
-public class VectorDatabase {
+public class QdrantVectorDatabase implements VectorDatabase {
     private QdrantVectorStore vectorStore;
     private QdrantClient qdrantClient;
     private EmbedModel embeddingModel;
-    private final int BATCH_SIZE = 5;
-    private final int THREAD_SLEEP = 20000;
 
     public QdrantClient createQdrantClient(String StoreName) throws ExecutionException, InterruptedException {
         String hostname = "localhost";
@@ -49,9 +50,9 @@ public class VectorDatabase {
         return client;
     }
 
-    public VectorDatabase (String StoreName) throws ExecutionException, InterruptedException, IOException {
+    public QdrantVectorDatabase(String StoreName, EmbedModel CurEmbed) throws ExecutionException, InterruptedException, IOException {
         this.qdrantClient = createQdrantClient(StoreName);
-        this.embeddingModel = new EmbedModel();
+        this.embeddingModel = CurEmbed;
         this.vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel.getEmbeddingModel())
                 .collectionName(StoreName)
                 .initializeSchema(true)
@@ -59,35 +60,20 @@ public class VectorDatabase {
                 .build();
     }
 
-    public void addToQdrant(List<Document> documents) {
 
-        for (int i = 0; i < documents.size(); i += BATCH_SIZE) {
-            int endIndex = Math.min(i + BATCH_SIZE, documents.size());
-            List<Document> batch = documents.subList(i, endIndex);
-
-            try {
-                vectorStore.add(batch);
-                System.out.println("Embedded " + i + " data points");
-
-                Thread.sleep(THREAD_SLEEP);
-
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Sleep interrupted: " + e.getMessage());
-                break;
-            } catch (Exception e) {
-                System.out.println("Failed to embed batch " + i + "-" + endIndex + ": " + e.getMessage());
-                continue;
-            }
-        }
-    }
-    public QdrantVectorStore getVectorStore() {
+    @Override
+    public VectorStore getVectorStore() {
         return vectorStore;
     }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         String storeName = "laptop";
-        VectorDatabase vectorStore = new VectorDatabase(storeName);
+        String prjid = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
+        String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
+
+        EmbedModel vertexEmbedModel = new VertexEmbedModel();
+
+        VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, vertexEmbedModel);
 
         List<Document> documents = List.of(
                 new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!", Map.of("meta1", "meta1")),
@@ -100,6 +86,6 @@ public class VectorDatabase {
                 new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")),
                 new Document("Past and you turn back toward the future.", Map.of("meta2", "meta2")),
                 new Document("future.", Map.of("meta2", "meta2")));
-        vectorStore.addToQdrant(documents);
+        vectorDatabase.addDocuments(documents);
     }
 }

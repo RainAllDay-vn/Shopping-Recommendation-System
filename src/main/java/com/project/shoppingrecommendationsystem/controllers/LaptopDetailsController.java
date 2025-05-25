@@ -1,6 +1,7 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Laptop;
+import com.project.shoppingrecommendationsystem.models.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -8,9 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
+
 public class LaptopDetailsController {
 
-    @FXML private Label descriptionText;
+    @FXML
+    private VBox descriptionBox;
+    @FXML private VBox productPage;
     @FXML private VBox productCardDetailsBox;
     @FXML private HBox cpuNameRow, cpuBaseFrequencyRow, cpuTurboFrequencyRow, cpuCoresRow, cpuThreadsRow, cpuCacheRow;
     @FXML private Label cpuNameText, cpuBaseFrequencyText, cpuTurboFrequencyText, cpuCoresText, cpuThreadsText, cpuCacheText;
@@ -53,7 +58,7 @@ public class LaptopDetailsController {
     public void setProductDetails(Laptop product, Node productCard) {
         productCardDetailsBox.getChildren().add(productCard);
 
-        //setLabelText(descriptionText, product.getDescription(), null);
+        displayProductDescription(product.getDescription());
 
         setCPUDetails(product.getCpu());
         setRAMDetails(product.getRam());
@@ -62,6 +67,7 @@ public class LaptopDetailsController {
         setConnectivityDetails(product.getConnectivity());
         setBatteryDetails(product.getBattery());
         setLaptopCaseDetails(product.getLaptopCase());
+        displayProductReview(product.getReviews());
     }
 
     private void setCPUDetails(CPU cpu) {
@@ -120,5 +126,34 @@ public class LaptopDetailsController {
         setLabelText(laptopCaseWeightText, laptopCase.getWeight(), laptopCaseWeightRow);
         setLabelText(laptopCaseDimensionsText, laptopCase.getDimensions(), laptopCaseDimensionsRow);
         setLabelText(laptopCaseMaterialText, laptopCase.getMaterial(), laptopCaseMaterialRow);
+    }
+
+    private void displayProductDescription(List<String[]> productDescription) {
+        for(int i = 0; i < productDescription.size(); i++) {
+            String s = productDescription.get(i)[0];
+            Label l = new Label(productDescription.get(i)[1]);
+            l.setWrapText(true);
+            if(s.equals("header")) {
+                l.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10px; -fx-text-fill: #2c3e50;");
+            } else if(s.equals("bold")) {
+                l.setStyle("-fx-font-weight: bold;");
+            }
+            descriptionBox.getChildren().add(l);
+        }
+    }
+
+    private void displayProductReview(List<Review> reviews) {
+        if(!reviews.isEmpty()) {
+            productPage.getChildren().add(new Label("User reviews:"));
+            for (Review review : reviews) {
+                VBox vbox = new VBox();
+                vbox.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;");
+                vbox.getChildren().add(new Label(review.getCreatedDate().toString()));
+                vbox.getChildren().add(new Label(review.getContent()));
+                vbox.getChildren().add(new Label(review.getScore()));
+                vbox.getChildren().add(new Label(review.getUsername()));
+                productPage.getChildren().add(vbox);
+            }
+        }
     }
 }

@@ -1,9 +1,10 @@
-package com.project.shoppingrecommendationsystem.llmagent;
+package com.project.shoppingrecommendationsystem.llmagent.embedmodel;
 
 import java.io.FileInputStream;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.aiplatform.v1.PredictionServiceSettings;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.vertexai.embedding.VertexAiEmbeddingConnectionDetails;
 import org.springframework.ai.vertexai.embedding.text.VertexAiTextEmbeddingModel;
@@ -14,10 +15,10 @@ import java.io.IOException;
 import java.util.List;
 
 // using command setx VARIABLE_NAME "VALUE"
-public class EmbedModel {
+public class VertexEmbedModel implements EmbedModel {
     private final VertexAiTextEmbeddingModel embeddingModel;
 
-    public EmbedModel() throws IOException {
+    public VertexEmbedModel() throws IOException {
         String credentialsJson = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 
         GoogleCredentials credentials = GoogleCredentials
@@ -50,22 +51,25 @@ public class EmbedModel {
         this.embeddingModel = new VertexAiTextEmbeddingModel(connectionDetails, options);
     }
 
-    public VertexAiTextEmbeddingModel getEmbeddingModel() {
+    @Override
+    public EmbeddingModel getEmbeddingModel() {
         return this.embeddingModel;
     }
 
+    @Override
     public EmbeddingResponse getEmbeddings(List<String> texts) {
         return this.embeddingModel.embedForResponse(texts);
     }
+
     public static void main(String[] args) throws IOException {
         System.out.println("Checking environment variables:");
         System.out.println("GOOGLE_APPLICATION_CREDENTIALS: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
         System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"));
         System.out.println("VERTEX_AI_GEMINI_LOCATION: " + System.getenv("VERTEX_AI_GEMINI_LOCATION"));
 
-        EmbedModel embedModel = new EmbedModel();
+        VertexEmbedModel vertexEmbedModel = new VertexEmbedModel();
         List<String> texts = List.of("Hello world", "This is a test");
-        EmbeddingResponse response = embedModel.getEmbeddings(texts);
+        EmbeddingResponse response = vertexEmbedModel.getEmbeddings(texts);
 
         System.out.println("\nEmbedding Response:");
         System.out.println("Number of embeddings: " + response.getResults().size());

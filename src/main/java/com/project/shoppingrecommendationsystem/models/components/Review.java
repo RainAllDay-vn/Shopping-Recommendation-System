@@ -24,4 +24,20 @@ public class Review {
                 "username: " + username + "\n" +
                 "}";
     }
+
+    public Date getCreatedDate() {
+        return created;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }

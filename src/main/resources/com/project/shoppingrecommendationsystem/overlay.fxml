@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
 
-<AnchorPane pickOnBounds="false" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.OverlayController">
-    <!-- Chat Toggle Button -->
-    <Button layoutX="1445.0" layoutY="780.0" onAction="#toggleChatBox" pickOnBounds="false" prefWidth="63.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
-        <graphic>
-            <Circle fill="DODGERBLUE" pickOnBounds="true" radius="31" stroke="BLACK" />
-        </graphic>
-    </Button>
+<AnchorPane pickOnBounds="false" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.project.shoppingrecommendationsystem.controllers.OverlayController">
+
+    <ImageView fx:id="chatButton"
+               fitWidth="63.0"
+               fitHeight="63.0"
+               pickOnBounds="false"
+               style="-fx-background-color: transparent; -fx-padding: 0;"
+               AnchorPane.bottomAnchor="30.0"
+               AnchorPane.rightAnchor="30.0" />
 </AnchorPane>

@@ -6,17 +6,22 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id = "card" maxHeight="300.0" maxWidth="200.0" spacing="10" style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10;" styleClass="custom_product" stylesheets="@../styling.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductCardController">
+<VBox fx:id = "card" maxHeight="300.0" maxWidth="200.0" spacing="10"
+      style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 10;"
+      styleClass="custom_product" stylesheets="@../styling.css" xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.ProductCardController">
 
     <ImageView fx:id="productImage" fitHeight="200.0" fitWidth="200.0" />
     <Label fx:id="productName" style="-fx-font-weight: bold;" />
     <Label fx:id="productPrice" />
     <Label fx:id="productDiscount" style="-fx-text-fill: green;" />
-    <HBox >
+    <HBox>
         <HBox layoutX="210.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
         <Button fx:id="showMoreButton" text="Show more"/>
         <HBox HBox.hgrow="ALWAYS" />
         <Button fx:id="favouriteButton" />
+        <HBox layoutX="86.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+        <Button fx:id="compareButton" text="Compare"/>
         <HBox layoutX="86.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
     </HBox>
 

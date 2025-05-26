@@ -58,6 +58,18 @@ public class TestLlmAgents {
         System.out.println(response);
     }
 
+    public void testQA() throws IOException{
+        String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
+        VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, new VertexEmbedModel());
+        ConversationModel curConversationModel = new VertexConversationModel();
+        System.out.println(vectorDatabase.getVectorStore());
+        QuestionAdviser adviser = new QuestionAdviser(vectorDatabase, curConversationModel);
+        String userText = "Tôi muốn tìm một chiếc laptop có mức giá và hiệu năng phù hợp với sinh viên, chạy hệ điều hành Windows và có màn hình lớn. Bạn có thể gợi ý cho tôi một vài mẫu được không?";
+        String response = adviser.advise(userText);
+
+        System.out.println(response);
+    }
+
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         System.out.println("Checking environment variables:");
         System.out.println("GOOGLE_APPLICATION_CREDENTIALS: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));

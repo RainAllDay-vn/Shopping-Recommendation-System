@@ -53,14 +53,21 @@ public class QdrantVectorDatabase implements VectorDatabase {
         return client;
     }
 
-    public QdrantVectorDatabase(String StoreName, EmbedModel CurEmbed) throws ExecutionException, InterruptedException, IOException {
-        this.qdrantClient = createQdrantClient(StoreName);
-        this.embeddingModel = CurEmbed;
-        this.vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel.getEmbeddingModel())
-                .collectionName(StoreName)
-                .initializeSchema(true)
-                .batchingStrategy(new TokenCountBatchingStrategy())
-                .build();
+    public QdrantVectorDatabase(String storeName, EmbedModel curEmbed) {
+        try {
+            this.qdrantClient = createQdrantClient(storeName);
+            this.embeddingModel = curEmbed;
+
+            this.vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel.getEmbeddingModel())
+                    .collectionName(storeName)
+                    .initializeSchema(true)
+                    .batchingStrategy(new TokenCountBatchingStrategy())
+                    .build();
+
+        } catch (Exception e) {
+            System.err.println("Failed to connect to Qdrant or initialize vector store: " + e.getMessage());
+            this.vectorStore = null;
+        }
     }
 
     @Override

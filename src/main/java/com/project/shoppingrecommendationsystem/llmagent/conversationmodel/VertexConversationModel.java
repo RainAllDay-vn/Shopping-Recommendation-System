@@ -46,13 +46,13 @@ public class VertexConversationModel implements ConversationModel {
 
     @Override
     public ChatModel getChatModel() {
-        return this.chatModel;
+        return chatModel;
     }
 
     @Override
     public String generate(String userPrompt) {
         Prompt chatPrompt = new Prompt(userPrompt);
-        return extractTextContent(this.chatModel.call(chatPrompt));
+        return extractTextContent(chatModel.call(chatPrompt));
     }
 
     @Override

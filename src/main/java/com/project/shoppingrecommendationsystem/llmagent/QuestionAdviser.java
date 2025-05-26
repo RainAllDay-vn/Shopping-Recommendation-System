@@ -52,7 +52,6 @@ public class QuestionAdviser {
         }
         startIndex += "textContent=".length();
 
-        // Find the end of text content (before metadata section)
         int endIndex = x.lastIndexOf(", metadata={");
         if (endIndex == -1) {
             return "Metadata marker not found";

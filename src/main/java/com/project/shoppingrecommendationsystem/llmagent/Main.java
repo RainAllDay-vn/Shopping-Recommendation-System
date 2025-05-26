@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 public class Main {
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
-        String userText = "Bạn hãy gợi ý cho tôi top 3 laptop dành cho học sinh sinh viên giá cả phải chăng";
+        String userText = "gợi ý cho tôi laptop có kích thước 13 inch, ccos SPU mạnh và hãng Lenovo";
         String response;
 
         ConversationModel chatModel = new VertexConversationModel();

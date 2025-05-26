@@ -6,6 +6,8 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+//import org.springframework.ai.template.st.StTemplateRenderer;
 
 
 public class QuestionAdviser {
@@ -23,13 +25,25 @@ public class QuestionAdviser {
 
         if (this.vectorDatabase != null) {
             try {
+                String userAdvise = "You are a helpful and knowledgeable assistant. Below is context retrieved from a trusted source (e.g. database, product catalog, or help article), enclosed between the lines.\n" +
+                        "\n" +
+                        "---------------------\n" +
+                        "{question_answer_context}\n" +
+                        "---------------------\n" +
+                        "\n" +
+                        "Based on the above context, answer the user’s question as helpfully and thoroughly as possible. If the context is not sufficient, you may also use your own general knowledge to provide a complete response.\n" +
+                        "\n" +
+                        "Do not mention the context explicitly. Use natural language, provide examples or reasoning when helpful, and be friendly and clear.";
                 this.qaAdvisor = new QuestionAnswerAdvisor(
                         this.vectorDatabase.getVectorStore(),
                         SearchRequest.builder()
                                 .similarityThreshold(THRESHOLD)
                                 .topK(TOP_K)
-                                .build()
+                                .build(),
+                        userAdvise
                 );
+
+
             } catch (Exception e) {
                 System.out.println("Failed to initialize QuestionAnswerAdvisor: " + e.getMessage());
                 this.qaAdvisor = null; // fallback to vanilla mode
@@ -47,6 +61,7 @@ public class QuestionAdviser {
         }
 
         try {
+            /*
             ChatResponse response = ChatClient.builder(this.conversationModel.getChatModel())
                     .build().prompt()
                     .advisors(this.qaAdvisor)
@@ -54,6 +69,14 @@ public class QuestionAdviser {
                     .call()
                     .chatResponse();
             return conversationModel.extractTextContent(response);
+
+             */
+            String response = ChatClient.builder(conversationModel.getChatModel()).build()
+                    .prompt(userText)
+                    .advisors(qaAdvisor)
+                    .call()
+                    .content();
+            return response;
 
         } catch (Exception e) {
             System.out.println(" Error while calling question advisor: " + e.getMessage());

@@ -115,8 +115,8 @@ public class ProductCardController implements Initializable {
     }
 
     private void addToCompareList() {
-        if(!ProductDatabase.getInstance().getCompareList().contains(product)) {
-            ProductDatabase.getInstance().addToCompareList(product);
+        if(!LaptopDatabase.getInstance().getCompareList().contains(product)) {
+            LaptopDatabase.getInstance().addToCompareList(product);
         }
     }
 }

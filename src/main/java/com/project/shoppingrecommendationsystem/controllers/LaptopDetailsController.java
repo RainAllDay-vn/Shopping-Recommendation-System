@@ -1,7 +1,7 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Laptop;
-import com.project.shoppingrecommendationsystem.models.Review;
+import com.project.shoppingrecommendationsystem.models.components.Review;
 import com.project.shoppingrecommendationsystem.models.components.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,22 +15,38 @@ public class LaptopDetailsController {
 
     @FXML
     private VBox descriptionBox;
-    @FXML private VBox productPage;
-    @FXML private VBox productCardDetailsBox;
-    @FXML private HBox cpuNameRow, cpuBaseFrequencyRow, cpuTurboFrequencyRow, cpuCoresRow, cpuThreadsRow, cpuCacheRow;
-    @FXML private Label cpuNameText, cpuBaseFrequencyText, cpuTurboFrequencyText, cpuCoresText, cpuThreadsText, cpuCacheText;
-    @FXML private HBox ramSizeRow, ramTypeRow, ramChannelsRow, ramClockRow, ramUpgradableRow, ramSlotsRow, ramMaxSizeRow;
-    @FXML private Label ramSizeText, ramTypeText, ramChannelsText, ramClockText, ramUpgradableText, ramSlotsText, ramMaxSizeText;
-    @FXML private HBox storageSizeRow, storageBusRow, storageTypeRow, storageChannelsRow, storageUpgradableRow, storageSlotsRow;
-    @FXML private Label storageSizeText, storageBusText, storageTypeText, storageChannelsText, storageUpgradableText, storageSlotsText;
-    @FXML private HBox displayScreenSizeRow, displayScreenResolutionRow, displayRefreshRateRow, displayGPUNameRow, displayGPUTypeRow, displayGPUBaseClockRow, displayGPUBoostClockRow;
-    @FXML private Label displayScreenSizeText, displayScreenResolutionText, displayRefreshRateText, displayGPUNameText, displayGPUTypeText, displayGPUBaseClockText, displayGPUBoostClockText;
-    @FXML private HBox connectivityPortsRow, connectivityWifiRow, connectivityBluetoothRow, connectivityFingerprintRow, connectivityWebcamRow;
-    @FXML private Label connectivityPortsText, connectivityWifiText, connectivityBluetoothText, connectivityFingerprintText, connectivityWebcamText;
-    @FXML private HBox batteryCapacityRow, batteryFullChargingTimeRow, batteryChargePowerRow;
-    @FXML private Label batteryCapacityText, batteryFullChargingTimeText, batteryChargePowerText;
-    @FXML private HBox laptopCaseWeightRow, laptopCaseDimensionsRow, laptopCaseMaterialRow;
-    @FXML private Label laptopCaseWeightText, laptopCaseDimensionsText, laptopCaseMaterialText;
+    @FXML
+    private VBox productPage;
+    @FXML
+    private VBox productCardDetailsBox;
+    @FXML
+    private HBox cpuNameRow, cpuBaseFrequencyRow, cpuTurboFrequencyRow, cpuCoresRow, cpuThreadsRow, cpuCacheRow;
+    @FXML
+    private Label cpuNameText, cpuBaseFrequencyText, cpuTurboFrequencyText, cpuCoresText, cpuThreadsText, cpuCacheText;
+    @FXML
+    private HBox ramSizeRow, ramTypeRow, ramChannelsRow, ramClockRow, ramUpgradableRow, ramSlotsRow, ramMaxSizeRow;
+    @FXML
+    private Label ramSizeText, ramTypeText, ramChannelsText, ramClockText, ramUpgradableText, ramSlotsText, ramMaxSizeText;
+    @FXML
+    private HBox storageSizeRow, storageBusRow, storageTypeRow, storageChannelsRow, storageUpgradableRow, storageSlotsRow;
+    @FXML
+    private Label storageSizeText, storageBusText, storageTypeText, storageChannelsText, storageUpgradableText, storageSlotsText;
+    @FXML
+    private HBox displayScreenSizeRow, displayScreenResolutionRow, displayRefreshRateRow, displayGPUNameRow, displayGPUTypeRow, displayGPUBaseClockRow, displayGPUBoostClockRow;
+    @FXML
+    private Label displayScreenSizeText, displayScreenResolutionText, displayRefreshRateText, displayGPUNameText, displayGPUTypeText, displayGPUBaseClockText, displayGPUBoostClockText;
+    @FXML
+    private HBox connectivityPortsRow, connectivityWifiRow, connectivityBluetoothRow, connectivityFingerprintRow, connectivityWebcamRow;
+    @FXML
+    private Label connectivityPortsText, connectivityWifiText, connectivityBluetoothText, connectivityFingerprintText, connectivityWebcamText;
+    @FXML
+    private HBox batteryCapacityRow, batteryFullChargingTimeRow, batteryChargePowerRow;
+    @FXML
+    private Label batteryCapacityText, batteryFullChargingTimeText, batteryChargePowerText;
+    @FXML
+    private HBox laptopCaseWeightRow, laptopCaseDimensionsRow, laptopCaseMaterialRow;
+    @FXML
+    private Label laptopCaseWeightText, laptopCaseDimensionsText, laptopCaseMaterialText;
 
     private void setLabelText(Label label, String value, HBox row) {
         if (value == null || value.trim().isEmpty() || "null".equalsIgnoreCase(value.trim())) {
@@ -129,29 +145,40 @@ public class LaptopDetailsController {
     }
 
     private void displayProductDescription(List<String[]> productDescription) {
-        for(int i = 0; i < productDescription.size(); i++) {
+        for (int i = 0; i < productDescription.size(); i++) {
             String s = productDescription.get(i)[0];
-            Label l = new Label(productDescription.get(i)[1]);
-            l.setWrapText(true);
-            if(s.equals("header")) {
-                l.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10px; -fx-text-fill: #2c3e50;");
-            } else if(s.equals("bold")) {
-                l.setStyle("-fx-font-weight: bold;");
+            Label productDescriptionLabel = new Label(productDescription.get(i)[1]);
+            productDescriptionLabel.setWrapText(true);
+            if (s.equals("header")) {
+                productDescriptionLabel.getStyleClass().add("description-header");
+            } else if (s.equals("bold")) {
+                productDescriptionLabel.getStyleClass().add("description-bold");
+            } else {
+                productDescriptionLabel.getStyleClass().add("description-normal");
             }
-            descriptionBox.getChildren().add(l);
+            descriptionBox.getChildren().add(productDescriptionLabel);
         }
     }
 
+
     private void displayProductReview(List<Review> reviews) {
-        if(!reviews.isEmpty()) {
-            productPage.getChildren().add(new Label("User reviews:"));
+        if (!reviews.isEmpty()) {
+            Label userReviewsHeader = new Label("User reviews:");
+            userReviewsHeader.getStyleClass().add("section-header");
+            productPage.getChildren().add(userReviewsHeader);
             for (Review review : reviews) {
                 VBox vbox = new VBox();
-                vbox.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-padding: 10;");
-                vbox.getChildren().add(new Label(review.getCreatedDate().toString()));
-                vbox.getChildren().add(new Label(review.getContent()));
-                vbox.getChildren().add(new Label(review.getScore()));
-                vbox.getChildren().add(new Label(review.getUsername()));
+                vbox.getStyleClass().add("review-box");
+                Label dateLabel = new Label(review.getCreatedDate().toString());
+                dateLabel.getStyleClass().add("review-date");
+                Label contentLabel = new Label(review.getContent());
+                contentLabel.setWrapText(true);
+                contentLabel.getStyleClass().add("review-content");
+                Label scoreLabel = new Label(review.getScore() + "⭐");
+                scoreLabel.getStyleClass().add("review-score");
+                Label usernameLabel = new Label(review.getUsername());
+                usernameLabel.getStyleClass().add("review-username");
+                vbox.getChildren().addAll(dateLabel, contentLabel, scoreLabel, usernameLabel);
                 productPage.getChildren().add(vbox);
             }
         }

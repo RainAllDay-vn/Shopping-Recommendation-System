@@ -7,31 +7,24 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="77" prefWidth="1536" style="-fx-alignment: center;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.shoppingrecommendationsystem.controllers.TopBarController">
+<HBox spacing ="20" prefHeight="77" prefWidth="1536" style="-fx-alignment: center;" xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.shoppingrecommendationsystem.controllers.TopBarController">
 
-     <HBox spacing="10" style="-fx-alignment: center-left; -fx-padding: 0 20 0 15;">
-        <Button fx:id="backButton" text="←" styleClass="nav-btn" stylesheets="@../styling.css" />
-        <Button fx:id="homeButton" text="🏠" styleClass="nav-btn" stylesheets="@../styling.css" />
-        <Button fx:id="resetButton" text="⟲" styleClass="nav-btn" stylesheets="@../styling.css" />
-    </HBox>
-    
-    
     <ImageView fx:id="logo" fitHeight="52" fitWidth="116" pickOnBounds="true" preserveRatio="true" />
 
-    <Label fx:id="titleLabel" prefHeight="78" prefWidth="365" styleClass="title" stylesheets="@../styling.css" text="Shopping Recommended System">
+    <Label fx:id="titleLabel" prefHeight="78" prefWidth="365" styleClass="title" stylesheets="@../styling.css"
+           text="Shopping Recommended System">
         <font>
             <Font size="22" />
         </font>
     </Label>
 
-    <TextField fx:id="searchTextField" prefHeight="40" prefWidth="525" promptText="What product you have in mind today" styleClass="search-field" stylesheets="@../styling.css" />
-
-    <!-- <Button fx:id="searchButton" text="Search" />
-
-    <Button fx:id="goToList" text="My list" /> -->
-
+    <TextField fx:id="searchTextField" prefHeight="40" prefWidth="525" promptText="What product you have in mind today"
+               styleClass="search-field" stylesheets="@../styling.css" />
 
     <Button fx:id="searchButton" text="🔍" styleClass="search-btn" stylesheets="@../styling.css" />
 
-    
+    <Button fx:id="goToList" text="My list"/>
+
 </HBox>

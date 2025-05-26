@@ -17,20 +17,28 @@ import java.util.ResourceBundle;
 
 public class ProductGridController implements Initializable {
     private static final int PRODUCT_PER_PAGE = 12;
-    private final LaptopDatabase productDatabase;
-    private final ObservableList<Laptop> laptops;
+    private final LaptopDatabase productDatabase = LaptopDatabase.getInstance();
     private final ObservableList<String[]> query = Messenger.getInstance().getQuery();
+    private final ObservableList<Laptop> laptops = FXCollections.observableArrayList
+            (productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
 
-    @FXML private FlowPane flowPane;
-    @FXML private Button expandButton;
-
-    public ProductGridController() {
-        this.productDatabase = LaptopDatabase.getInstance();
-        this.laptops = FXCollections.observableArrayList(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
-    }
+    @FXML
+    private FlowPane flowPane;
+    @FXML
+    private Button expandButton;
+    @FXML
+    private Button sortByNameButton;
+    @FXML
+    private Button sortByPriceButton;
+    @FXML
+    private Button sortByDiscountPriceButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        sortByNameButton.setOnAction(event -> sortByName());
+        sortByPriceButton.setOnAction(event -> sortByPrice());
+        sortByDiscountPriceButton.setOnAction(event -> sortByDiscountPrice());
+
         laptops.forEach(laptop -> {
                     ProductCard card = new ProductCard(laptop);
                     flowPane.getChildren().add(card.getRoot());
@@ -40,6 +48,13 @@ public class ProductGridController implements Initializable {
             flowPane.getChildren().clear();
             for (Laptop laptop : laptops) {
                 flowPane.getChildren().add(new ProductCard(laptop).getRoot());
+            }
+            if(laptops.isEmpty()){
+                expandButton.setVisible(false);
+                expandButton.setManaged(false);
+            } else {
+                expandButton.setVisible(true);
+                expandButton.setManaged(true);
             }
         });
         query.addListener((InvalidationListener) observable -> {
@@ -56,6 +71,21 @@ public class ProductGridController implements Initializable {
                     flowPane.getChildren().add(card.getRoot());
                 }
         );
+    }
+
+    private void sortByName() {
+        productDatabase.sortByName();
+        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+    }
+
+    private void sortByPrice() {
+        productDatabase.sortByPrice();
+        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+    }
+
+    private void sortByDiscountPrice() {
+        productDatabase.sortByDiscountPrice();
+        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
     }
 
     public void expand() {

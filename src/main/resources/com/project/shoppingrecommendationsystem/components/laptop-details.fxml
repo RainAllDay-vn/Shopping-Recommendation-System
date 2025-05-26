@@ -9,12 +9,8 @@
             fx:controller="com.project.shoppingrecommendationsystem.controllers.LaptopDetailsController" stylesheets="@../styling.css">
     <VBox spacing="25" style="-fx-padding: 20;" fx:id="productPage" >
         <HBox spacing="30">
-            <VBox fx:id="productCardDetailsBox" spacing="10" style="-fx-pref-width: 300;">
-            </VBox>
-            <VBox spacing="15" style="-fx-pref-width: 1000;" fx:id="descriptionBox">
-                <Label text="Description" styleClass="section-header"/>
-                <Label fx:id="descriptionText" wrapText="true" styleClass="detail-content" maxWidth="500"/>
-            </VBox>
+            <VBox fx:id="productCardDetailsBox" spacing="10" style="-fx-pref-width: 300;"/>
+            <VBox spacing="15" style="-fx-pref-width: 1000;" fx:id="descriptionBox"/>
         </HBox>
 
         <VBox spacing="20">

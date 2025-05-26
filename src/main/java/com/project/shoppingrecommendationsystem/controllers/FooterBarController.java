@@ -1,7 +1,7 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.ProductDatabase;
+import com.project.shoppingrecommendationsystem.models.database.LaptopDatabase;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class FooterBarController implements Initializable {
 
-    private final ProductDatabase productDatabase = ProductDatabase.getInstance();
+    private final LaptopDatabase productDatabase = LaptopDatabase.getInstance();
     private final ObservableList<Product> compareProducts = FXCollections.observableList(productDatabase.getCompareList());
 
     @FXML

@@ -23,6 +23,9 @@ public class QdrantVectorDatabase implements VectorDatabase {
     private QdrantClient qdrantClient;
     private EmbedModel embeddingModel;
 
+    private static final int BATCH_SIZE = 3;
+    private static final int THREAD_SLEEP = 20000;
+
     public QdrantClient createQdrantClient(String StoreName) throws ExecutionException, InterruptedException {
         String hostname = "localhost";
         int port = 6334;
@@ -50,42 +53,48 @@ public class QdrantVectorDatabase implements VectorDatabase {
         return client;
     }
 
-    public QdrantVectorDatabase(String StoreName, EmbedModel CurEmbed) throws ExecutionException, InterruptedException, IOException {
-        this.qdrantClient = createQdrantClient(StoreName);
-        this.embeddingModel = CurEmbed;
-        this.vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel.getEmbeddingModel())
-                .collectionName(StoreName)
-                .initializeSchema(true)
-                .batchingStrategy(new TokenCountBatchingStrategy())
-                .build();
-    }
+    public QdrantVectorDatabase(String storeName, EmbedModel curEmbed) {
+        try {
+            this.qdrantClient = createQdrantClient(storeName);
+            this.embeddingModel = curEmbed;
 
+            this.vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel.getEmbeddingModel())
+                    .collectionName(storeName)
+                    .initializeSchema(true)
+                    .batchingStrategy(new TokenCountBatchingStrategy())
+                    .build();
+
+        } catch (Exception e) {
+            System.err.println("Failed to connect to Qdrant or initialize vector store: " + e.getMessage());
+            this.vectorStore = null;
+        }
+    }
 
     @Override
     public VectorStore getVectorStore() {
         return vectorStore;
     }
 
-    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        String storeName = "laptop";
-        String prjid = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
-        String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
+    @Override
+    public void addDocuments(List<Document> documents){
+        for (int i = 0; i < documents.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, documents.size());
+            List<Document> batch = documents.subList(i, endIndex);
 
-        EmbedModel vertexEmbedModel = new VertexEmbedModel();
+            try {
+                this.getVectorStore().add(batch);
+                System.out.println("Embedded " + i + " data points");
 
-        VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, vertexEmbedModel);
+                Thread.sleep(THREAD_SLEEP);
 
-        List<Document> documents = List.of(
-                new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!", Map.of("meta1", "meta1")),
-                new Document("The World is Big and Salvation Lurks Around the Corner"),
-                new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("You walk forward facing the past and.", Map.of("meta2", "meta2")),
-                new Document(" you turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("Past and you turn back toward the future.", Map.of("meta2", "meta2")),
-                new Document("future.", Map.of("meta2", "meta2")));
-        vectorDatabase.addDocuments(documents);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Sleep interrupted: " + e.getMessage());
+                break;
+            } catch (Exception e) {
+                System.out.println("Failed to embed batch " + i + "-" + endIndex + ": " + e.getMessage());
+                continue;
+            }
+        }
     }
 }

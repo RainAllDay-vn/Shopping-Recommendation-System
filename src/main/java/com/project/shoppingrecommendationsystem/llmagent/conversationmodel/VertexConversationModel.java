@@ -1,6 +1,7 @@
 package com.project.shoppingrecommendationsystem.llmagent.conversationmodel;
 
 import com.google.cloud.vertexai.VertexAI;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -13,15 +14,24 @@ import java.util.*;
 public class VertexConversationModel implements ConversationModel {
     private VertexAI vertexApi;
     private VertexAiGeminiChatModel chatModel;
-    private final VertexAiGeminiChatOptions OPTION = VertexAiGeminiChatOptions.builder()
-            .temperature(0.7)
-            .topP(0.8)
-            .topK(40)
-            .maxOutputTokens(1500)
-            .stopSequences(List.of())
-            .candidateCount(1)
-            .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-            .build();
+    private static final double TEMPERATURE = 0.7;
+    private static final double TOP_P = 0.8;
+    private static final int TOP_K = 40;
+    private static final int MAX_OUTPUT_TOKENS = 1500;
+    private static final int CANDIDATE_COUNT = 1;
+    private static final List<String> STOP_SEQUENCES = List.of();
+    private static final VertexAiGeminiChatModel.ChatModel MODEL = VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH;
+
+    private static final VertexAiGeminiChatOptions DEFAULT_CHAT_OPTIONS =
+            VertexAiGeminiChatOptions.builder()
+                    .temperature(TEMPERATURE)
+                    .topP(TOP_P)
+                    .topK(TOP_K)
+                    .maxOutputTokens(MAX_OUTPUT_TOKENS)
+                    .stopSequences(STOP_SEQUENCES)
+                    .candidateCount(CANDIDATE_COUNT)
+                    .model(MODEL)
+                    .build();
 
     public VertexConversationModel() {
         String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
@@ -30,31 +40,36 @@ public class VertexConversationModel implements ConversationModel {
         this.vertexApi = new VertexAI(projectId, location);
         this.chatModel = VertexAiGeminiChatModel.builder()
                 .vertexAI(vertexApi)
-                .defaultOptions(OPTION)
+                .defaultOptions(DEFAULT_CHAT_OPTIONS)
                 .build();
     }
 
     @Override
     public ChatModel getChatModel() {
-        return this.chatModel;
+        return chatModel;
     }
 
     @Override
     public String generate(String userPrompt) {
         Prompt chatPrompt = new Prompt(userPrompt);
-        return extractTextContent(this.chatModel.call(chatPrompt));
+        return extractTextContent(chatModel.call(chatPrompt));
     }
 
-    //test the chat model
-    public static void main(String[] args) {
-        String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
-        String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
+    @Override
+    public String extractTextContent(ChatResponse response) {
+        String x = response.getResults().toString();
+        int startIndex = x.indexOf("textContent=");
+        if (startIndex == -1) {
+            return "Text content not found";
+        }
+        startIndex += "textContent=".length();
 
-        System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + projectId);
-        System.out.println("VERTEX_AI_GEMINI_LOCATION: " + location);
-        ConversationModel conversationModel = new VertexConversationModel();
-        String response = conversationModel.generate("Can you explain Polynorpishm in OOP in detail");
-        System.out.println(response);
+        int endIndex = x.lastIndexOf(", metadata={");
+        if (endIndex == -1) {
+            return "Metadata marker not found";
+        }
+
+        return x.substring(startIndex, endIndex);
     }
 
 }

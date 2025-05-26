@@ -16,25 +16,29 @@ import java.util.List;
 
 // using command setx VARIABLE_NAME "VALUE"
 public class VertexEmbedModel implements EmbedModel {
-    private final VertexAiTextEmbeddingModel embeddingModel;
-
+    private final VertexAiTextEmbeddingModel EMBEDDING_MODEL;
+    private final String MODELNAME = "text-multilingual-embedding-002";
+    private static final String GOOGLE_APPLICATION_CREDENTIALS= System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+    private static final String SCOPED_URL = "https://www.googleapis.com/auth/cloud-platform";
+    private static final String VERTEX_AI_ENDPOINT = System.getenv("VERTEX_AI_ENDPOINT");
+    private static final String VERTEX_AI_GEMINI_PROJECT_ID = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
+    private static final String VERTEX_AI_GEMINI_LOCATION = System.getenv("VERTEX_AI_GEMINI_LOCATION");
     public VertexEmbedModel() throws IOException {
-        String credentialsJson = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 
         GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(System.getenv("GOOGLE_APPLICATION_CREDENTIALS")))
-                .createScoped("https://www.googleapis.com/auth/cloud-platform");
+                .fromStream(new FileInputStream(GOOGLE_APPLICATION_CREDENTIALS))
+                .createScoped(SCOPED_URL);
 
         credentials.refreshIfExpired();
 
-        String endpoint = System.getenv("VERTEX_AI_ENDPOINT");
+        String endpoint = VERTEX_AI_ENDPOINT;
         if (endpoint == null) {
             endpoint = "us-central1-aiplatform.googleapis.com:443";
         }
 
         VertexAiEmbeddingConnectionDetails connectionDetails = VertexAiEmbeddingConnectionDetails.builder()
-                .projectId(System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"))
-                .location(System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+                .projectId(VERTEX_AI_GEMINI_PROJECT_ID)
+                .location(VERTEX_AI_GEMINI_LOCATION)
                 .apiEndpoint(endpoint)
                 .predictionServiceSettings(
                         PredictionServiceSettings.newBuilder()
@@ -45,38 +49,21 @@ public class VertexEmbedModel implements EmbedModel {
                 .build();
 
         VertexAiTextEmbeddingOptions options = VertexAiTextEmbeddingOptions.builder()
-                .model("text-multilingual-embedding-002")
+                .model(MODELNAME)
                 .build();
 
-        this.embeddingModel = new VertexAiTextEmbeddingModel(connectionDetails, options);
+        this.EMBEDDING_MODEL = new VertexAiTextEmbeddingModel(connectionDetails, options);
     }
 
     @Override
     public EmbeddingModel getEmbeddingModel() {
-        return this.embeddingModel;
+        return this.EMBEDDING_MODEL;
     }
 
     @Override
     public EmbeddingResponse getEmbeddings(List<String> texts) {
-        return this.embeddingModel.embedForResponse(texts);
+        return this.EMBEDDING_MODEL.embedForResponse(texts);
     }
 
-    public static void main(String[] args) throws IOException {
-        System.out.println("Checking environment variables:");
-        System.out.println("GOOGLE_APPLICATION_CREDENTIALS: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
-        System.out.println("VERTEX_AI_GEMINI_PROJECT_ID: " + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"));
-        System.out.println("VERTEX_AI_GEMINI_LOCATION: " + System.getenv("VERTEX_AI_GEMINI_LOCATION"));
 
-        VertexEmbedModel vertexEmbedModel = new VertexEmbedModel();
-        List<String> texts = List.of("Hello world", "This is a test");
-        EmbeddingResponse response = vertexEmbedModel.getEmbeddings(texts);
-
-        System.out.println("\nEmbedding Response:");
-        System.out.println("Number of embeddings: " + response.getResults().size());
-        for (int i = 0; i < response.getResults().size(); i++) {
-            System.out.println("\nText " + i + ": " + texts.get(i));
-            System.out.println("Embedding dimension: " + response.getResults().get(i).getOutput());
-            System.out.println("View embedding" + response.getResults().get(i).getOutput());
-        }
-    }
 }

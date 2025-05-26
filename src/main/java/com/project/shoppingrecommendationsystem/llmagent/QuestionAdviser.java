@@ -1,75 +1,87 @@
 package com.project.shoppingrecommendationsystem.llmagent;
 
 import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.ConversationModel;
-import com.project.shoppingrecommendationsystem.llmagent.conversationmodel.VertexConversationModel;
-import com.project.shoppingrecommendationsystem.llmagent.embedmodel.VertexEmbedModel;
-import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.QdrantVectorDatabase;
 import com.project.shoppingrecommendationsystem.llmagent.vectordatabase.VectorDatabase;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
-
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+//import org.springframework.ai.template.st.StTemplateRenderer;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 public class QuestionAdviser {
     private ConversationModel conversationModel;
     private VectorDatabase vectorDatabase;
     private QuestionAnswerAdvisor qaAdvisor;
 
-    public QuestionAdviser(VectorDatabase CurVectorDatabase, ConversationModel CurConversationModel) throws IOException, ExecutionException, InterruptedException {
+    private static final double THRESHOLD = 0.8;
+    private static final int TOP_K = 15;
+    private static final String FALLBACK_MESSAGE = "Sorry, I'm currently unable to generate a response.";
 
-        this.conversationModel = CurConversationModel;
-        this.vectorDatabase = CurVectorDatabase;
+    public QuestionAdviser(VectorDatabase curVectorDatabase, ConversationModel curConversationModel) {
+        this.conversationModel = curConversationModel;
+        this.vectorDatabase = curVectorDatabase;
 
-        QuestionAnswerAdvisor qaAdvisor = new QuestionAnswerAdvisor(this.vectorDatabase.getVectorStore(),
-                SearchRequest.builder().
-                        similarityThreshold(0.8d).
-                        topK(15).
-                        build());
-        this.qaAdvisor = qaAdvisor;
+        if (this.vectorDatabase != null) {
+            try {
+                String userAdvise = "You are a helpful and knowledgeable assistant. Below is context retrieved from a trusted source (e.g. database, product catalog, or help article), enclosed between the lines.\n" +
+                        "\n" +
+                        "---------------------\n" +
+                        "{question_answer_context}\n" +
+                        "---------------------\n" +
+                        "\n" +
+                        "Based on the above context, answer the user’s question as helpfully and thoroughly as possible. If the context is not sufficient, you may also use your own general knowledge to provide a complete response.\n" +
+                        "\n" +
+                        "Do not mention the context explicitly. Use natural language, provide examples or reasoning when helpful, and be friendly and clear.";
+                this.qaAdvisor = new QuestionAnswerAdvisor(
+                        this.vectorDatabase.getVectorStore(),
+                        SearchRequest.builder()
+                                .similarityThreshold(THRESHOLD)
+                                .topK(TOP_K)
+                                .build(),
+                        userAdvise
+                );
+
+
+            } catch (Exception e) {
+                System.out.println("Failed to initialize QuestionAnswerAdvisor: " + e.getMessage());
+                this.qaAdvisor = null; // fallback to vanilla mode
+            }
+        } else {
+            System.out.println("Vector database is null. Proceeding without retrieval.");
+            this.qaAdvisor = null;
+        }
     }
-
 
     public String advise(String userText) {
-        ChatResponse response = ChatClient.builder(this.conversationModel.getChatModel())
-                .build().prompt()
-                .advisors(new QuestionAnswerAdvisor(this.vectorDatabase.getVectorStore()))
-                .user(userText)
-                .call()
-                .chatResponse();
-
-        return extractTextContent(response);
-    }
-    public static String extractTextContent(ChatResponse response) {
-        // Find the start of text content
-        String x = response.getResults().toString();
-        int startIndex = x.indexOf("textContent=");
-        if (startIndex == -1) {
-            return "Text content not found";
-        }
-        startIndex += "textContent=".length();
-
-        // Find the end of text content (before metadata section)
-        int endIndex = x.lastIndexOf(", metadata={");
-        if (endIndex == -1) {
-            return "Metadata marker not found";
+        if (conversationModel == null || conversationModel.getChatModel() == null) {
+            System.out.println("Chat model is not available");
+            return FALLBACK_MESSAGE;
         }
 
-        // Extract the content between these positions
-        return x.substring(startIndex, endIndex);
-    }
-    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        String storeName = System.getenv("VERTEX_AI_GEMINI_STORE_NAME");
-        VectorDatabase vectorDatabase = new QdrantVectorDatabase(storeName, new VertexEmbedModel());
-        ConversationModel curConversationModel = new VertexConversationModel();
-        QuestionAdviser adviser = new QuestionAdviser(vectorDatabase, curConversationModel);
-        String userText = "hello ";
-        String response = adviser.advise(userText);
+        try {
+            /*
+            ChatResponse response = ChatClient.builder(this.conversationModel.getChatModel())
+                    .build().prompt()
+                    .advisors(this.qaAdvisor)
+                    .user(userText)
+                    .call()
+                    .chatResponse();
+            return conversationModel.extractTextContent(response);
 
-        System.out.println(response);
+             */
+            String response = ChatClient.builder(conversationModel.getChatModel()).build()
+                    .prompt(userText)
+                    .advisors(qaAdvisor)
+                    .call()
+                    .content();
+            return response;
+
+        } catch (Exception e) {
+            System.out.println(" Error while calling question advisor: " + e.getMessage());
+            return conversationModel.generate(userText);
+        }
     }
 
 }

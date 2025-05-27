@@ -1,8 +1,8 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
 import com.project.shoppingrecommendationsystem.Messenger;
-import com.project.shoppingrecommendationsystem.models.Laptop;
-import com.project.shoppingrecommendationsystem.models.database.ListDatabase;
+import com.project.shoppingrecommendationsystem.models.Product;
+import com.project.shoppingrecommendationsystem.models.database.ProductDatabase;
 import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -17,10 +17,10 @@ import java.util.ResourceBundle;
 
 public class ProductGridController implements Initializable {
     private static final int PRODUCT_PER_PAGE = 12;
-    private final ListDatabase productDatabase = ListDatabase.getInstance();
+    private final ProductDatabase productDatabase = Messenger.getInstance().getProductDatabase();
     private final ObservableList<String[]> query = Messenger.getInstance().getQuery();
-    private final ObservableList<Laptop> laptops = FXCollections.observableArrayList
-            (productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+    private final ObservableList<Product> products = FXCollections.observableArrayList
+            (productDatabase.findProducts(query, PRODUCT_PER_PAGE, 0));
 
     @FXML
     private FlowPane flowPane;
@@ -39,17 +39,17 @@ public class ProductGridController implements Initializable {
         sortByPriceButton.setOnAction(event -> sortByPrice());
         sortByDiscountPriceButton.setOnAction(event -> sortByDiscountPrice());
 
-        laptops.forEach(laptop -> {
-                    ProductCard card = new ProductCard(laptop);
+        products.forEach(product -> {
+                    ProductCard card = new ProductCard(product);
                     flowPane.getChildren().add(card.getRoot());
                 }
         );
-        laptops.addListener((InvalidationListener) observable -> {
+        products.addListener((InvalidationListener) observable -> {
             flowPane.getChildren().clear();
-            for (Laptop laptop : laptops) {
-                flowPane.getChildren().add(new ProductCard(laptop).getRoot());
+            for (Product product : products) {
+                flowPane.getChildren().add(new ProductCard(product).getRoot());
             }
-            if(laptops.isEmpty()){
+            if(products.isEmpty()){
                 expandButton.setVisible(false);
                 expandButton.setManaged(false);
             } else {
@@ -58,15 +58,15 @@ public class ProductGridController implements Initializable {
             }
         });
         query.addListener((InvalidationListener) observable -> {
-            laptops.clear();
-            laptops.addAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+            products.clear();
+            products.addAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, 0));
         });
         expandButton.setOnAction(event -> expand());
     }
 
     protected void updateProductCards() {
         flowPane.getChildren().clear();
-        laptops.forEach(laptop -> {
+        products.forEach(laptop -> {
                     ProductCard card = new ProductCard(laptop);
                     flowPane.getChildren().add(card.getRoot());
                 }
@@ -75,20 +75,20 @@ public class ProductGridController implements Initializable {
 
     private void sortByName() {
         productDatabase.sortByName();
-        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+        products.setAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, 0));
     }
 
     private void sortByPrice() {
         productDatabase.sortByPrice();
-        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+        products.setAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, 0));
     }
 
     private void sortByDiscountPrice() {
         productDatabase.sortByDiscountPrice();
-        laptops.setAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, 0));
+        products.setAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, 0));
     }
 
     public void expand() {
-        laptops.addAll(productDatabase.findLaptops(query, PRODUCT_PER_PAGE, laptops.size()));
+        products.addAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, products.size()));
     }
 }

@@ -4,7 +4,6 @@ import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.database.ListDatabase;
 import com.project.shoppingrecommendationsystem.views.LaptopDetails;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,7 +51,7 @@ public class ProductCardController implements Initializable {
         productName.setText(product.getName());
         productPrice.setText("Price: "+ product.getPrice());
         productDiscount.setText("Discount : "+ product.getDiscountPrice());
-        boolean isFavorite = ListDatabase.getInstance().isFavourite(product);
+        boolean isFavorite = Messenger.getInstance().getProductDatabase().isFavourite(product);
         if (isFavorite) {
             favouriteButton.setText("Unlike");
         } else {
@@ -88,11 +87,11 @@ public class ProductCardController implements Initializable {
     }
 
     private void toggleFavouriteStatus() {
-        if (ListDatabase.getInstance().isFavourite(product)) {
-            ListDatabase.getInstance().removeFromFavourites(product);
+        if (Messenger.getInstance().getProductDatabase().isFavourite(product)) {
+            Messenger.getInstance().getProductDatabase().removeFromFavourites(product);
             favouriteButton.setText("Like");
         } else {
-            ListDatabase.getInstance().addToFavourites(product);
+            Messenger.getInstance().getProductDatabase().addToFavourites(product);
             favouriteButton.setText("Unlike");
         }
     }
@@ -107,7 +106,7 @@ public class ProductCardController implements Initializable {
         try {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("[ERROR]: Cannot open web page");
         }
     }
 }

@@ -40,7 +40,6 @@ public class MainPageController implements Initializable {
     }
 
     public void displayDetails(Node content){
-
         root.setCenter(content);
         root.setLeft(null);
     }

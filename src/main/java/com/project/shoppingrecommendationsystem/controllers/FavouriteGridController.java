@@ -1,7 +1,7 @@
 package com.project.shoppingrecommendationsystem.controllers;
 
+import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.database.ListDatabase;
 import com.project.shoppingrecommendationsystem.views.ProductCard;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +17,7 @@ public class FavouriteGridController implements Initializable {
     private final List<Product> products;
 
     public FavouriteGridController() {
-        this.products = ListDatabase.getInstance().getFavouriteProducts();
+        this.products = Messenger.getInstance().getProductDatabase().getFavouriteProducts();
     }
 
     @Override

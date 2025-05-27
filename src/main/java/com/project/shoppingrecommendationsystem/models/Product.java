@@ -85,6 +85,8 @@ public abstract class Product {
                     case "name" -> name;
                     case "brand" -> brand;
                     case "price" -> String.valueOf(discountPrice);
+                    case "vendor" -> source;
+                    case "type" -> this.getClass().getSimpleName();
                     case "description" -> {
                         StringBuilder compactedDescription = new StringBuilder();
                         for (String[] paragraph: description) {

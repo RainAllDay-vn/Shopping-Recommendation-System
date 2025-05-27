@@ -4,7 +4,7 @@ import com.project.shoppingrecommendationsystem.Messenger;
 import com.project.shoppingrecommendationsystem.ShoppingApplication;
 import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
-import com.project.shoppingrecommendationsystem.models.database.LaptopDatabase;
+import com.project.shoppingrecommendationsystem.models.database.ListDatabase;
 import com.project.shoppingrecommendationsystem.views.LaptopDetails;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,7 +52,7 @@ public class ProductCardController implements Initializable {
         productName.setText(product.getName());
         productPrice.setText("Price: "+ product.getPrice());
         productDiscount.setText("Discount : "+ product.getDiscountPrice());
-        boolean isFavorite = LaptopDatabase.getInstance().isFavourite(product);
+        boolean isFavorite = ListDatabase.getInstance().isFavourite(product);
         if (isFavorite) {
             favouriteButton.setText("Unlike");
         } else {
@@ -88,11 +88,11 @@ public class ProductCardController implements Initializable {
     }
 
     private void toggleFavouriteStatus() {
-        if (LaptopDatabase.getInstance().isFavourite(product)) {
-            LaptopDatabase.getInstance().removeFromFavourites(product);
+        if (ListDatabase.getInstance().isFavourite(product)) {
+            ListDatabase.getInstance().removeFromFavourites(product);
             favouriteButton.setText("Like");
         } else {
-            LaptopDatabase.getInstance().addToFavourites(product);
+            ListDatabase.getInstance().addToFavourites(product);
             favouriteButton.setText("Unlike");
         }
     }

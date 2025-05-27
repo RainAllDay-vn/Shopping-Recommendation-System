@@ -48,7 +48,7 @@ public class ChatBoxController implements Initializable {
     ConversationModel curConversationModel = new VertexConversationModel();
     QuestionAdviser adviser = new QuestionAdviser(vectorDatabase, curConversationModel);
 
-    public ChatBoxController() throws IOException, ExecutionException, InterruptedException {
+    public ChatBoxController() throws IOException {
     }
 
     @Override

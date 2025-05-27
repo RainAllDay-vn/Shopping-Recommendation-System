@@ -4,7 +4,6 @@ import com.project.shoppingrecommendationsystem.models.Laptop;
 import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSLaptopCrawler;
-import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSSmartPhoneCrawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.fptshop.FPTShopLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.tgdd.TGDDLaptopCrawler;
 
@@ -12,16 +11,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class LaptopDatabase implements ProductDatabase{
-    private static final LaptopDatabase instance = new LaptopDatabase();
+public class ListDatabase implements ProductDatabase{
+    private static final ListDatabase instance = new ListDatabase();
     private final List<Crawler> crawlers;
     private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
 
-    private LaptopDatabase() {
+    private ListDatabase() {
         crawlers = new ArrayList<>();
         crawlers.add(new CellphoneSLaptopCrawler());
-        crawlers.add(new CellphoneSSmartPhoneCrawler());
         crawlers.add(new FPTShopLaptopCrawler());
         crawlers.add(new TGDDLaptopCrawler());
         storeProducts = new ArrayList<>();
@@ -29,9 +27,10 @@ public class LaptopDatabase implements ProductDatabase{
                 .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
                 .forEach(storeProducts::add);
+        Collections.shuffle(storeProducts);
     }
 
-    public static LaptopDatabase getInstance() {
+    public static ListDatabase getInstance() {
         return instance;
     }
 
@@ -60,7 +59,7 @@ public class LaptopDatabase implements ProductDatabase{
 
     @Override
     public List<Product> findAllProducts () {
-        return storeProducts;
+        return new ArrayList<>(storeProducts);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class LaptopDatabase implements ProductDatabase{
 
     @Override
     public List<Product> findProducts (List<String[]> query, int limit, int offset) {
-        return storeProducts.stream()
+        return findAllProducts().stream()
                 .filter(product -> product.match(query))
                 .skip(offset)
                 .limit(limit)
@@ -83,14 +82,14 @@ public class LaptopDatabase implements ProductDatabase{
     }
 
     public List<Laptop> findAllLaptops() {
-        return storeProducts.stream()
+        return findAllProducts().stream()
                 .filter(product -> product instanceof Laptop)
                 .map(product -> (Laptop) product)
                 .collect(Collectors.toList());
     }
 
     public List<Laptop> findLaptops (List<String[]> query, int limit, int offset) {
-        return storeProducts.stream()
+        return findAllProducts().stream()
                 .filter(product -> product instanceof Laptop)
                 .filter(product -> product.match(query))
                 .map(product -> (Laptop) product)
@@ -99,32 +98,39 @@ public class LaptopDatabase implements ProductDatabase{
                 .toList();
     }
 
+    @Override
     public List<Product> getFavouriteProducts() {
-        return favouriteProducts;
+        return new ArrayList<>(favouriteProducts);
     }
 
+    @Override
     public boolean isFavourite(Product product){
         return favouriteProducts.contains(product);
     }
 
+    @Override
     public void addToFavourites(Product product) {
         if (!favouriteProducts.contains(product)) {
             favouriteProducts.add(product);
         }
     }
 
+    @Override
     public void removeFromFavourites(Product product) {
         favouriteProducts.remove(product);
     }
 
+    @Override
     public void sortByName(){
         storeProducts.sort(Comparator.comparing(Product::getName));
     }
 
+    @Override
     public void sortByPrice(){
         storeProducts.sort(Comparator.comparingInt(Product::getPrice));
     }
 
+    @Override
     public void sortByDiscountPrice(){
         storeProducts.sort(Comparator.comparingInt(Product::getDiscountPrice));
     }

@@ -20,4 +20,18 @@ public interface ProductDatabase {
     Optional<Product> findProductById(int id);
 
     List<Product> findProducts(List<String[]> query, int limit, int offset);
+
+    List<Product> getFavouriteProducts();
+
+    boolean isFavourite(Product product);
+
+    void addToFavourites(Product product);
+
+    void removeFromFavourites(Product product);
+
+    void sortByName();
+
+    void sortByPrice();
+
+    void sortByDiscountPrice();
 }

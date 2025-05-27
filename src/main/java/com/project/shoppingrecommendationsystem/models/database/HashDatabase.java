@@ -4,23 +4,27 @@ import com.project.shoppingrecommendationsystem.models.Product;
 import com.project.shoppingrecommendationsystem.models.crawlers.Crawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSLaptopCrawler;
 import com.project.shoppingrecommendationsystem.models.crawlers.cellphones.CellphoneSSmartPhoneCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.fptshop.FPTShopLaptopCrawler;
+import com.project.shoppingrecommendationsystem.models.crawlers.tgdd.TGDDLaptopCrawler;
 
 import java.util.*;
 
-public class CellphoneSDatabase implements ProductDatabase {
+public class HashDatabase implements ProductDatabase {
     private final List<Crawler> crawlers;
-    private final List<Product> storeProducts;
+    private final HashMap<Integer, Product> storeProducts;
+    private final List<Product> favouriteProducts = new ArrayList<>();
 
-    public CellphoneSDatabase() {
+    public HashDatabase() {
         crawlers = new ArrayList<>();
         crawlers.add(new CellphoneSLaptopCrawler());
         crawlers.add(new CellphoneSSmartPhoneCrawler());
-        storeProducts = new ArrayList<>();
+        crawlers.add(new FPTShopLaptopCrawler());
+        crawlers.add(new TGDDLaptopCrawler());
+        storeProducts = new HashMap<>();
         crawlers.stream()
                 .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
-                .forEach(storeProducts::add);
-        Collections.shuffle(storeProducts);
+                .forEach(p -> storeProducts.put(p.getId(), p));
     }
 
     @Override
@@ -35,19 +39,19 @@ public class CellphoneSDatabase implements ProductDatabase {
         crawlers.stream()
                 .map(Crawler::getAllProducts)
                 .flatMap(Collection::stream)
-                .forEach(storeProducts::add);
+                .forEach(p -> storeProducts.put(p.getId(), p));
     }
 
     @Override
     public void crawl(Crawler crawler) {
         storeProducts.clear();
         crawler.crawl();
-        storeProducts.addAll(crawler.getAllProducts());
+        crawler.getAllProducts().forEach(p -> storeProducts.put(p.getId(), p));
     }
 
     @Override
     public List<Product> findAllProducts() {
-        return storeProducts;
+        return new ArrayList<>(storeProducts.values());
     }
 
     @Override
@@ -62,10 +66,48 @@ public class CellphoneSDatabase implements ProductDatabase {
 
     @Override
     public List<Product> findProducts(List<String[]> query, int limit, int offset) {
-        return storeProducts.stream()
+        return storeProducts.values()
+                .stream()
                 .filter(product -> product.match(query))
                 .skip(offset)
                 .limit(limit)
                 .toList();
+    }
+
+    @Override
+    public List<Product> getFavouriteProducts() {
+        return new ArrayList<>(favouriteProducts);
+    }
+
+    @Override
+    public boolean isFavourite(Product product){
+        return favouriteProducts.contains(product);
+    }
+
+    @Override
+    public void addToFavourites(Product product) {
+        if (!favouriteProducts.contains(product)) {
+            favouriteProducts.add(product);
+        }
+    }
+
+    @Override
+    public void removeFromFavourites(Product product) {
+        favouriteProducts.remove(product);
+    }
+
+    @Override
+    public void sortByName(){
+        // To be implemented
+    }
+
+    @Override
+    public void sortByPrice(){
+        // To be implemented
+    }
+
+    @Override
+    public void sortByDiscountPrice(){
+        // To bo implemented
     }
 }

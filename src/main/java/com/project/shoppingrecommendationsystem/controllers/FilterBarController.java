@@ -27,6 +27,8 @@ public class FilterBarController implements Initializable {
         query.clear();
     }
 
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         for (Node node : vendorOptions.getChildren()) {

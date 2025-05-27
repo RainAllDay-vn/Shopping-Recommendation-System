@@ -3,7 +3,6 @@ package com.project.shoppingrecommendationsystem.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,7 +67,7 @@ public class ChatBoxController implements Initializable {
             if (event.getCode() == KeyCode.ENTER && !event.isShiftDown()) {
                 askChatBox(chatInput.getText());
             }});
-        addUIChatBotMessage("Hi how can I help you?");
+        addUIChatBotMessage("Xin chào, tôi có thể giúp được gì cho bạn ?");
     }
 
     private void askChatBox(String message) {
@@ -85,9 +84,7 @@ public class ChatBoxController implements Initializable {
             @Override
             protected void succeeded() {
                 String botReply = getValue();
-                Platform.runLater(() -> {
-                    addUIChatBotMessage(botReply);
-                });
+                Platform.runLater(() -> addUIChatBotMessage(botReply));
             }
 
             @Override

@@ -41,6 +41,7 @@ public class TopBarController implements Initializable {
     }
 
     private void search(){
+        Messenger.getInstance().getMainPageController().displayMain();
         if (searchTextField.getText().isBlank()) {
             removeSearchFromQuery();
         } else {

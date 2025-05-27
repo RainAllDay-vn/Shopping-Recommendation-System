@@ -2,7 +2,7 @@ package com.project.shoppingrecommendationsystem.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 import java.awt.*;
 import java.net.URI;
@@ -11,11 +11,11 @@ import java.util.ResourceBundle;
 
 public class FooterBarController implements Initializable {
     @FXML
-    Button footerLabel;
+    Label aboutUsLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        footerLabel.setOnMouseClicked(event -> goToRepo());
+        aboutUsLabel.setOnMouseClicked(event -> goToRepo());
     }
 
     public void goToRepo(){

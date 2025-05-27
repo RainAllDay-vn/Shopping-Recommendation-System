@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ProductGridController implements Initializable {
-    private static final int PRODUCT_PER_PAGE = 12;
+    private static final int PRODUCT_PER_PAGE = 24;
     private final ProductDatabase productDatabase = Messenger.getInstance().getProductDatabase();
     private final ObservableList<String[]> query = Messenger.getInstance().getQuery();
     private final ObservableList<Product> products = FXCollections.observableArrayList
@@ -89,6 +89,11 @@ public class ProductGridController implements Initializable {
     }
 
     public void expand() {
+        int checkProductNumber = products.size();
         products.addAll(productDatabase.findProducts(query, PRODUCT_PER_PAGE, products.size()));
+        if(checkProductNumber == products.size()){
+            expandButton.setVisible(false);
+            expandButton.setManaged(false);
+        }
     }
 }

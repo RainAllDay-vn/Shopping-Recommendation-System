@@ -1,4 +1,4 @@
-# RAG-with-metadata-filtering
+# ✨ ShopX: Intelligent Shopping Recommendation System
 
 
 ## Quick‑start

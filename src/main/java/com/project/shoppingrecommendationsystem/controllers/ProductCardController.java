@@ -17,6 +17,9 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ProductCardController implements Initializable {
@@ -49,8 +52,8 @@ public class ProductCardController implements Initializable {
             productImage.setImage(defaultImage);
         }
         productName.setText(product.getName());
-        productPrice.setText("Price: "+ product.getPrice());
-        productDiscount.setText("Discount : "+ product.getDiscountPrice());
+        productPrice.setText("Price: "+ numberFormat(product.getPrice()) + " VNĐ");
+        productDiscount.setText("Discount : "+ numberFormat(product.getDiscountPrice()) + " VNĐ");
         boolean isFavorite = Messenger.getInstance().getProductDatabase().isFavourite(product);
         if (isFavorite) {
             favouriteButton.setText("Unlike");
@@ -58,6 +61,15 @@ public class ProductCardController implements Initializable {
             favouriteButton.setText("Like");
         }
     }
+
+    private String numberFormat(int number){
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setGroupingSeparator(' ');  // Set space as separator
+
+        DecimalFormat formatter = new DecimalFormat("#,###", symbols);
+        return formatter.format(number);
+    }
+
 
     private static Image loadDefaultImage() {
         URL imageURL = ShoppingApplication.class.getResource("images/product-default.png");

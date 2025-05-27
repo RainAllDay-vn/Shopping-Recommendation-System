@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?> <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER"
       style="-fx-background-color: black;"
       fx:controller="com.project.shoppingrecommendationsystem.controllers.FooterBarController">
-    <Button fx:id="footerLabel" text="About Us" underline="true" textAlignment="CENTER" alignment="CENTER"
-           style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+
+    <Label fx:id="aboutUsLabel" text="About Us"
+           style="-fx-text-fill: white; -fx-font-size: 14px;-fx-underline: true;"/>
 </VBox>

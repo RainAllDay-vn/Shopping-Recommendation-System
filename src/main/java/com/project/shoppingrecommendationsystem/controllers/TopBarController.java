@@ -32,28 +32,29 @@ public class TopBarController implements Initializable {
 
     @Override
     public void initialize (URL url, ResourceBundle resourceBundle) {
-        searchButton.setOnAction(event -> search());
-        searchTextField.setOnAction(event -> search());
+        searchButton.setOnAction(event -> search(searchTextField.getText()));
+        searchTextField.setOnAction(event -> search(searchTextField.getText()));
         goToList.setOnAction(e -> Messenger.getInstance().getMainPageController().displayMyList());
         logo.setImage(appLogo);
         logo.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
         titleLabel.setOnMouseClicked(e -> Messenger.getInstance().getMainPageController().displayMain());
     }
 
-    private void search(){
-        if (searchTextField.getText().isBlank()) {
-            removeSearchFromQuery();
+    private void search(String text){
+        Messenger.getInstance().getMainPageController().displayMain();
+        if (text.isBlank()) {
+            removeNameFromQuery();
         } else {
-            addSearchToQuery(searchTextField.getText());
+            addNameToQuery(text);
         }
     }
 
-    private void addSearchToQuery (String searchText) {
-        removeSearchFromQuery();
+    private void addNameToQuery(String searchText) {
+        removeNameFromQuery();
         query.add(new String[]{"name", "contain", searchText});
     }
 
-    private void removeSearchFromQuery () {
+    private void removeNameFromQuery() {
         for (int i = 0; i < query.size(); i++) {
             if (query.get(i)[0].equals("name")){
                 query.remove(i);

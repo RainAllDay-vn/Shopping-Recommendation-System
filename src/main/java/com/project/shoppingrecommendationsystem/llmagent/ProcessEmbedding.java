@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 
 public class ProcessEmbedding {
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
+        embedDatabase();
+    }
+
+    public static void embedDatabase() throws IOException {
         ProductDatabase rawDatabase = Messenger.getInstance().getProductDatabase();
         EmbedModel embedding = new VertexEmbedModel();
         String storeName = "Shopping Recommendation System";

@@ -17,7 +17,6 @@ public class LaptopDatabase implements ProductDatabase{
     private final List<Crawler> crawlers;
     private final List<Product> storeProducts;
     private final List<Product> favouriteProducts = new ArrayList<>();
-    private final List<Product> compareList = new ArrayList<>();
 
     private LaptopDatabase() {
         crawlers = new ArrayList<>();
@@ -116,20 +115,6 @@ public class LaptopDatabase implements ProductDatabase{
 
     public void removeFromFavourites(Product product) {
         favouriteProducts.remove(product);
-    }
-
-    public List<Product> getCompareList() {
-        return compareList;
-    }
-
-    public void addToCompareList(Product product) {
-        if(!compareList.contains(product)) {
-            compareList.add(product);
-        }
-    }
-
-    public void removeFromCompareList(Product product) {
-        compareList.remove(product);
     }
 
     public void sortByName(){

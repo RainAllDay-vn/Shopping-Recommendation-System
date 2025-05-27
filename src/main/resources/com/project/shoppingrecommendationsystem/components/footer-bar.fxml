@@ -4,10 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER"
-      style="-fx-background-color: black;">
-
-    <HBox fx:id="compareBox"/>
-
+      style="-fx-background-color: black;"
+      fx:controller="com.project.shoppingrecommendationsystem.controllers.FooterBarController">
     <Label text="About Us" underline="true" textAlignment="CENTER" alignment="CENTER"
            style="-fx-text-fill: white; -fx-font-size: 14px;"/>
 </VBox>
